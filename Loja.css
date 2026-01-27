@@ -1,0 +1,472 @@
+/* CONFIGURAÇÕES GERAIS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    padding-top: 80px;
+}
+
+/* NAVEGAÇÃO */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    background: #000;
+    height: 80px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 2000;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0 auto;
+}
+
+.nav-list a {
+    color: white;
+    text-decoration: none;
+}
+
+.nav-list a.active {
+    color: #005eff !important;
+    font-weight: bold;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: white;
+}
+
+/* LAYOUT DA LOJA */
+.container-loja {
+    padding: 40px 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.topo-loja h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.barra-busca {
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin: 20px 0 40px 0;
+}
+
+.barra-busca input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 1rem;
+}
+
+/* CONTEÚDO PRINCIPAL EM GRID */
+.conteudo-principal {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* BOTÃO FILTRO MOBILE */
+.btn-mobile-filtros {
+    display: none;
+    /* Escondido no PC */
+    width: 100%;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* SIDEBAR E FILTROS */
+.sidebar-filtros {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    height: fit-content;
+}
+
+.filtro-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.grupo-filtro h4 {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.grupo-filtro label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* CUSTOM RADIO BUTTONS */
+.grupo-filtro input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+}
+
+.grupo-filtro input[type="radio"]:checked {
+    border-color: #005eff;
+}
+
+.grupo-filtro input[type="radio"]:checked::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background: #005eff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* SLIDER PREÇO */
+#filtro-preco {
+    width: 100%;
+    margin: 15px 0;
+}
+
+.labels-preco {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+/* BOTÃO RESET */
+.btn-reset {
+    width: 100%;
+    margin-top: 25px;
+    padding: 12px;
+    border: 2px solid #005eff;
+    background: transparent;
+    color: #005eff;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-reset:hover {
+    background: #005eff;
+    color: #fff;
+}
+
+.grid-produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+/* O CARD ESTILO FOTO */
+.card-produto {
+    background: #fff;
+    border-radius: 15px;
+    /* Bordas arredondadas suaves */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+    position: relative;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-produto:hover {
+    transform: translateY(-5px);
+}
+
+.card-produto img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: #f9f9f9;
+}
+
+.card-info {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+}
+
+.categoria-label {
+    color: #999;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+}
+
+.card-info h3 {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 2px 0;
+    min-height: 38px;
+    /* Mantém alinhamento com nomes longos */
+}
+
+/* ESTRELAS E AVALIAÇÃO */
+.rating {
+    color: #777;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rating i {
+    color: #ffc107;
+}
+
+/* PREÇOS */
+.preco-box {
+    margin-top: 10px;
+}
+
+.preco-antigo {
+    display: block;
+    color: #bbb;
+    text-decoration: line-through;
+    font-size: 0.75rem;
+}
+
+.preco-atual {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #005eff;
+}
+
+.btn-add-cart {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    background: #005eff;
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 94, 255, 0.3);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #2ecc71;
+    /* Verde igual ao seu pedido */
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: none;
+    /* Começa escondido */
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000;
+}
+
+
+/* MEDIA QUERIES (MOBILE) */
+@media (max-width: 900px) {
+    .conteudo-principal {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-mobile-filtros {
+        display: flex;
+    }
+
+    .sidebar-filtros {
+        display: none;
+        /* Esconde no mobile por padrão */
+    }
+
+    /* Classe ativada pelo JS */
+    .sidebar-filtros.active {
+        display: block;
+        margin-bottom: 30px;
+    }
+}
+
+@media (min-width: 1000px) and (max-width: 1250px) {
+    nav {
+        padding: 0 2%;
+        /* Reduz a folga nas laterais da tela */
+    }
+
+    .nav-list {
+        gap: 15px;
+        /* Diminui o espaço entre "Início", "Loja", etc. */
+    }
+
+    .nav-list a {
+        font-size: 0.9rem;
+        /* Diminui levemente a letra para caber tudo */
+    }
+
+    .logo {
+        font-size: 1.2rem;
+        /* Ajusta a logo se necessário */
+    }
+}
+
+
+.main-footer {
+    background-color: #000;
+    color: #fff;
+    padding: 60px 10% 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-column h3 {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.footer-column p {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    max-width: 250px;
+}
+
+.footer-column ul {
+    list-style: none;
+}
+
+.footer-column ul li {
+    margin-bottom: 12px;
+}
+
+.footer-column ul li a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.footer-column ul li a:hover {
+    color: #005eff;
+}
+
+/* Ícones Sociais e Pagamento */
+.social-icons, .payment-icons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    font-size: 1.2rem;
+}
+
+.social-icons a {
+    color: #fff;
+    transition: transform 0.3s;
+}
+
+.social-icons a:hover {
+    transform: translateY(-3px);
+    color: #005eff;
+}
+
+.footer-bottom {
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.footer-bottom p {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .footer-column {
+        text-align: left;
+    }
+
+    .footer-column p {
+        max-width: 100%;
+    }
+
+    .main-footer {
+        padding: 50px 8% 30px;
+    }
+}
+
+.info-resultado span {
+    color: #000;
+}
+
+.topo-loja h1 {
+    color: #000;
+}
+
+.topo-loja p {
+    color: #000;
+}

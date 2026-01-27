@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styless.css">
+    <link rel="stylesheet" href="Loja.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Loja - FitSuplementos</title>
+</head>
+<body>
+
+    <header class="shop-nav">
+        <nav>
+            <a href="home.html" class="logo">FitSuplementos</a>
+            <ul class="nav-list">
+                <li><a href="home.html">Início</a></li>
+                <li><a href="Loja.html" class="active">Loja</a></li>
+                <li><a href="#">Categorias</a></li>
+                <li><a href="Loja.html">Pacotes</a></li>
+                
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="nav-icons">
+                    <a href="#" class="cart-container">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge">0</span>
+                    </a>
+                    <a href="#"><i class="fas fa-user"></i></a>
+                </div>
+                <div class="mobile-menu">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container-loja">
+        <section class="topo-loja">
+            <h1>Loja</h1>
+            <p>Descubra nossa seleção completa de suplementos esportivos</p>
+            <div class="barra-busca">
+                <i class="fas fa-search"></i>
+                <input type="text" id="input-busca" placeholder="Buscar um produto...">
+            </div>
+        </section>
+
+        <button id="btn-abrir-filtros" class="btn-mobile-filtros">
+            <i class="fas fa-sliders-h"></i> Filtros
+        </button>
+
+        <div class="conteudo-principal">
+            <aside class="sidebar-filtros" id="sidebar">
+                <div class="filtro-card">
+                    <h3>Filtros</h3>
+                    <div class="grupo-filtro">
+                        <h4>Categoria</h4>
+                        <label><input type="radio" name="categoria" value="todos" checked> Todas</label>
+                        <label><input type="radio" name="categoria" value="proteinas"> Proteínas</label>
+                        <label><input type="radio" name="categoria" value="creatina"> Creatina</label>
+                        <label><input type="radio" name="categoria" value="bcaa"> BCAA</label>
+                        <label><input type="radio" name="categoria" value="pre-treino"> Pré-treino</label>
+                        <label><input type="radio" name="categoria" value="vitaminas"> Vitaminas</label>
+                        
+
+                        <h4 style="margin-top: 20px;">Preço</h4>
+                        <input type="range" id="filtro-preco" min="0" max="100" value="100">
+                        <div class="labels-preco">
+                            <span>R$0</span>
+                            <span id="valor-preco">R$100</span>
+                        </div>
+                    </div>
+                    <button id="btn-resetar" class="btn-reset">Resetar</button>
+                </div>
+            </aside>
+
+            <section class="vitrine-produtos">
+                <div class="info-resultado">
+                    <span id="contador-produtos">0 produtos encontrados</span>
+                </div>
+                <div class="grid-produtos" id="grid-produtos">
+                    </div>
+            </section>
+        </div>
+    </main>
+
+     <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>FitSuplementos</h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos de qualidade premium.</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Links rápidos</h3>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Loja</a></li>
+                    <li><a href="#">Contato</a></li>
+                    <li><a href="#">Sobre nós</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Informações legais</h3>
+                <ul>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Termos e condições</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Entrega</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Siga-nos</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+                <h3>Formas de pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card"></i>
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="produtos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
