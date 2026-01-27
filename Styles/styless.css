@@ -70,7 +70,7 @@ nav {
 
 .hero-section {
     height: 92vh;
-    background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url("Imagens/Backgrounghero.png");
+    background-image: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url("../Imagens/Backgrounghero.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -402,7 +402,7 @@ nav {
 
 .hero-section {
     height: 92vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("Imagens/Backgrounghero.png");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Imagens/Backgrounghero.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -980,7 +980,7 @@ nav {
 
 .hero-section {
     height: 92vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("Imagens/Backgrounghero.png");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Imagens/Backgrounghero.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -1449,7 +1449,7 @@ nav {
 
 .hero-section {
     height: 92vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("Imagens/Backgrounghero.png");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Imagens/Backgrounghero.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -2174,7 +2174,7 @@ nav {
 
 .hero-section {
     height: 92vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("Imagens/Backgrounghero.png");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Imagens/Backgrounghero.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -2903,7 +2903,7 @@ nav {
 
 .hero-section {
     height: 92vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("Imagens/Backgrounghero.png");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Imagens/Backgrounghero.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -3640,23 +3640,23 @@ nav {
 
 /* Imagens */
 .card-proteina {
-    background-image: url('Imagens/Proteinas.png');
+    background-image: url('../Imagens/Proteinas.png');
 }
 
 .card-creatina {
-    background-image: url('Imagens/Creatina.png');
+    background-image: url('../Imagens/Creatina.png');
 }
 
 .card-bcaa {
-    background-image: url('Imagens/BCAA.png');
+    background-image: url('../Imagens/BCAA.png');
 }
 
 .card-vitaminas {
-    background-image: url('Imagens/Vitaminas.png');
+    background-image: url('../Imagens/Vitaminas.png');
 }
 
 .card-pre-treino {
-    background-image: url('Imagens/pre-treino.png');
+    background-image: url('../Imagens/pre-treino.png');
 }
 
 /* Correção específica para a faixa de quebra (875px a 999px) */
