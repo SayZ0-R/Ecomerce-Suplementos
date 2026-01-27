@@ -1,57 +1,11 @@
-/* CONFIGURAÇÕES GERAIS */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
+/* Loja: estilos específicos. Header/nav/footer vêm do styless.css */
 
-body {
+body.loja-page {
     background-color: #f8f9fa;
-    padding-top: 80px;
 }
 
-/* NAVEGAÇÃO */
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 5%;
-    background: #000;
-    height: 80px;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 2000;
-}
-
-.nav-list {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-    margin: 0 auto;
-}
-
-.nav-list a {
-    color: white;
-    text-decoration: none;
-}
-
-.nav-list a.active {
-    color: #005eff !important;
-    font-weight: bold;
-}
-
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: white;
-}
-
-/* LAYOUT DA LOJA */
 .container-loja {
-    padding: 40px 5%;
+    padding: 40px 10%;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -294,26 +248,6 @@ nav {
     box-shadow: 0 4px 15px rgba(0, 94, 255, 0.3);
 }
 
-.cart-badge {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: #2ecc71;
-    /* Verde igual ao seu pedido */
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: none;
-    /* Começa escondido */
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #000;
-}
-
-
 /* MEDIA QUERIES (MOBILE) */
 @media (max-width: 900px) {
     .conteudo-principal {
@@ -333,129 +267,6 @@ nav {
     .sidebar-filtros.active {
         display: block;
         margin-bottom: 30px;
-    }
-}
-
-@media (min-width: 1000px) and (max-width: 1250px) {
-    nav {
-        padding: 0 2%;
-        /* Reduz a folga nas laterais da tela */
-    }
-
-    .nav-list {
-        gap: 15px;
-        /* Diminui o espaço entre "Início", "Loja", etc. */
-    }
-
-    .nav-list a {
-        font-size: 0.9rem;
-        /* Diminui levemente a letra para caber tudo */
-    }
-
-    .logo {
-        font-size: 1.2rem;
-        /* Ajusta a logo se necessário */
-    }
-}
-
-
-.main-footer {
-    background-color: #000;
-    color: #fff;
-    padding: 60px 10% 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 40px;
-    flex-wrap: wrap;
-}
-
-.footer-column {
-    flex: 1;
-    min-width: 200px;
-}
-
-.footer-column h3 {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    font-weight: 700;
-}
-
-.footer-column p {
-    font-size: 0.9rem;
-    color: #94a3b8;
-    line-height: 1.6;
-    max-width: 250px;
-}
-
-.footer-column ul {
-    list-style: none;
-}
-
-.footer-column ul li {
-    margin-bottom: 12px;
-}
-
-.footer-column ul li a {
-    color: #94a3b8;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s;
-}
-
-.footer-column ul li a:hover {
-    color: #005eff;
-}
-
-/* Ícones Sociais e Pagamento */
-.social-icons, .payment-icons {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    font-size: 1.2rem;
-}
-
-.social-icons a {
-    color: #fff;
-    transition: transform 0.3s;
-}
-
-.social-icons a:hover {
-    transform: translateY(-3px);
-    color: #005eff;
-}
-
-.footer-bottom {
-    margin-top: 50px;
-    padding-top: 25px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
-}
-
-.footer-bottom p {
-    font-size: 0.8rem;
-    color: #64748b;
-}
-
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        gap: 40px;
-    }
-
-    .footer-column {
-        text-align: left;
-    }
-
-    .footer-column p {
-        max-width: 100%;
-    }
-
-    .main-footer {
-        padding: 50px 8% 30px;
     }
 }
 

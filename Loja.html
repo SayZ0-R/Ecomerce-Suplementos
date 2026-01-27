@@ -5,38 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="Styles/Loja.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Loja - FitSuplementos</title>
 </head>
-<body>
+<body class="loja-page">
 
-    <header class="shop-nav">
-        <nav>
-            <a href="index.html" class="logo">FitSuplementos</a>
-            <ul class="nav-list">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="Loja.html" class="active">Loja</a></li>
-                <li><a href="#">Categorias</a></li>
-                <li><a href="Loja.html">Pacotes</a></li>
-                
-                <li><a href="contato.html">Contato</a></li>
-            </ul>
-            <div class="nav-right">
-                <div class="nav-icons">
-                    <a href="#" class="cart-container">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-badge">0</span>
-                    </a>
-                    <a href="#"><i class="fas fa-user"></i></a>
-                </div>
-                <div class="mobile-menu">
-                    <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
-                </div>
+    <nav>
+        <a class="logo" href="index.html">FitSuplementos</a>
+
+        <ul class="nav-list">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="Loja.html" class="active">Loja</a></li>
+            <li><a href="index.html#nossas-categorias">Categorias</a></li>
+            <li><a href="Loja.html">Pacotes</a></li>
+            <li><a href="contato.html">Contato</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="nav-icons">
+                <a href="#" style="position: relative; display: inline-flex;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-badge"></span>
+                </a>
+                <a href="#"><i class="fas fa-user"></i></a>
             </div>
-        </nav>
-    </header>
+        </div>
+
+        <div class="mobile-menu">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </nav>
 
     <main class="container-loja">
         <section class="topo-loja">

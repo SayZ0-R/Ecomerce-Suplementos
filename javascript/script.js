@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileMenu && navList) {
         mobileMenu.addEventListener('click', () => {
             navList.classList.toggle('active');
-            // Unificando as classes de animação (toggle e active)
-            mobileMenu.classList.toggle('toggle'); 
+            mobileMenu.classList.toggle('toggle');
+            mobileMenu.classList.toggle('open');
             mobileMenu.classList.toggle('active');
-            
+
             const expanded = navList.classList.contains('active');
             mobileMenu.setAttribute('aria-expanded', expanded);
         });
@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             link.addEventListener("click", () => {
                 navList.classList.remove("active");
                 mobileMenu.classList.remove("toggle");
+                mobileMenu.classList.remove("open");
                 mobileMenu.classList.remove("active");
             });
         });

@@ -1,92 +1,9 @@
-/* --- CONFIGURAÇÕES GERAIS --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
+/* Contato: estilos específicos. Header/nav/footer e fontes vêm do styless.css */
 
-body {
+body.contato-page-body {
     background-color: #f8f9fa;
-    padding-top: 80px; /* Evita que o conteúdo suba para baixo do header */
 }
 
-/* --- HEADER / NAVEGAÇÃO --- */
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 5%;
-    background: #000;
-    height: 80px;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 2000;
-}
-
-.logo {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.5rem;
-}
-
-/* Menu Desktop (Correção aqui) */
-.nav-list {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-    margin: 0 auto;
-    transition: 0.3s;
-}
-
-.nav-list a {
-    color: white;
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: 0.3s;
-}
-
-.nav-list a.active {
-    color: #005eff !important;
-    font-weight: bold;
-}
-
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: white;
-}
-
-.nav-icons {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.nav-icons a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.2rem;
-}
-
-/* Botão Hamburguer */
-.mobile-menu {
-    display: none;
-    cursor: pointer;
-}
-
-.mobile-menu div {
-    width: 25px;
-    height: 3px;
-    background: white;
-    margin: 5px;
-    transition: 0.3s;
-}
-
-/* --- PÁGINA DE CONTATO --- */
 .contact-page {
     background-color: #ffffff;
     padding-top: 40px;
@@ -116,7 +33,7 @@ nav {
     gap: 20px;
     max-width: 1100px;
     margin: 0 auto 60px auto;
-    padding: 0 20px;
+    padding: 0 10%;
 }
 
 .info-card {
@@ -152,7 +69,7 @@ nav {
 .contact-container {
     max-width: 1100px;
     margin: 40px auto;
-    padding: 0 20px;
+    padding: 0 10%;
     display: flex;
     gap: 30px;
     align-items: flex-start;
@@ -218,131 +135,14 @@ nav {
 .detail-item strong { color: #000; font-size: 0.9rem; }
 .detail-item p { font-size: 0.8rem; color: #555; }
 
-/* --- FOOTER --- */
-.main-footer {
-    background-color: #000;
-    color: #fff;
-    padding: 60px 10% 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 40px;
-    flex-wrap: wrap;
-}
-
-.footer-column { flex: 1; min-width: 200px; }
-.footer-column h3 { font-size: 1.1rem; margin-bottom: 20px; font-weight: 700; }
-.footer-column p { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; max-width: 250px; }
-.footer-column ul { list-style: none; }
-.footer-column ul li { margin-bottom: 12px; }
-.footer-column ul li a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
-.footer-column ul li a:hover { color: #005eff; }
-
-.social-icons, .payment-icons { display: flex; gap: 15px; margin-bottom: 25px; font-size: 1.2rem; }
-.social-icons a { color: #fff; transition: 0.3s; }
-.social-icons a:hover { transform: translateY(-3px); color: #005eff; }
-
-.footer-bottom {
-    margin-top: 50px;
-    padding-top: 25px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
-}
-
-.footer-bottom p { font-size: 0.8rem; color: #64748b; }
-
-/* --- RESPONSIVIDADE --- */
-
-/* Ajustes Desktop Médio */
-@media (max-width: 1250px) {
-    nav { padding: 0 2%; }
-    .nav-list { gap: 15px; }
-    .nav-list a { font-size: 0.9rem; }
-}
-
-/* Mobile e Tablets */
+/* Responsividade Contato */
 @media (max-width: 992px) {
-    .mobile-menu {
-        display: block; /* Mostra o hamburguer */
-    }
-
-    .nav-list {
-        display: none; /* Esconde o menu lateral */
-        flex-direction: column;
-        position: absolute;
-        top: 80px;
-        right: 0;
-        width: 100%;
-        background-color: #000;
-        padding: 30px 0;
-        text-align: center;
-    }
-
-    .nav-list.active {
-        display: flex; /* Abre o menu no clique */
-    }
-
-    .nav-list li { margin: 15px 0; }
-
-    /* Ajuste da Página de Contato */
-    .info-grid { grid-template-columns: 1fr; }
-    .contact-container { flex-direction: column; }
+    .info-grid { grid-template-columns: 1fr; padding: 0 10%; }
+    .contact-container { flex-direction: column; padding: 0 10%; }
     .form-section, .info-side { width: 100%; }
-
-    /* Ajuste Footer */
-    .footer-container { flex-direction: column; gap: 40px; }
-    .main-footer { padding: 50px 8% 30px; }
 }
 
-/* Animação do Menu Hamburguer (Toggle) */
-.mobile-menu.toggle .line1 { transform: rotate(-45deg) translate(-5px, 6px); }
-.mobile-menu.toggle .line2 { opacity: 0; }
-.mobile-menu.toggle .line3 { transform: rotate(45deg) translate(-5px, -6px); }
-
-
-@media (max-width: 992px) {
-    .mobile-menu {
-        display: block;
-        z-index: 2100; /* Garante que o botão fique acima de tudo */
-    }
-
-    .nav-list {
-        display: flex;
-        flex-direction: column;
-        position: fixed; /* Fixed é melhor para cobrir a tela toda no mobile */
-        top: 80px;
-        left: 0;
-        width: 100%;
-        height: calc(100vh - 80px);
-        background-color: #000;
-        padding: 40px 10%;
-        text-align: left;
-
-        /* O SEGREDO: Movemos o bloco todo para fora da tela */
-        transform: translateX(-100%);
-        /* Cubic-bezier faz a entrada ser rápida e a parada ser bem suave */
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        
-        z-index: 2000;
-    }
-
-    /* Quando clicado, ele desliza para a tela */
-    .nav-list.active {
-        transform: translateX(0);
-    }
-
-    .nav-list li {
-        margin: 20px 0;
-        opacity: 0; /* Começa invisível para um efeito elegante */
-        transition: 0.3s;
-    }
-
-    /* Faz os itens aparecerem suavemente quando o menu abrir */
-    .nav-list.active li {
-        opacity: 1;
-        transition-delay: 0.3s; /* Espera o fundo deslizar um pouco */
-    }
+@media (max-width: 768px) {
+    .info-grid { padding: 0 5%; }
+    .contact-container { padding: 0 5%; }
 }

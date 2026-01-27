@@ -4,41 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Styles/contato.css">
     <link rel="stylesheet" href="Styles/styless.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="Styles/contato.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Contato - FitSuplementos</title>
 </head>
 
-<body>
+<body class="contato-page-body">
 
-    <header class="main-header">
-        <nav class="nav-container">
-            <a href="index.html" class="logo">FitSuplementos</a>
+    <nav>
+        <a class="logo" href="index.html">FitSuplementos</a>
 
-            <ul class="nav-list" id="nav-list">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="Loja.html">Loja</a></li>
-                <li><a href="#">Categorias</a></li>
-                <li><a href="Loja.html">Pacotes</a></li>
-                <li><a href="contato.html" class="active">Contato</a></li>
-            </ul>
+        <ul class="nav-list">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="Loja.html">Loja</a></li>
+            <li><a href="index.html#nossas-categorias">Categorias</a></li>
+            <li><a href="Loja.html">Pacotes</a></li>
+            <li><a href="contato.html" class="active">Contato</a></li>
+        </ul>
 
-            <div class="nav-right">
-                <div class="nav-icons">
-                    <a href="#"><i class="fas fa-shopping-cart"></i></a>
-                    <a href="#"><i class="fas fa-user"></i></a>
-                </div>
-
-                <div class="mobile-menu" id="mobile-menu">
-                    <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
-                </div>
+        <div class="nav-right">
+            <div class="nav-icons">
+                <a href="#" style="position: relative; display: inline-flex;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-badge"></span>
+                </a>
+                <a href="#"><i class="fas fa-user"></i></a>
             </div>
-        </nav>
-    </header>
+        </div>
+
+        <div class="mobile-menu">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </nav>
 
     <main class="contact-page">
         <section class="contact-header">
@@ -180,6 +180,7 @@
 
 
         
-        <script src="javascript/produtos.js"></script>
         <script src="javascript/script.js"></script>
 </body>
+
+</html>
