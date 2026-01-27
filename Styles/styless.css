@@ -1,6 +1,5 @@
 /* ========== VARIÁVEIS ========== */
 :root {
-    /* Cores principais */
     --bg-dark: #000;
     --bg-card: #fff;
     --bg-section: #f9f9f9;
@@ -23,28 +22,23 @@
     --nav-bg-solid: #000;
     --gradient-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
 
-    /* Sombras */
     --shadow-nav: 0 2px 15px rgba(0, 0, 0, 0.5);
     --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.08);
     --shadow-card-hover: 0 12px 24px rgba(0, 0, 0, 0.2);
     --shadow-icon: 0 0 20px rgba(0, 94, 255, 0.2);
 
-    /* Tipografia */
     --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-    /* Transições */
     --transition-fast: 0.2s;
     --transition: 0.3s;
     --transition-slow: 0.4s;
 
-    /* Layout */
     --nav-height: 8vh;
     --section-padding: 60px 10%;
     --section-padding-narrow: 40px 10%;
     --container-padding: 10%;
     --hero-bg: url("../Imagens/Backgrounghero.png");
 
-    /* Raios e tamanhos */
     --radius-sm: 8px;
     --radius: 10px;
     --radius-md: 12px;
@@ -69,7 +63,6 @@ body {
     padding-top: var(--nav-height);
 }
 
-/* Tipografia global (identidade em todas as páginas) */
 h1,
 h2,
 h3,
@@ -93,7 +86,6 @@ h4 {
     font-weight: 700;
 }
 
-/* Container padrão para seções (respiro lateral igual) */
 .container {
     width: 100%;
     max-width: 1400px;
@@ -113,10 +105,9 @@ nav {
   width: 100%;
   height: var(--nav-height);
   padding: 0 7%;
-  background: var(--bg-dark); /* Preto absoluto em qualquer situação */
+  background: var(--bg-dark);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
   z-index: 2000;
-  /* Removido o backdrop-filter daqui para manter sólido */
 }
 
 .logo {
@@ -215,7 +206,6 @@ nav {
     transition: transform var(--transition-slow), opacity var(--transition);
 }
 
-/* Hambúrguer → X quando menu aberto */
 .mobile-menu.toggle .line1,
 .mobile-menu.open .line1 {
     transform: rotate(-45deg) translate(-5px, 8px);
@@ -702,7 +692,6 @@ nav {
 
 /* ========== MEDIA QUERIES (agrupadas no final) ========== */
 
-/* Tablet: menu hambúrguer e hero ajustado */
 @media (max-width: 999px) {
     nav {
         justify-content: space-between;
@@ -722,14 +711,46 @@ nav {
         gap: 20px;
     }
 
-    .mobile-menu {
+.mobile-menu {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        z-index: 1001;
+        align-items: center;
+
+        width: 30px; 
+        height: 30px;
+        cursor: pointer;
+        z-index: 2001;
+        overflow: visible;
+        position: relative;
     }
 
-.nav-list {
+    .mobile-menu div {
+        width: 28px;
+        height: 2px;
+        background: var(--text);
+        margin: 0;
+        transition: transform var(--transition-slow);
+        position: absolute;
+    }
+
+    .line1 { transform: translateY(-8px); }
+    .line2 { transform: translateY(0); }
+    .line3 { transform: translateY(8px); }
+
+    .mobile-menu.toggle .line1 {
+        transform: rotate(-45deg) translateY(0);
+    }
+
+    .mobile-menu.toggle .line2 {
+        opacity: 0;
+    }
+
+    .mobile-menu.toggle .line3 {
+        transform: rotate(45deg) translateY(0);
+    }
+
+    .nav-list {
     position: fixed;
     top: var(--nav-height);
     left: 0;
@@ -739,8 +760,6 @@ nav {
     align-items: flex-start;
     justify-content: flex-start;
     padding: 40px var(--container-padding);
-    
-    /* Preto dominante com leve transparência e desfoque */
     background: rgba(0, 0, 0, 0.92); 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -749,7 +768,7 @@ nav {
     transition: transform var(--transition-slow) ease-in-out;
     z-index: 1000;
     border-top: 1px solid var(--border-light);
-  }
+    }
 
     .nav-list.active {
         transform: translateX(0);
@@ -823,7 +842,6 @@ nav {
     }
 }
 
-/* Categorias: faixa 875px–999px com cards fixos */
 @media (min-width: 875px) and (max-width: 999px) {
     .categories-grid {
         display: grid;
@@ -845,7 +863,6 @@ nav {
     }
 }
 
-/* Mobile: categorias em grid 2 colunas, último card span 2 */
 @media (max-width: 600px) {
     .categories-section {
         padding: 40px 5%;
@@ -869,7 +886,6 @@ nav {
     }
 }
 
-/* Mobile geral: produtos, promo, signals, footer */
 @media (max-width: 768px) {
     .product-card {
         max-width: 320px;
