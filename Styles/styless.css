@@ -3344,6 +3344,7 @@ nav {
     color: #64748b;
 }
 
+/* --- AJUSTE MOBILE HOME --- */
 @media (max-width: 999px) {
     .logo {
         font-size: 1.2rem;
@@ -3359,50 +3360,67 @@ nav {
         gap: 20px;
     }
 
-    .nav-icons {
-        gap: 20px;
-    }
-
+    /* Botão Hamburguer: Adicionando a animação para o X */
     .mobile-menu {
         display: block;
         z-index: 1001;
+        cursor: pointer;
     }
 
+    .mobile-menu div {
+        width: 25px;
+        height: 2px;
+        background: #fff;
+        margin: 6px;
+        transition: 0.4s; /* Velocidade da transformação para X */
+    }
+
+    /* Menu Lateral: Deslizando da esquerda e alinhado */
     .nav-list {
         position: fixed;
         top: 8vh;
-        right: 0;
+        left: 0; /* Começa fixo na esquerda */
         width: 100%;
-        height: 55vh;
-        background: rgba(0, 0, 0, 0.95);
+        height: calc(100vh - 8vh); /* Ocupa a altura restante da tela */
+        background: rgba(0, 0, 0, 0.98);
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: space-between;
-        padding: 40px 10%;
-        transform: translateX(100%);
-        transition: transform 0.4s ease-in-out;
+        align-items: flex-start; /* Alinha itens na esquerda */
+        justify-content: flex-start;
+        padding: 40px 10%; /* Recuo de 10% na esquerda como pedido */
+        
+        /* ANIMAÇÃO DE DESLIZE */
+        transform: translateX(-100%); /* Escondido totalmente à esquerda */
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Abertura lenta */
         z-index: 1000;
     }
 
     .nav-list.active {
-        transform: translateX(0);
+        transform: translateX(0); /* Desliza para dentro da tela */
     }
 
     .nav-list li {
         width: 100%;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Linha divisória sutil */
     }
 
     .nav-list a {
         font-size: 1.1rem;
         display: block;
         padding: 10px 0;
+        text-align: left; /* Garante o texto à esquerda */
     }
 
-    .hero-section {
-        padding: 0 5%;
-        text-align: center;
-        align-items: center;
+    /* --- ANIMAÇÃO DO X NO HAMBURGUER --- */
+    .mobile-menu.toggle .line1 {
+        transform: rotate(-45deg) translate(-5px, 6px);
+    }
+    .mobile-menu.toggle .line2 {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    .mobile-menu.toggle .line3 {
+        transform: rotate(45deg) translate(-5px, -6px);
     }
 }
 
@@ -3690,3 +3708,5 @@ nav {
 .products-header p {
     color: #000;
 }
+
+

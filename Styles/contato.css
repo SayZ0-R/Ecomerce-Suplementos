@@ -303,3 +303,46 @@ nav {
 .mobile-menu.toggle .line3 { transform: rotate(45deg) translate(-5px, -6px); }
 
 
+@media (max-width: 992px) {
+    .mobile-menu {
+        display: block;
+        z-index: 2100; /* Garante que o botão fique acima de tudo */
+    }
+
+    .nav-list {
+        display: flex;
+        flex-direction: column;
+        position: fixed; /* Fixed é melhor para cobrir a tela toda no mobile */
+        top: 80px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 80px);
+        background-color: #000;
+        padding: 40px 10%;
+        text-align: left;
+
+        /* O SEGREDO: Movemos o bloco todo para fora da tela */
+        transform: translateX(-100%);
+        /* Cubic-bezier faz a entrada ser rápida e a parada ser bem suave */
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        z-index: 2000;
+    }
+
+    /* Quando clicado, ele desliza para a tela */
+    .nav-list.active {
+        transform: translateX(0);
+    }
+
+    .nav-list li {
+        margin: 20px 0;
+        opacity: 0; /* Começa invisível para um efeito elegante */
+        transition: 0.3s;
+    }
+
+    /* Faz os itens aparecerem suavemente quando o menu abrir */
+    .nav-list.active li {
+        opacity: 1;
+        transition-delay: 0.3s; /* Espera o fundo deslizar um pouco */
+    }
+}
