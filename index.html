@@ -4,9 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FitSuplementos - A sua loja premium de suplementos esportivos. Whey, Creatina e Pré-treino com o melhor preço e entrega rápida.">
+    <meta name="keywords" content="suplementos, whey protein, creatina, academia, fit">
+    
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <title>FitSuplementos</title>
+    <title>FitSuplementos | Alta Performance Esportiva</title>
 </head>
 
 <body>
@@ -19,21 +22,20 @@
             <li><a href="Loja.html">Loja</a></li>
             <li><a href="index.html#nossas-categorias">Categorias</a></li>
             <li><a href="Loja.html">Pacotes</a></li>
-            
             <li><a href="contato.html">Contato</a></li>
         </ul>
 
         <div class="nav-right">
             <div class="nav-icons">
-                <a href="#" style="position: relative; display: inline-flex;">
+                <a href="#" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
                     <i class="fas fa-shopping-cart"></i>
                     <span id="cart-count" class="cart-badge"></span>
                 </a>
-                <a href="#"><i class="fas fa-user"></i></a>
+                <a href="#" aria-label="Minha conta"><i class="fas fa-user"></i></a>
             </div>
         </div>
 
-        <div class="mobile-menu">
+        <div class="mobile-menu" aria-label="Menu" role="button">
             <div class="line1"></div>
             <div class="line2"></div>
             <div class="line3"></div>
@@ -44,7 +46,7 @@
         <div class="hero-content">
             <h1>Impulsione Seu Desempenho</h1>
             <p>Descubra nossa linha de suplementos esportivos premium para alcançar seus objetivos.</p>
-            <a href="#" class="btn-comprar">Comprar agora →</a>
+            <a href="Loja.html" class="btn-comprar">Comprar agora →</a>
         </div>
     </section>
 
@@ -52,34 +54,37 @@
         <h2>Nossas Categorias</h2>
         <div class="categories-grid">
             <div class="category-card card-proteina">
-                <div class="category-info"><span class="category-icon">🥤</span>
+                <div class="category-info">
+                    <span class="category-icon">🥤</span>
                     <p>Proteínas</p>
                 </div>
             </div>
             <div class="category-card card-creatina">
-                <div class="category-info"><span class="category-icon">💊</span>
+                <div class="category-info">
+                    <span class="category-icon">💊</span>
                     <p>Creatina</p>
                 </div>
             </div>
             <div class="category-card card-bcaa">
-                <div class="category-info"><span class="category-icon">⚡</span>
+                <div class="category-info">
+                    <span class="category-icon">⚡</span>
                     <p>BCAA</p>
                 </div>
             </div>
             <div class="category-card card-vitaminas">
-                <div class="category-info"><span class="category-icon">🌿</span>
+                <div class="category-info">
+                    <span class="category-icon">🌿</span>
                     <p>Vitaminas</p>
                 </div>
             </div>
             <div class="category-card card-pre-treino">
-                <div class="category-info"><span class="category-icon">🔥</span>
+                <div class="category-info">
+                    <span class="category-icon">🔥</span>
                     <p>Pré-Treino</p>
                 </div>
             </div>
-
         </div>
     </section>
-
 
     <section class="products-section">
         <div class="products-header">
@@ -88,9 +93,9 @@
         </div>
 
         <div class="products-grid">
-            <div class="product-card">
+            <article class="product-card">
                 <div class="product-image">
-                    <img src="Imagens/Image (Whey Protein Isolado Premium).png" alt="Whey Protein">
+                    <img src="Imagens/Image (Whey Protein Isolado Premium).png" alt="Whey Protein Isolado Premium">
                 </div>
                 <div class="product-info">
                     <span class="product-category">Proteínas</span>
@@ -105,12 +110,12 @@
                             <span class="old-price">R$59,99</span>
                             <span class="current-price">R$49,99</span>
                         </div>
-                        <button class="btn-cart">
+                        <button class="btn-cart" aria-label="Adicionar ao carrinho">
                             <i class="cart-icon">🛒</i>
                         </button>
                     </div>
                 </div>
-            </div>
+            </article>
         </div>
     </section>
 
@@ -166,9 +171,9 @@
             <div class="footer-column">
                 <h3>Links rápidos</h3>
                 <ul>
-                    <li><a href="#">Início</a></li>
-                    <li><a href="#">Loja</a></li>
-                    <li><a href="#">Contato</a></li>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="Loja.html">Loja</a></li>
+                    <li><a href="contato.html">Contato</a></li>
                     <li><a href="#">Sobre nós</a></li>
                 </ul>
             </div>
@@ -186,15 +191,15 @@
             <div class="footer-column">
                 <h3>Siga-nos</h3>
                 <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                 </div>
                 <h3>Formas de pagamento</h3>
                 <div class="payment-icons">
-                    <i class="fas fa-credit-card"></i>
-                    <i class="fas fa-mobile-alt"></i>
+                    <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                    <i class="fas fa-mobile-alt" title="Pix"></i>
                 </div>
             </div>
         </div>
@@ -203,8 +208,6 @@
             <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
         </div>
     </footer>
-
-
 
     <script src="javascript/script.js"></script>
 </body>
