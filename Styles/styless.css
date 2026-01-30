@@ -1,6 +1,6 @@
 /* ========== VARIÁVEIS ========== */
 :root {
-    --bg-dark: #000;
+    --bg-dark: #fff;
     --bg-card: #fff;
     --bg-section: #f9f9f9;
     --bg-signals: #0f172a;
@@ -112,11 +112,30 @@ nav {
 
 .logo {
     position: absolute;
-    left: 7%;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text);
-    text-decoration: none;
+    left: 5%;
+    display: flex;
+    align-items: center;
+    height: 100%; /* Garante que o link ocupe a altura da nav */
+    z-index: 10;
+    margin-top: 12.5px;
+}
+
+/* Ajuste da Imagem (Proporcional ao Header) */
+.logo-img {
+    /* Como a imagem está 'refilada', 65px a 75px já é um tamanho bem grande */
+    height: 130px;       
+    width: auto;        /* Mantém a proporção original da logo */
+    display: block;
+    object-fit: contain;
+    
+    /* Suaviza a transição caso você adicione efeitos */
+    transition: transform var(--transition-fast);
+    
+}
+
+/* Hover opcional para dar um toque moderno */
+.logo-img:hover {
+    transform: scale(1.03);
 }
 
 .nav-list {
@@ -126,16 +145,16 @@ nav {
 }
 
 .nav-list a {
-    color: var(--text);
+    color: #000;
     text-decoration: none;
     letter-spacing: 2px;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     transition: color var(--transition);
 }
 
 .nav-list a:hover,
 .nav-list a.active {
-    color: var(--primary);
+    color: #44C662;
 }
 
 .nav-right {
@@ -160,8 +179,8 @@ nav {
 }
 
 .nav-icons a i {
-    color: var(--text);
-    font-size: 1.3rem;
+    color: #000;
+    font-size: 1.5rem;
     transition: color var(--transition);
 }
 
@@ -601,6 +620,7 @@ nav {
     background: var(--bg-dark);
     color: var(--text);
     border-top: 1px solid var(--border-light);
+    background: #000;
 }
 
 .footer-container {
@@ -693,45 +713,75 @@ nav {
 /* ========== MEDIA QUERIES (agrupadas no final) ========== */
 
 @media (max-width: 999px) {
-    nav {
-        justify-content: space-between;
+nav {
+        display: grid !important;
+        /* Cria 3 colunas: as das pontas ocupam espaço igual (1fr), a do meio apenas o necessário */
+        grid-template-columns: 1fr 1fr 1fr; 
+        align-items: center;
+        padding: 0 5%;
+        height: var(--nav-height);
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
+    /* 1. Alinha o Menu à esquerda da primeira coluna */
+    .mobile-menu {
+       display: flex;
+        flex-direction: column; /* Alinha as linhas uma abaixo da outra */
+        justify-content: center; /* Centraliza o bloco de linhas verticalmente */
+        align-items: center;
+        height: 30px; /* Define uma altura para o container do hambúrguer */
+        grid-column: 1; 
+        justify-self: flex-start;
+        position: relative;
+        z-index: 2001;
+    }
+
+    /* 2. Centraliza a Logo na coluna do meio */
     .logo {
+        grid-column: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         position: static;
-        font-size: 1.2rem;
+        margin: 0 !important;
     }
 
+    .logo img {
+        height: 60px; /* Tamanho fixo para não variar */
+        width: auto;
+        transform: none !important; /* Removemos o translateY para não desalinhar no redimensionamento */
+        display: block;
+    }
+
+    /* 3. Alinha os Ícones à direita da última coluna */
     .nav-right {
+        grid-column: 3;
+        justify-self: end;
+        display: flex;
+        align-items: center;
+        gap: 15px;
         position: static;
-        gap: 20px;
     }
 
     .nav-icons {
-        gap: 20px;
-    }
-
-.mobile-menu {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        width: 30px; 
-        height: 30px;
-        cursor: pointer;
-        z-index: 2001;
-        overflow: visible;
-        position: relative;
+        gap: 15px;
     }
+
+    /* Mantém os ícones pretos conforme solicitado anteriormente */
+    .nav-icons a i {
+        color: #000 !important;
+    }
+
 
     .mobile-menu div {
-        width: 28px;
+       width: 28px;
         height: 2px;
-        background: var(--text);
-        margin: 0;
+        background: #000;
+        margin: 3px 0; /* Substitui o translateY fixo por margem para manter o fluxo */
         transition: transform var(--transition-slow);
-        position: absolute;
+        position: static; /* MUDE DE absolute PARA static */
     }
 
     .line1 { transform: translateY(-8px); }
@@ -739,15 +789,13 @@ nav {
     .line3 { transform: translateY(8px); }
 
     .mobile-menu.toggle .line1 {
-        transform: rotate(-45deg) translateY(0);
+        transform: translateY(8px) rotate(-45deg);
     }
-
     .mobile-menu.toggle .line2 {
         opacity: 0;
     }
-
     .mobile-menu.toggle .line3 {
-        transform: rotate(45deg) translateY(0);
+        transform: translateY(-8px) rotate(45deg);
     }
 
     .nav-list {
@@ -759,11 +807,11 @@ nav {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    padding: 40px var(--container-padding);
-    background: rgba(0, 0, 0, 0.92); 
+    padding: 20px var(--container-padding);
+    background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-
+    
     transform: translateX(100%);
     transition: transform var(--transition-slow) ease-in-out;
     z-index: 1000;
@@ -776,7 +824,7 @@ nav {
 
     .nav-list li {
         width: 100%;
-        border-bottom: 1px solid var(--border-light);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.8);
     }
 
     .nav-list a {
@@ -945,3 +993,4 @@ nav {
         padding: 50px 8% 30px;
     }
 }
+
