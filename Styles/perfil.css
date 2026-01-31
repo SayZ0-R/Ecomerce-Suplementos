@@ -1,24 +1,28 @@
 /* Layout Principal */
 .profile-layout {
-   display: grid;
+    display: grid;
     /* Reduzi de 300px para 250px para encurtar a largura lateral */
-    grid-template-columns: 250px 1fr; 
+    grid-template-columns: 250px 1fr;
     gap: 30px;
-    padding: 40px 5%; /* Diminuí o padding lateral de 10% para 5% para dar mais espaço */
+    padding: 40px 5%;
+    /* Diminuí o padding lateral de 10% para 5% para dar mais espaço */
     margin: 20px auto;
-    max-width: 1300px; /* Garante que o layout não "escape" em telas muito grandes */
-    align-items: start; /* Mantém o menu no topo mesmo se o conteúdo for longo */
+    max-width: 1300px;
+    /* Garante que o layout não "escape" em telas muito grandes */
+    align-items: start;
+    /* Mantém o menu no topo mesmo se o conteúdo for longo */
 
 }
 
 /* Sidebar Estilo Card */
 .profile-sidebar {
-   background: #fff;
+    background: #fff;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     padding: 20px;
     height: fit-content;
-    width: 100%; /* Ela ocupará os 250px definidos no grid-template-columns */
+    width: 100%;
+    /* Ela ocupará os 250px definidos no grid-template-columns */
 }
 
 .user-profile-card {
@@ -38,7 +42,8 @@
     align-items: center;
     justify-content: center;
     font-size: 2.5rem;
-    color: var(--primary); /* Azul do :root */
+    color: var(--primary);
+    /* Azul do :root */
 }
 
 /* Navegação da Sidebar */
@@ -65,27 +70,44 @@
     transition: 0.3s;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
     background: var(--primary);
     color: #fff !important;
 }
 
-.logout-link { color: #ff4757; margin-top: 10px; }
-.logout-link:hover { background: #ff4757; }
+.logout-link {
+    color: #ff4757;
+    margin-top: 10px;
+}
+
+.logout-link:hover {
+    background: #ff4757;
+}
 
 /* Área de Conteúdo */
 .profile-content {
     background: #fff;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     padding: 35px;
     min-height: 500px;
 }
 
-.tab-content { display: none; }
-.tab-content.active { display: block; animation: fadeIn 0.4s; }
+.tab-content {
+    display: none;
+}
 
-.tab-content h2 { margin-bottom: 25px; color: #1a1a1a; font-size: 1.5rem; }
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.4s;
+}
+
+.tab-content h2 {
+    margin-bottom: 25px;
+    color: #1a1a1a;
+    font-size: 1.5rem;
+}
 
 /* Grid de Formulário */
 .form-grid {
@@ -94,7 +116,13 @@
     gap: 20px;
 }
 
-.input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
 .input-group input {
     width: 100%;
     padding: 12px;
@@ -102,11 +130,16 @@
     border-radius: 8px;
 }
 
-.readonly { background: #f9f9f9; color: #888; cursor: not-allowed; }
+.readonly {
+    background: #f9f9f9;
+    color: #888;
+    cursor: not-allowed;
+}
 
 .btn-save-changes {
     margin-top: 30px;
-    background: var(--accent); /* Verde do print */
+    background: var(--accent);
+    /* Verde do print */
     color: #000;
     border: none;
     padding: 15px 35px;
@@ -134,11 +167,23 @@
 
 .order-info-summary {
     display: flex;
-    gap: 40px;
+    justify-content: space-between;
+    /* Empurra o nome para a esquerda e o valor para o centro/direita */
+    align-items: center;
+    gap: 20px;
     flex: 1;
+    padding-right: 20px;
+    /* Espaço antes da setinha */
 }
 
-.order-price { color: var(--primary); font-weight: 700; }
+.order-price {
+    color: #005eff;
+    /* Azul conforme o print */
+    font-weight: 700;
+    flex: 1;
+    text-align: center;
+    /* Centraliza o valor como na imagem */
+}
 
 .order-body {
     max-height: 0;
@@ -146,8 +191,15 @@
     background: #fdfdfd;
 }
 
-.order-item.open .order-body { max-height: 200px; padding: 20px; border-top: 1px solid #eee; }
-.order-item.open .arrow-btn { transform: rotate(180deg); }
+.order-item.open .order-body {
+    max-height: 200px;
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+.order-item.open .arrow-btn {
+    transform: rotate(180deg);
+}
 
 .status-badge {
     padding: 5px 12px;
@@ -155,19 +207,72 @@
     font-size: 0.8rem;
     font-weight: 700;
 }
-.status-badge.entregue { background: #d4edda; color: #155724; }
-.status-badge.caminho { background: #fff3cd; color: #856404; }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.status-badge.entregue {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.caminho {
+    background: #fff3cd;
+    color: #856404;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 
 /* Mobile */
 @media (max-width: 950px) {
-    .profile-layout { grid-template-columns: 1fr; padding: 20px 5%; }
-    .form-grid { grid-template-columns: 1fr; }
+    .profile-layout {
+        grid-template-columns: 1fr;
+        padding: 20px 5%;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .order-info-summary {
+        flex-direction: column;
+        /* Empilha os dados (Pedido, Data, Valor) verticalmente */
+        align-items: flex-start;
+        /* Alinha tudo à esquerda */
+        gap: 8px;
+        /* Espaçamento entre as linhas de informação */
+    }
+
+    .order-header {
+        padding: 15px;
+        align-items: flex-start;
+        /* Alinha a seta com o topo do texto */
+    }
+
+    .order-price {
+        text-align: left;
+        /* Remove a centralização e alinha à esquerda como o resto */
+        width: 100%;
+        display: block;
+        margin-top: 5px;
+        font-size: 1.1rem;
+    }
+
+    .arrow-btn {
+        margin-top: 5px;
+        /* Ajusta a seta para não ficar desalinhada com o texto empilhado */
+    }
+
+    .order-body {
+        padding: 15px;
+    }
 }
 
 .user-profile-card h3 {
     color: #000;
 }
-
-
