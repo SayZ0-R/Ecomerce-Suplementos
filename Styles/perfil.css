@@ -1,0 +1,173 @@
+/* Layout Principal */
+.profile-layout {
+   display: grid;
+    /* Reduzi de 300px para 250px para encurtar a largura lateral */
+    grid-template-columns: 250px 1fr; 
+    gap: 30px;
+    padding: 40px 5%; /* Diminuí o padding lateral de 10% para 5% para dar mais espaço */
+    margin: 20px auto;
+    max-width: 1300px; /* Garante que o layout não "escape" em telas muito grandes */
+    align-items: start; /* Mantém o menu no topo mesmo se o conteúdo for longo */
+
+}
+
+/* Sidebar Estilo Card */
+.profile-sidebar {
+   background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    padding: 20px;
+    height: fit-content;
+    width: 100%; /* Ela ocupará os 250px definidos no grid-template-columns */
+}
+
+.user-profile-card {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-avatar-main {
+    width: 80px;
+    height: 80px;
+    background: #f0f4ff;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--primary); /* Azul do :root */
+}
+
+/* Navegação da Sidebar */
+.side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #444;
+    font-weight: 500;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+    background: var(--primary);
+    color: #fff !important;
+}
+
+.logout-link { color: #ff4757; margin-top: 10px; }
+.logout-link:hover { background: #ff4757; }
+
+/* Área de Conteúdo */
+.profile-content {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    padding: 35px;
+    min-height: 500px;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.4s; }
+
+.tab-content h2 { margin-bottom: 25px; color: #1a1a1a; font-size: 1.5rem; }
+
+/* Grid de Formulário */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.readonly { background: #f9f9f9; color: #888; cursor: not-allowed; }
+
+.btn-save-changes {
+    margin-top: 30px;
+    background: var(--accent); /* Verde do print */
+    color: #000;
+    border: none;
+    padding: 15px 35px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Estilo de Compras (Accordion) */
+.order-item {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.order-header {
+    padding: 20px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.order-info-summary {
+    display: flex;
+    gap: 40px;
+    flex: 1;
+}
+
+.order-price { color: var(--primary); font-weight: 700; }
+
+.order-body {
+    max-height: 0;
+    transition: 0.3s ease-out;
+    background: #fdfdfd;
+}
+
+.order-item.open .order-body { max-height: 200px; padding: 20px; border-top: 1px solid #eee; }
+.order-item.open .arrow-btn { transform: rotate(180deg); }
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.status-badge.entregue { background: #d4edda; color: #155724; }
+.status-badge.caminho { background: #fff3cd; color: #856404; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Mobile */
+@media (max-width: 950px) {
+    .profile-layout { grid-template-columns: 1fr; padding: 20px 5%; }
+    .form-grid { grid-template-columns: 1fr; }
+}
+
+.user-profile-card h3 {
+    color: #000;
+}
+
+

@@ -206,8 +206,8 @@ body {
 
 .main-footer {
     padding: 60px 10% 20px;
-    background: var(--bg-dark);
-    color: var(--text);
+    background: #000 !important; /* Força o fundo preto da Home */
+    color: #fff !important;
     border-top: 1px solid var(--border-light);
     width: 100%;
 }
@@ -230,15 +230,19 @@ body {
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 25px;
-    color: var(--text);
+    color: #fff !important; /* Títulos em branco */
     position: relative;
+}
+
+/* Removi aquele erro de syntax da pseudo-classe que estava no seu código original */
+.footer-column h3::after {
     content: '';
     position: absolute;
     left: 0;
     bottom: -8px;
     width: 30px;
     height: 2px;
-    background: var(--primary);
+    
 }
 
 .footer-column p {
@@ -250,17 +254,14 @@ body {
 
 .footer-column ul {
     list-style: none;
-}
-
-.footer-column ul li {
-    margin-bottom: 12px;
+    padding: 0;
 }
 
 .footer-column ul li a {
     color: var(--text-muted);
     font-size: 0.9rem;
     text-decoration: none;
-    transition: color var(--transition), padding-left var(--transition);
+    transition: all var(--transition);
 }
 
 .footer-column ul li a:hover {
@@ -268,30 +269,17 @@ body {
     padding-left: 5px;
 }
 
-.social-icons,
-.payment-icons {
-    display: flex;
-    gap: 15px;
-    font-size: 1.3rem;
-}
-
 .social-icons a {
-    color: var(--text);
-    transition: transform var(--transition), color var(--transition);
+    color: #fff;
+    font-size: 1.3rem;
+    margin-right: 15px;
+    transition: transform var(--transition);
+    display: inline-block;
 }
 
 .social-icons a:hover {
     color: var(--primary);
     transform: translateY(-3px);
-}
-
-.payment-icons i {
-    color: var(--text-muted);
-    transition: color var(--transition);
-}
-
-.payment-icons i:hover {
-    color: var(--text);
 }
 
 .footer-bottom {
@@ -306,6 +294,22 @@ body {
     color: var(--text-footer-small);
 }
 
+/* Responsividade do Footer em Contato */
+@media (max-width: 768px) {
+    .main-footer {
+        padding: 40px 5% 20px;
+    }
+    
+    .footer-container {
+        flex-direction: column;
+        text-align: left;
+    }
+    
+    .footer-column {
+        width: 100%;
+    }
+}
+
 @media (max-width: 992px) {
     .info-grid {
         grid-template-columns: 1fr;
@@ -315,27 +319,6 @@ body {
         flex-direction: column;
     }
 
-    .main-footer {
-        padding: 50px 8% 30px;
-    }
-
-    .footer-container {
-        flex-direction: column;
-        gap: 40px;
-        text-align: left;
-    }
-
-    .footer-column h3::after {
-        left: 0;
-    }
-
-    .footer-column p {
-        max-width: 100%;
-    }
-
-    .footer-bottom {
-        margin-top: 30px;
-    }
 }
 
 .contact-header h1,

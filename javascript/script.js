@@ -148,3 +148,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const profileIcon = document.querySelector('.profile-icon');
+    const dropdown = document.querySelector('.profile-dropdown');
+
+    // 1. Abre/Fecha ao clicar no ícone
+    profileIcon.addEventListener('click', (e) => {
+        e.preventDefault(); // Evita que o link '#' recarregue a página
+        dropdown.classList.toggle('active');
+    });
+
+    // 2. Fecha ao clicar fora do menu
+    document.addEventListener('click', (e) => {
+        // Se o clique NÃO for no ícone e NÃO for dentro do menu aberto
+        if (!profileIcon.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+});

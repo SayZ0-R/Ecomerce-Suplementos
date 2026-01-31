@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil | NutrirVida</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="Styles/styless.css">
+    <link rel="stylesheet" href="Styles/perfil.css">
+</head>
+
+<body>
+
+    <nav>
+        <a class="logo" href="index.html">
+            <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
+        </a>
+
+        <ul class="nav-list">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="Loja.html">Loja</a></li>
+            <li><a href="index.html#nossas-categorias">Categorias</a></li>
+            <li><a href="Loja.html">Pacotes</a></li>
+            <li><a href="contato.html">Contato</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="nav-icons">
+                <a href="#" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-badge"></span>
+                </a>
+
+                <div class="profile-container">
+                    <a href="#" aria-label="Minha conta" class="profile-icon">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <ul class="profile-dropdown">
+                        <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
+                        <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
+                        
+                        <li class="dropdown-divider"></li>
+                        <li><a href="logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mobile-menu">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container profile-layout">
+
+        <aside class="profile-sidebar-container">
+
+            <div class="user-profile-card">
+                <div class="user-avatar-main">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 id="display-user-name">João Silva</h3>
+            </div>
+
+            <section class="side-nav">
+                <button class="nav-link active" onclick="openTab(event, 'meus-dados')">
+                    <i class="fas fa-id-card"></i> Meus Dados
+                </button>
+                <button class="nav-link" onclick="openTab(event, 'minhas-compras')">
+                    <i class="fas fa-shopping-bag"></i> Minhas Compras
+                </button>
+                <div class="nav-divider"></div>
+                <a href="logout.php" class="nav-link logout-link">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </section>
+        </aside>
+
+        <main class="profile-content">
+
+            <section id="meus-dados" class="tab-content active">
+                <h2>Meus Dados</h2>
+                <form class="profile-form">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="api-nome" value="João Silva">
+                        </div>
+                        <div class="input-group">
+                            <label>E-mail</label>
+                            <input type="email" id="api-email" value="joao@email.com">
+                        </div>
+                        <div class="input-group">
+                            <label>Telefone</label>
+                            <input type="text" id="api-telefone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="input-group">
+                            <label>CPF</label>
+                            <input type="text" id="api-cpf" value="***.***.***-**" readonly class="readonly">
+                        </div>
+                        <div class="input-group">
+                            <label>Data de Nascimento</label>
+                            <input type="date" id="api-nascimento">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-save-changes">Salvar Alterações</button>
+                </form>
+            </section>
+
+            <section id="minhas-compras" class="tab-content">
+                <h2>Minhas Compras</h2>
+                <div class="orders-container">
+                    <div class="order-item">
+                        <div class="order-header" onclick="toggleOrder(this)">
+                            <div class="order-info-summary">
+                                <strong>Pedido #12345</strong>
+                                <span>15/01/2026</span>
+                                <span class="order-price">R$ 249,90</span>
+                            </div>
+                            <i class="fas fa-chevron-down arrow-btn"></i>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-status-box">
+                                <p>Status: <span class="status-badge entregue">Entregue</span></p>
+                                <p>O seu pedido já foi entregue ao destinatário.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-item">
+                        <div class="order-header" onclick="toggleOrder(this)">
+                            <div class="order-info-summary">
+                                <strong>Pedido #12346</strong>
+                                <span>28/01/2026</span>
+                                <span class="order-price">R$ 180,00</span>
+                            </div>
+                            <i class="fas fa-chevron-down arrow-btn"></i>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-status-box">
+                                <p>Status: <span class="status-badge caminho">A caminho</span></p>
+                                <p>O pedido está com a transportadora.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>NUTRIR<span>VIDA</span></h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Links rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="Loja.html">Loja</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                    <li><a href="#">Sobre nós</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Informações legais</h3>
+                <ul>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Termos e condições</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Entrega</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Siga-nos</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                <h3>Formas de pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                    <i class="fas fa-mobile-alt" title="Pix"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("nav-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function toggleOrder(element) {
+            element.parentElement.classList.toggle("open");
+        }
+
+    </script>
+
+    <script src="javascript/script.js"></script>
+</body>
+
+</html>
