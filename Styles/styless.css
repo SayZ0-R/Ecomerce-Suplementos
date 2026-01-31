@@ -712,110 +712,118 @@ nav {
 
 /* ========== MEDIA QUERIES (agrupadas no final) ========== */
 
-@media (max-width: 999px) {
-nav {
-        display: grid !important;
-        /* Cria 3 colunas: as das pontas ocupam espaço igual (1fr), a do meio apenas o necessário */
-        grid-template-columns: 1fr 1fr 1fr; 
+@media (max-width: 799px) {
+
+    nav {
+        display: flex !important;
+        flex-direction: row;
+        justify-content: space-between;
+        /* Empurra logo para esquerda e o resto para direita */
         align-items: center;
         padding: 0 5%;
-        height: var(--nav-height);
+        height: 80px !important;
+        /* Altura fixa para controle do menu */
         background: #fff;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 2000;
     }
 
-    /* 1. Alinha o Menu à esquerda da primeira coluna */
-    .mobile-menu {
-       display: flex;
-        flex-direction: column; /* Alinha as linhas uma abaixo da outra */
-        justify-content: center; /* Centraliza o bloco de linhas verticalmente */
-        align-items: center;
-        height: 30px; /* Define uma altura para o container do hambúrguer */
-        grid-column: 1; 
-        justify-self: flex-start;
-        position: relative;
-        z-index: 2001;
-    }
-
-    /* 2. Centraliza a Logo na coluna do meio */
     .logo {
-        grid-column: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         position: static;
-        margin: 0 !important;
+        font-size: 1.2rem;
+        margin: 0;
+
     }
 
-    .logo img {
-        height: 60px; /* Tamanho fixo para não variar */
-        width: auto;
-        transform: none !important; /* Removemos o translateY para não desalinhar no redimensionamento */
-        display: block;
-    }
-
-    /* 3. Alinha os Ícones à direita da última coluna */
     .nav-right {
-        grid-column: 3;
-        justify-self: end;
         display: flex;
         align-items: center;
-        gap: 15px;
+        /* Define um espaçamento fixo e pequeno entre carrinho, perfil e menu */
+        gap: 20px !important;
+        /* Garante que o container não cresça mais que o necessário */
+        width: auto;
+        justify-content: flex-end;
         position: static;
     }
 
     .nav-icons {
         display: flex;
-        gap: 15px;
+        gap: 20px;
+        align-items: center;
     }
 
-    /* Mantém os ícones pretos conforme solicitado anteriormente */
-    .nav-icons a i {
-        color: #000 !important;
+    .mobile-menu {
+        /* Removemos o position absolute das linhas para centralizar melhor */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        width: 30px;
+        height: 30px;
+        order: 3;
+        /* Garante que o hambúrguer seja o último item à direita */
     }
-
 
     .mobile-menu div {
-       width: 28px;
+        width: 28px;
         height: 2px;
         background: #000;
-        margin: 3px 0; /* Substitui o translateY fixo por margem para manter o fluxo */
+        margin: 0;
         transition: transform var(--transition-slow);
-        position: static; /* MUDE DE absolute PARA static */
+        position: absolute;
     }
 
-    .line1 { transform: translateY(-8px); }
-    .line2 { transform: translateY(0); }
-    .line3 { transform: translateY(8px); }
+    .line1 {
+        transform: translateY(-8px);
+    }
+
+    .line2 {
+        transform: translateY(0);
+    }
+
+    .line3 {
+        transform: translateY(8px);
+    }
 
     .mobile-menu.toggle .line1 {
-        transform: translateY(8px) rotate(-45deg);
+        transform: rotate(-45deg) translateY(0);
     }
+
     .mobile-menu.toggle .line2 {
         opacity: 0;
     }
+
     .mobile-menu.toggle .line3 {
-        transform: translateY(-8px) rotate(45deg);
+        transform: rotate(45deg) translateY(0);
     }
 
     .nav-list {
-    position: fixed;
-    top: var(--nav-height);
-    left: 0;
-    width: 100%;
-    height: calc(100vh - var(--nav-height));
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 20px var(--container-padding);
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    
-    transform: translateX(100%);
-    transition: transform var(--transition-slow) ease-in-out;
-    z-index: 1000;
-    border-top: 1px solid var(--border-light);
+        position: fixed;
+        /* Deve ser EXATAMENTE a mesma altura definida no nav */
+        top: 80px !important;
+        left: 0;
+        width: 100%;
+        /* Altura total menos a altura do header para não vazar embaixo */
+        height: calc(100vh - 80px) !important;
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 40px 5%;
+
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+
+        transform: translateX(100%);
+        transition: transform 0.4s ease-in-out;
+        z-index: 1999;
+        /* Um número abaixo da nav (2000) para ficar "atrás" dela */
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .nav-list.active {
@@ -824,14 +832,22 @@ nav {
 
     .nav-list li {
         width: 100%;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+        border-bottom: 1px solid #000;
+        color: #000;
+        text-align: center;
+    }
+
+    .nav-icons a i {
+        color: #000 !important;
     }
 
     .nav-list a {
         font-size: 1.1rem;
         display: block;
         padding: 10px 0;
+        color: black;
     }
+
 
     .hero-section {
         padding: 0 8%;
@@ -889,7 +905,6 @@ nav {
         height: 140px;
     }
 }
-
 @media (min-width: 875px) and (max-width: 999px) {
     .categories-grid {
         display: grid;
