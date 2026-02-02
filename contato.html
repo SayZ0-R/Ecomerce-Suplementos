@@ -30,20 +30,32 @@
             <li><a href="contato.html" class="active">Contato</a></li>
         </ul>
 
-        <div class="nav-right">
+                <div class="nav-right">
             <div class="nav-icons">
-                <a href="#" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
+                <a href="Carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
                     <i class="fas fa-shopping-cart"></i>
                     <span id="cart-count" class="cart-badge"></span>
                 </a>
-                <a href="#" aria-label="Minha conta"><i class="fas fa-user"></i></a>
-            </div>
-        </div>
 
-        <div class="mobile-menu" aria-label="Abrir menu" role="button">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
+                <div class="profile-container">
+                    <a href="#" aria-label="Minha conta" class="profile-icon">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <ul class="profile-dropdown">
+                        <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
+                        <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
+
+                        <li class="dropdown-divider"></li>
+                        <li><a href="logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mobile-menu" aria-label="Menu" role="button">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
         </div>
     </nav>
 

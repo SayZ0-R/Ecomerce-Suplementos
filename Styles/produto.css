@@ -1,0 +1,180 @@
+/* Container Principal */
+.container-produto {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 5%;
+}
+
+/* Layout Flex: Imagem de um lado, Info do outro */
+.produto-main-flex {
+    display: flex;
+    gap: 50px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+/* Galeria de Imagem */
+.produto-galeria {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f9f9f9;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.produto-galeria img {
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.produto-galeria img:hover {
+    transform: scale(1.05);
+}
+
+/* Informações de Compra */
+.produto-infos-compra {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.produto-infos-compra h1 {
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.rating-box {
+    color: #ffb800;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.precos-detalhe {
+    margin-bottom: 30px;
+}
+
+#detalhe-preco-antigo {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 1.1rem;
+}
+
+#detalhe-preco-atual {
+    font-size: 2.5rem;
+    color: #00c853; /* Verde NutrirVida */
+    font-weight: 800;
+}
+
+/* Ações de Compra */
+.compra-acoes {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+#qtd-produto {
+    width: 70px;
+    padding: 12px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.btn-principal {
+    flex: 1;
+    padding: 15px 30px;
+    background: #00c853;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-principal:hover {
+    background: #00a844;
+    transform: translateY(-2px);
+}
+
+/* Seção de Abas (Descrição, Nutricional, Receitas) */
+.produto-detalhes-extras {
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.abas-info {
+    display: flex;
+    gap: 20px;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 25px;
+}
+
+.aba-item {
+    padding: 15px 25px;
+    border: none;
+    background: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #777;
+    cursor: pointer;
+    position: relative;
+}
+
+.aba-item.active {
+    color: #00c853;
+}
+
+.aba-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #00c853;
+}
+
+.aba-content {
+    line-height: 1.8;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+/* Responsividade Mobile */
+@media (max-width: 850px) {
+    .produto-main-flex {
+        flex-direction: column;
+    }
+
+    .produto-galeria img {
+        max-height: 300px;
+    }
+
+    .produto-infos-compra h1 {
+        font-size: 1.8rem;
+    }
+
+    .abas-info {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .aba-item {
+        text-align: left;
+        padding: 12px 0;
+    }
+}

@@ -64,12 +64,12 @@ function filtrar() {
     renderizarFiltrados(produtosFiltrados);
 }
 
-// Função auxiliar para renderizar apenas o que foi filtrado
+// Modifique a função que gera o HTML do card (renderizarProdutos ou renderizarFiltrados)
 function renderizarFiltrados(lista) {
     const grid = document.getElementById('grid-produtos');
     const contador = document.getElementById('contador-produtos');
     
-    contador.innerText = `${lista.length} produtos encontrados`;
+    if (contador) contador.innerText = `${lista.length} produtos encontrados`;
     
     grid.innerHTML = lista.map(p => `
         <div class="card-produto">
@@ -82,12 +82,22 @@ function renderizarFiltrados(lista) {
                     <span class="preco-antigo">R$ ${p.precoAntigo.toFixed(2)}</span>
                     <span class="preco-atual">R$ ${p.preco.toFixed(2)}</span>
                 </div>
-                <button class="btn-add-cart">
+                <button class="btn-add-cart" onclick="adicionarItem('${p.id}')">
                     <i class="fas fa-shopping-cart"></i>
                 </button>
             </div>
         </div>
     `).join('');
+}
+
+// Função que serve de ponte entre a vitrine e o LocalStorage
+function adicionarItem(id) {
+    // Encontra o produto completo no seu array 'produtos' usando o ID
+    const produtoSelected = produtos.find(p => p.id == id);
+    if (produtoSelected) {
+        // Chama a função global que estará no script.js
+        adicionarAoCarrinho(produtoSelected);
+    }
 }
 
 // Eventos para busca e filtro
@@ -98,3 +108,28 @@ document.querySelectorAll('input[name="categoria"]').forEach(input => {
 
 // Chamar ao carregar para mostrar tudo inicialmente
 renderizarFiltrados(produtos);
+
+function criarCardProduto(p) {
+    return `
+        <div class="card-produto">
+            <img src="${p.imagem}" alt="${p.nome}">
+            <div class="card-info">
+                <span class="categoria-label">${p.categoria}</span>
+                <h3>${p.nome}</h3>
+                <div class="rating"><i class="fas fa-star"></i> ${p.avaliacao}</div>
+                <div class="preco-box">
+                    <span class="preco-antigo">R$ ${p.precoAntigo.toFixed(2)}</span>
+                    <span class="preco-atual">R$ ${p.preco.toFixed(2)}</span>
+                </div>
+                
+                <div class="botoes-card">
+                    <a href="produto.html?id=${p.id}" class="btn-saiba-mais">Saiba Mais</a>
+                    
+                    <button class="btn-add-cart" onclick="adicionarItem('${p.id}')">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}

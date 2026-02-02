@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Entre em contato com a FitSuplementos. Suporte ao cliente, dúvidas sobre produtos e atendimento via WhatsApp e E-mail.">
+    <meta name="keywords" content="contato fitsuplementos, atendimento academia, suporte suplementos">
+
+    <link rel="stylesheet" href="Styles/styless.css">
+    <link rel="stylesheet" href="Styles/carrinho.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Carrinho - NutrirVida</title>
+</head>
+
+<body>
+
+    <nav>
+        <a class="logo" href="index.html">
+            <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
+        </a>
+
+
+
+        <div class="nav-right">
+            <div class="nav-icons">
+                <a href="Carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-badge"></span>
+                </a>
+
+                <div class="profile-container">
+                    <a href="#" aria-label="Minha conta" class="profile-icon">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <ul class="profile-dropdown">
+                        <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
+                        <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
+
+                        <li class="dropdown-divider"></li>
+                        <li><a href="logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mobile-menu" aria-label="Menu" role="button">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container cart-layout">
+        <main class="cart-items-container">
+            <h1>Meu Carrinho</h1>
+
+            <div class="cart-table">
+                <div class="cart-header">
+                    <span>Produto</span>
+                    <span>Preço</span>
+                    <span>Quantidade</span>
+                    <span>Total</span>
+                    <span></span>
+                </div>
+
+                <div id="cart-list">
+                    <div class="cart-item">
+                        <div class="item-product">
+                            <img src="Imagens/produto1.png" alt="Whey Protein">
+                            <div class="item-info">
+                                <h3>Whey Protein Isolate</h3>
+                                <p>Sabor: Chocolate</p>
+                            </div>
+                        </div>
+                        <div class="item-price">R$ 180,00</div>
+                        <div class="item-quantity">
+                            <button onclick="changeQty(this, -1)">-</button>
+                            <input type="number" value="1" min="1" readonly>
+                            <button onclick="changeQty(this, 1)">+</button>
+                        </div>
+                        <div class="item-total">R$ 180,00</div>
+                        <button class="btn-remove" title="Remover produto">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <a href="Loja.html" class="btn-continue"><i class="fas fa-arrow-left"></i> Continuar Comprando</a>
+        </main>
+
+        <aside class="cart-summary">
+            <h2>Resumo do Pedido</h2>
+            <div class="summary-details">
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <span id="subtotal">R$ 180,00</span>
+                </div>
+                <div class="summary-line">
+                    <span>Frete</span>
+                    <span id="shipping">Calcular</span>
+                </div>
+                <div class="shipping-calc">
+                    <input type="text" placeholder="00000-000" id="cep-input">
+                    <button id="btn-cep">Calcular</button>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-line total">
+                    <span>Total</span>
+                    <span id="final-total">R$ 180,00</span>
+                </div>
+            </div>
+            <button class="btn-checkout">Finalizar Compra</button>
+            <div class="payment-methods">
+                <p>Aceitamos:</p>
+                <div class="payment-icons">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>FitSuplementos</h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos de qualidade premium.</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Links rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="Loja.html">Loja</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                    <li><a href="#">Sobre nós</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Informações legais</h3>
+                <ul>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Termos e condições</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Entrega</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Siga-nos</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                <h3>Formas de pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                    <i class="fas fa-mobile-alt" title="Pix"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function changeQty(btn, delta) {
+            const input = btn.parentElement.querySelector('input');
+            let val = parseInt(input.value) + delta;
+            if (val >= 1) input.value = val;
+            // Aqui chamaremos a função da API para atualizar o total
+        }
+    </script>
+
+    <script src="javascript/script.js"></script>
+</body>
+
+</html>

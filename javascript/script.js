@@ -167,3 +167,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+// Função global para gerenciar a gaveta (LocalStorage)
+function adicionarAoCarrinho(produto) {
+    // Busca o que já existe ou cria array vazio
+    let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+
+    // Verifica se já tem o item
+    const index = carrinho.findIndex(item => item.id === produto.id);
+
+    if (index > -1) {
+        carrinho[index].quantidade += 1;
+    } else {
+        carrinho.push({
+            id: produto.id,
+            nome: produto.nome,
+            preco: produto.preco,
+            imagem: produto.imagem,
+            quantidade: 1
+        });
+    }
+
+    // Salva na gaveta
+    localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
+    
+    // Atualiza o visual
+    atualizarBadgeCarrinho();
+    
+    // Feedback para o usuário
+    alert(`${produto.nome} adicionado!`);
+}
+
+function atualizarBadgeCarrinho() {
+    let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    const total = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+    const badge = document.getElementById('cart-count');
+    
+    if (badge) {
+        badge.textContent = total;
+        badge.style.display = total > 0 ? 'flex' : 'none';
+    }
+}
+
+// Roda sempre que a página carregar (Loja, Contato, Perfil, etc)
+document.addEventListener('DOMContentLoaded', atualizarBadgeCarrinho);
+
+
+// Pega o ID da URL (ex: produto.html?id=2)
+const urlParams = new URLSearchParams(window.location.search);
+const idProduto = urlParams.get('id');
+
+// Procura o produto no seu array global (que deve estar disponível)
+const produto = produtos.find(p => p.id == idProduto);
+
+if (produto) {
+    document.getElementById('detalhe-nome').innerText = produto.nome;
+    document.getElementById('detalhe-img').src = produto.imagem;
+    // ... e assim por diante
+}
