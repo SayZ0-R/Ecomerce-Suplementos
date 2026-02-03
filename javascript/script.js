@@ -1,180 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- NAVEGAÇÃO & MENU HAMBÚRGUER ---
-    const mobileMenu = document.getElementById('mobile-menu') || document.querySelector(".mobile-menu");
-    const navList = document.getElementById('nav-menu') || document.querySelector(".nav-list");
+    // --- MENU MOBILE ---
+    // Selecionamos pelo ID que você adicionou
+    const mobileMenu = document.getElementById("mobile-menu");
+    const navList = document.querySelector(".nav-list");
 
-    if (mobileMenu && navList) {
-        mobileMenu.addEventListener('click', () => {
-            navList.classList.toggle('active');
-            mobileMenu.classList.toggle('toggle');
-            mobileMenu.classList.toggle('open');
-            mobileMenu.classList.toggle('active');
-
-            const expanded = navList.classList.contains('active');
-            mobileMenu.setAttribute('aria-expanded', expanded);
-        });
-
-        document.querySelectorAll(".nav-list a, .nav-menu a").forEach(link => {
-            link.addEventListener("click", () => {
-                navList.classList.remove("active");
-                mobileMenu.classList.remove("toggle");
-                mobileMenu.classList.remove("open");
-                mobileMenu.classList.remove("active");
-            });
-        });
-    }
-
-    // --- CONTROLE DO CARRINHO ---
-    const cartBadge = document.getElementById('cart-count');
-    const buyButtons = document.querySelectorAll('.btn-cart, .btn-add-cart');
-    let cartItems = 0;
-
-    if (buyButtons.length > 0 && cartBadge) {
-        buyButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                cartItems++;
-                cartBadge.innerText = cartItems;
-                
-                if (cartItems > 0) {
-                    cartBadge.classList.add('active');
-                }
-
-                cartBadge.style.animation = 'none';
-                cartBadge.offsetHeight; 
-                cartBadge.style.animation = null; 
-            });
-        });
-    }
-
-    // --- FILTROS E SIDEBAR MOBILE (LOJA) ---
-    const btnMobileFiltros = document.getElementById('btn-abrir-filtros');
-    const sidebar = document.getElementById('sidebar');
-
-    if (btnMobileFiltros && sidebar) {
-        btnMobileFiltros.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            btnMobileFiltros.innerHTML = sidebar.classList.contains('active') 
-                ? '<i class="fas fa-times"></i> Fechar Filtros' 
-                : '<i class="fas fa-sliders-h"></i> Filtros';
-        });
-    }
-
-    // --- LÓGICA DE PRODUTOS E FILTROS ---
-    // Só executa se o grid de produtos existir na página
-    const gridProdutos = document.getElementById('grid-produtos');
-    if (gridProdutos) {
-        
-        function renderizarProdutos(lista) {
-            const contador = document.getElementById('contador-produtos');
+    if (mobileMenu) {
+        // Usamos .onclick para garantir que apenas um evento dispare
+        mobileMenu.onclick = function() {
+            // Alterna o X (Animação das linhas)
+            this.classList.toggle('active');
             
-            gridProdutos.innerHTML = lista.map(p => `
-                <div class="card-produto">
-                    <img src="${p.imagem}" alt="${p.nome}">
-                    <div class="card-info">
-                        <span class="categoria-label">${p.categoria}</span>
-                        <h3>${p.nome}</h3>
-                        <div class="rating">
-                            <i class="fas fa-star"></i> <span>${p.avaliacao} (Avaliações)</span>
-                        </div>
-                        <div class="preco-box">
-                            <span class="preco-antigo">R$${(p.preco * 1.2).toFixed(2)}</span>
-                            <span class="preco-atual">R$${p.preco.toFixed(2)}</span>
-                        </div>
-                        <button class="btn-add-cart"><i class="fas fa-shopping-cart"></i></button>
-                    </div>
-                </div>
-            `).join('');
+            // Abre/Fecha o menu
+            if (navList) {
+                navList.classList.toggle('active');
+            }
             
-            if (contador) contador.innerText = `${lista.length} produto(s) encontrado(s)`;
-        }
-
-        function aplicarFiltros() {
-            const catChecked = document.querySelector('input[name="categoria"]:checked');
-            const filtroPreco = document.getElementById('filtro-preco');
-            const valorPrecoTxt = document.getElementById('valor-preco');
-
-            if (!catChecked || !filtroPreco) return;
-
-            const catSelecionada = catChecked.value;
-            const precoMaximo = filtroPreco.value;
-            
-            if (valorPrecoTxt) valorPrecoTxt.innerText = `R$${precoMaximo}`;
-
-            const filtrados = produtos.filter(p => {
-                const bateCategoria = catSelecionada === 'todos' || p.categoria === catSelecionada;
-                const batePreco = p.preco <= precoMaximo;
-                 bateCategoria && batePreco;
-                return bateCategoria && batePreco;
-            });
-
-            renderizarProdutos(filtrados);
-        }
-
-        // Eventos de Filtro
-        document.querySelectorAll('input[name="categoria"]').forEach(input => {
-            input.addEventListener('change', aplicarFiltros);
-        });
-
-        const sliderPreco = document.getElementById('filtro-preco');
-        if (sliderPreco) sliderPreco.addEventListener('input', aplicarFiltros);
-
-        // Resetar Filtros
-        const btnResetar = document.getElementById('btn-resetar');
-        if (btnResetar) {
-            btnResetar.addEventListener('click', () => {
-                const radioTodos = document.querySelector('input[value="todos"]');
-                if (radioTodos) radioTodos.checked = true;
-
-                const slider = document.getElementById('filtro-preco');
-                if (slider) {
-                    slider.value = 100;
-                    if (document.getElementById('valor-preco')) {
-                        document.getElementById('valor-preco').innerText = `R$100`;
-                    }
-                }
-
-                const busca = document.getElementById('input-busca');
-                if (busca) busca.value = '';
-                
-                renderizarProdutos(produtos);
-            });
-        }
-
-        // Inicialização inicial
-        if (typeof produtos !== 'undefined') {
-            renderizarProdutos(produtos);
-        }
+            // Log para você conferir no F12 se o clique está sendo registrado
+            console.log("Status do menu:", this.classList.contains('active') ? "Aberto (X)" : "Fechado (≡)");
+        };
     }
-});
 
-document.addEventListener('DOMContentLoaded', () => {
+    // --- DROPDOWN PERFIL ---
     const profileIcon = document.querySelector('.profile-icon');
     const dropdown = document.querySelector('.profile-dropdown');
+    
+    if (profileIcon && dropdown) {
+        profileIcon.onclick = (e) => {
+            e.preventDefault();
+            dropdown.classList.toggle('active');
+        };
 
-    // 1. Abre/Fecha ao clicar no ícone
-    profileIcon.addEventListener('click', (e) => {
-        e.preventDefault(); // Evita que o link '#' recarregue a página
-        dropdown.classList.toggle('active');
-    });
+        document.addEventListener('click', (e) => {
+            if (!profileIcon.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    }
 
-    // 2. Fecha ao clicar fora do menu
-    document.addEventListener('click', (e) => {
-        // Se o clique NÃO for no ícone e NÃO for dentro do menu aberto
-        if (!profileIcon.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('active');
-        }
-    });
+    // --- INICIALIZAÇÃO ---
+    atualizarBadgeCarrinho();
+    carregarPaginaProduto();
 });
 
-
-// Função global para gerenciar a gaveta (LocalStorage)
+// --- LÓGICA DO CARRINHO ---
 function adicionarAoCarrinho(produto) {
-    // Busca o que já existe ou cria array vazio
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-
-    // Verifica se já tem o item
     const index = carrinho.findIndex(item => item.id === produto.id);
 
     if (index > -1) {
@@ -185,44 +56,69 @@ function adicionarAoCarrinho(produto) {
             nome: produto.nome,
             preco: produto.preco,
             imagem: produto.imagem,
+            categoria: produto.categoria, 
             quantidade: 1
         });
     }
 
-    // Salva na gaveta
     localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
-    
-    // Atualiza o visual
     atualizarBadgeCarrinho();
-    
-    // Feedback para o usuário
-    alert(`${produto.nome} adicionado!`);
+    alert(`${produto.nome} adicionado ao carrinho!`);
 }
 
 function atualizarBadgeCarrinho() {
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
     const total = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
     const badge = document.getElementById('cart-count');
-    
     if (badge) {
         badge.textContent = total;
         badge.style.display = total > 0 ? 'flex' : 'none';
     }
 }
 
-// Roda sempre que a página carregar (Loja, Contato, Perfil, etc)
-document.addEventListener('DOMContentLoaded', atualizarBadgeCarrinho);
+// --- PÁGINA DE PRODUTO ---
+function carregarPaginaProduto() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (!id || typeof produtos === 'undefined') return;
 
+    const p = produtos.find(item => item.id == id);
+    if (p) {
+        if(document.getElementById('detalhe-nome')) document.getElementById('detalhe-nome').innerText = p.nome;
+        if(document.getElementById('detalhe-img')) document.getElementById('detalhe-img').src = p.imagem;
+        if(document.getElementById('detalhe-preco-atual')) document.getElementById('detalhe-preco-atual').innerText = `R$ ${p.preco.toFixed(2)}`;
+        if(document.getElementById('detalhe-preco-antigo')) document.getElementById('detalhe-preco-antigo').innerText = `R$ ${p.precoAntigo.toFixed(2)}`;
+        if(document.getElementById('detalhe-rating')) document.getElementById('detalhe-rating').innerText = p.avaliacao;
+        
+        mudarAba('descricao');
 
-// Pega o ID da URL (ex: produto.html?id=2)
-const urlParams = new URLSearchParams(window.location.search);
-const idProduto = urlParams.get('id');
+        const btnComprar = document.getElementById('btn-comprar-detalhe');
+        if (btnComprar) {
+            btnComprar.onclick = () => {
+                const qtdInput = document.getElementById('qtd-produto');
+                const qtd = qtdInput ? parseInt(qtdInput.value) : 1;
+                for(let i=0; i<qtd; i++) { 
+                    adicionarAoCarrinho(p); 
+                }
+            };
+        }
+    }
+}
 
-// Procura o produto no seu array global (que deve estar disponível)
-const produto = produtos.find(p => p.id == idProduto);
+function mudarAba(tipo) {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (typeof produtos === 'undefined') return;
+    const p = produtos.find(item => item.id == id);
+    const container = document.getElementById('conteudo-aba');
+    if (!p || !container) return;
 
-if (produto) {
-    document.getElementById('detalhe-nome').innerText = produto.nome;
-    document.getElementById('detalhe-img').src = produto.imagem;
-    // ... e assim por diante
+    document.querySelectorAll('.aba-item').forEach(btn => btn.classList.remove('active'));
+    
+    // Tenta encontrar o botão que foi clicado
+    const btnAtivo = document.querySelector(`[onclick*="mudarAba('${tipo}')"]`) || event?.currentTarget;
+    if(btnAtivo && btnAtivo.classList) btnAtivo.classList.add('active');
+
+    if (tipo === 'descricao') container.innerText = p.descricao;
+    if (tipo === 'nutricional') container.innerText = p.nutricional;
+    if (tipo === 'receitas') container.innerText = p.receitas;
 }

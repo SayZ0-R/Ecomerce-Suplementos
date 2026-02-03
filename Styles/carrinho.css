@@ -171,3 +171,16 @@
     .item-product { grid-column: span 2; }
     .item-total { text-align: right; font-weight: 800; }
 }
+
+.container cart-layout, h1 {
+    color: #2e2e2e;
+}
+
+.item-price,
+.item-total {
+    color: #2e2e2e;
+}
+
+.item-info {
+    color: #2e2e2e;
+}

@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Entre em contato com a FitSuplementos. Suporte ao cliente, dúvidas sobre produtos e atendimento via WhatsApp e E-mail.">
-    <meta name="keywords" content="contato fitsuplementos, atendimento academia, suporte suplementos">
+    <meta name="description" content="Meu Carrinho - FitSuplementos. Finalize sua compra com segurança.">
 
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="Styles/carrinho.css">
@@ -21,7 +19,13 @@
             <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
         </a>
 
-
+        <ul class="nav-list">
+            <li><a href="index.html" class="active">Início</a></li>
+            <li><a href="Loja.html">Loja</a></li>
+            <li><a href="index.html#nossas-categorias">Categorias</a></li>
+            <li><a href="Loja.html">Pacotes</a></li>
+            <li><a href="contato.html">Contato</a></li>
+        </ul>
 
         <div class="nav-right">
             <div class="nav-icons">
@@ -44,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -66,25 +70,7 @@
                 </div>
 
                 <div id="cart-list">
-                    <div class="cart-item">
-                        <div class="item-product">
-                            <img src="Imagens/produto1.png" alt="Whey Protein">
-                            <div class="item-info">
-                                <h3>Whey Protein Isolate</h3>
-                                <p>Sabor: Chocolate</p>
-                            </div>
-                        </div>
-                        <div class="item-price">R$ 180,00</div>
-                        <div class="item-quantity">
-                            <button onclick="changeQty(this, -1)">-</button>
-                            <input type="number" value="1" min="1" readonly>
-                            <button onclick="changeQty(this, 1)">+</button>
-                        </div>
-                        <div class="item-total">R$ 180,00</div>
-                        <button class="btn-remove" title="Remover produto">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
+                    <p style="text-align:center; padding: 40px;">Carregando seu carrinho...</p>
                 </div>
             </div>
 
@@ -96,40 +82,43 @@
             <div class="summary-details">
                 <div class="summary-line">
                     <span>Subtotal</span>
-                    <span id="subtotal">R$ 180,00</span>
+                    <span id="subtotal">R$ 0,00</span>
                 </div>
                 <div class="summary-line">
                     <span>Frete</span>
-                    <span id="shipping">Calcular</span>
+                    <span id="shipping-value">R$ 0,00</span>
                 </div>
+
                 <div class="shipping-calc">
-                    <input type="text" placeholder="00000-000" id="cep-input">
+                    <input type="text" placeholder="00000-000" id="cep-input" maxlength="9">
                     <button id="btn-cep">Calcular</button>
                 </div>
+
                 <div class="summary-divider"></div>
+
                 <div class="summary-line total">
                     <span>Total</span>
-                    <span id="final-total">R$ 180,00</span>
+                    <span id="final-total">R$ 0,00</span>
                 </div>
             </div>
-            <button class="btn-checkout">Finalizar Compra</button>
+            <button class="btn-checkout" id="btn-checkout">Finalizar Compra</button>
+
             <div class="payment-methods">
                 <p>Aceitamos:</p>
                 <div class="payment-icons">
                     <i class="fab fa-cc-visa"></i>
                     <i class="fab fa-cc-mastercard"></i>
-                    <i class="fas fa-mobile-alt"></i>
+                    <i class="fab fa-pix"></i>
                 </div>
             </div>
         </aside>
     </div>
 
-
-    <footer class="main-footer">
+       <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
-                <h3>FitSuplementos</h3>
-                <p>Seu parceiro de confiança para todos os seus suplementos esportivos de qualidade premium.</p>
+                <h3>NUTRIR<span>VIDA</span></h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
             </div>
 
             <div class="footer-column">
@@ -174,14 +163,99 @@
     </footer>
 
     <script>
-        function changeQty(btn, delta) {
-            const input = btn.parentElement.querySelector('input');
-            let val = parseInt(input.value) + delta;
-            if (val >= 1) input.value = val;
-            // Aqui chamaremos a função da API para atualizar o total
-        }
-    </script>
+        function carregarCarrinho() {
+            const cartList = document.getElementById('cart-list');
+            const subtotalElement = document.getElementById('subtotal');
+            const finalTotalElement = document.getElementById('final-total');
 
+            if (!cartList) return;
+
+            let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+
+            if (carrinho.length === 0) {
+                cartList.innerHTML = `
+                    <div style="text-align:center; padding: 50px;">
+                        <i class="fas fa-shopping-basket" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+                        <p>Seu carrinho está vazio.</p>
+                    </div>`;
+                subtotalElement.innerText = "R$ 0,00";
+                finalTotalElement.innerText = "R$ 0,00";
+                return;
+            }
+
+            let subtotal = 0;
+
+            cartList.innerHTML = carrinho.map((item, index) => {
+                const totalItem = (item.preco || 0) * (item.quantidade || 1);
+                subtotal += totalItem;
+
+                // CORREÇÃO: Pega a categoria do item. Se não houver, exibe vazio ou uma mensagem padrão.
+                const categoriaExibida = item.categoria || "Geral";
+
+                return `
+                    <div class="cart-item">
+                        <div class="item-product">
+                            <img src="${item.imagem}" alt="${item.nome}">
+                            <div class="item-info">
+                                <h3>${item.nome}</h3>
+                                <p style="font-size: 0.85rem; color: #666;">Categoria: <strong>${categoriaExibida}</strong></p>
+                            </div>
+                        </div>
+                        <div class="item-price">R$ ${item.preco.toFixed(2)}</div>
+                        <div class="item-quantity">
+                            <button onclick="alterarQuantidade(${index}, -1)">-</button>
+                            <input type="number" value="${item.quantidade}" readonly>
+                            <button onclick="alterarQuantidade(${index}, 1)">+</button>
+                        </div>
+                        <div class="item-total">R$ ${totalItem.toFixed(2)}</div>
+                        <button class="btn-remove" onclick="removerDoCarrinho(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            subtotalElement.innerText = `R$ ${subtotal.toFixed(2)}`;
+            finalTotalElement.innerText = `R$ ${subtotal.toFixed(2)}`;
+
+            if (window.atualizarBadgeCarrinho) window.atualizarBadgeCarrinho();
+        }
+
+        function alterarQuantidade(index, delta) {
+            let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+            if (!carrinho[index]) return;
+            carrinho[index].quantidade += delta;
+            if (carrinho[index].quantidade < 1) {
+                removerDoCarrinho(index);
+            } else {
+                localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
+                carregarCarrinho();
+            }
+        }
+
+        function removerDoCarrinho(index) {
+            let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+            carrinho.splice(index, 1);
+            localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
+            carregarCarrinho();
+        }
+
+        document.getElementById('btn-cep')?.addEventListener('click', () => {
+            const cepInput = document.getElementById('cep-input');
+            const shippingValue = document.getElementById('shipping-value');
+            if (cepInput && cepInput.value.length >= 8) {
+                alert("Frete calculado com sucesso!");
+                shippingValue.innerText = "R$ 15,00";
+                const subStr = document.getElementById('subtotal').innerText.replace('R$ ', '').replace(',', '.');
+                const sub = parseFloat(subStr);
+                document.getElementById('final-total').innerText = `R$ ${(sub + 15).toFixed(2)}`;
+            } else {
+                alert("Insira um CEP válido.");
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', carregarCarrinho);
+    </script>
     <script src="javascript/script.js"></script>
 </body>
 

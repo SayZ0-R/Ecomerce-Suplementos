@@ -15,8 +15,7 @@
             <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
         </a>
 
-
-        <ul class="nav-list">
+        <ul class="nav-list" id="nav-menu">
             <li><a href="index.html">Início</a></li>
             <li><a href="Loja.html" class="active">Loja</a></li>
             <li><a href="index.html#nossas-categorias">Categorias</a></li>
@@ -24,7 +23,7 @@
             <li><a href="contato.html">Contato</a></li>
         </ul>
 
-               <div class="nav-right">
+        <div class="nav-right">
             <div class="nav-icons">
                 <a href="Carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
                     <i class="fas fa-shopping-cart"></i>
@@ -38,14 +37,13 @@
                     <ul class="profile-dropdown">
                         <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
                         <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
-
                         <li class="dropdown-divider"></li>
                         <li><a href="logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -79,72 +77,57 @@
                         <label><input type="radio" name="categoria" value="bcaa"> BCAA</label>
                         <label><input type="radio" name="categoria" value="pre-treino"> Pré-treino</label>
                         <label><input type="radio" name="categoria" value="vitaminas"> Vitaminas</label>
-                        
 
-                        <h4 style="margin-top: 20px;">Preço</h4>
-                        <input type="range" id="filtro-preco" min="0" max="100" value="100">
+                        <h4 style="margin-top: 20px;">Preço Máximo</h4>
+                        <input type="range" id="filtro-preco" min="0" max="200" value="200">
                         <div class="labels-preco">
                             <span>R$0</span>
-                            <span id="valor-preco">R$100</span>
+                            <span id="valor-preco">R$200</span>
                         </div>
                     </div>
-                    <button id="btn-resetar" class="btn-reset">Resetar</button>
+                    <button id="btn-resetar" class="btn-reset">Limpar Filtros</button>
                 </div>
             </aside>
 
             <section class="vitrine-produtos">
                 <div class="info-resultado">
-                    <span id="contador-produtos">0 produtos encontrados</span>
+                    <span id="contador-produtos">Carregando produtos...</span>
                 </div>
-                <div class="grid-produtos" id="grid-produtos">
-                    </div>
+                <div class="grid-produtos" id="grid-produtos"></div>
             </section>
         </div>
     </main>
 
-     <footer class="main-footer">
+    <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
                 <h3>FitSuplementos</h3>
                 <p>Seu parceiro de confiança para todos os seus suplementos esportivos de qualidade premium.</p>
             </div>
-
             <div class="footer-column">
                 <h3>Links rápidos</h3>
                 <ul>
-                    <li><a href="#">Início</a></li>
-                    <li><a href="#">Loja</a></li>
-                    <li><a href="#">Contato</a></li>
-                    <li><a href="#">Sobre nós</a></li>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="Loja.html">Loja</a></li>
+                    <li><a href="contato.html">Contato</a></li>
                 </ul>
             </div>
-
             <div class="footer-column">
                 <h3>Informações legais</h3>
                 <ul>
-                    <li><a href="#">Termos de uso</a></li>
-                    <li><a href="#">Termos e condições</a></li>
-                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Privacidade</a></li>
+                    <li><a href="#">Termos</a></li>
                     <li><a href="#">Entrega</a></li>
                 </ul>
             </div>
-
             <div class="footer-column">
                 <h3>Siga-nos</h3>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                </div>
-                <h3>Formas de pagamento</h3>
-                <div class="payment-icons">
-                    <i class="fas fa-credit-card"></i>
-                    <i class="fas fa-mobile-alt"></i>
                 </div>
             </div>
         </div>
-
         <div class="footer-bottom">
             <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
         </div>

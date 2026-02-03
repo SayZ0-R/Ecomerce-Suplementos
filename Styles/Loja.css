@@ -1,18 +1,23 @@
-/* Loja: estilos específicos. Header/nav/footer vêm do styless.css */
+/* Loja: Design Original Restaurado com Ajuste de Largura */
 
 body.loja-page {
     background-color: #f8f9fa;
 }
 
 .container-loja {
-    padding: 40px 10%;
-    max-width: 1400px;
+    padding: 40px 5%;
+    max-width: 1600px; /* Única alteração de estrutura solicitada */
     margin: 0 auto;
 }
 
 .topo-loja h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
+    color: #000;
+}
+
+.topo-loja p {
+    color: #000;
 }
 
 .barra-busca {
@@ -44,7 +49,6 @@ body.loja-page {
 /* BOTÃO FILTRO MOBILE */
 .btn-mobile-filtros {
     display: none;
-    /* Escondido no PC */
     width: 100%;
     padding: 15px;
     background: #fff;
@@ -58,7 +62,7 @@ body.loja-page {
     gap: 10px;
 }
 
-/* SIDEBAR E FILTROS */
+/* SIDEBAR E FILTROS ORIGINAIS */
 .sidebar-filtros {
     background: #fff;
     padding: 30px;
@@ -72,11 +76,13 @@ body.loja-page {
     margin-bottom: 25px;
     border-bottom: 2px solid #f0f0f0;
     padding-bottom: 10px;
+    color: #000;
 }
 
 .grupo-filtro h4 {
     margin-bottom: 15px;
     font-weight: 600;
+    color: #000;
 }
 
 .grupo-filtro label {
@@ -89,7 +95,7 @@ body.loja-page {
     color: #666;
 }
 
-/* CUSTOM RADIO BUTTONS */
+/* CUSTOM RADIO BUTTONS ORIGINAIS */
 .grupo-filtro input[type="radio"] {
     appearance: none;
     width: 20px;
@@ -116,7 +122,6 @@ body.loja-page {
     transform: translate(-50%, -50%);
 }
 
-/* SLIDER PREÇO */
 #filtro-preco {
     width: 100%;
     margin: 15px 0;
@@ -128,7 +133,6 @@ body.loja-page {
     font-weight: bold;
 }
 
-/* BOTÃO RESET */
 .btn-reset {
     width: 100%;
     margin-top: 25px;
@@ -147,6 +151,7 @@ body.loja-page {
     color: #fff;
 }
 
+/* VITRINE E CARDS (Layout Fiel ao Original) */
 .grid-produtos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -154,11 +159,9 @@ body.loja-page {
     padding: 10px;
 }
 
-/* O CARD ESTILO FOTO */
 .card-produto {
     background: #fff;
     border-radius: 15px;
-    /* Bordas arredondadas suaves */
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease;
@@ -200,10 +203,8 @@ body.loja-page {
     line-height: 1.2;
     margin: 2px 0;
     min-height: 38px;
-    /* Mantém alinhamento com nomes longos */
 }
 
-/* ESTRELAS E AVALIAÇÃO */
 .rating {
     color: #777;
     font-size: 0.8rem;
@@ -216,7 +217,6 @@ body.loja-page {
     color: #ffc107;
 }
 
-/* PREÇOS */
 .preco-box {
     margin-top: 10px;
 }
@@ -234,21 +234,51 @@ body.loja-page {
     color: #005eff;
 }
 
+/* ESTILIZAÇÃO DO BOTÃO "SAIBA MAIS" INTEGRADA AO DESIGN ANTIGO */
+.botoes-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.btn-saiba-mais {
+    flex-grow: 1;
+    text-decoration: none;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px;
+    color: #005eff;
+    border: 1.5px solid #005eff;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-saiba-mais:hover {
+    background-color: #005eff;
+    color: #fff;
+}
+
 .btn-add-cart {
-    position: absolute;
-    bottom: 25px;
-    right: 25px;
     background: #005eff;
     color: white;
     border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 15px;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 94, 255, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 94, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* MEDIA QUERIES (MOBILE) */
+.btn-add-cart:hover {
+    background: #0044bb;
+}
+
+/* MEDIA QUERIES ORIGINAIS */
 @media (max-width: 900px) {
     .conteudo-principal {
         grid-template-columns: 1fr;
@@ -260,33 +290,10 @@ body.loja-page {
 
     .sidebar-filtros {
         display: none;
-        /* Esconde no mobile por padrão */
     }
 
-    /* Classe ativada pelo JS */
     .sidebar-filtros.active {
         display: block;
         margin-bottom: 30px;
     }
-}
-
-.info-resultado span {
-    color: #000;
-}
-
-.topo-loja h1 {
-    color: #000;
-}
-
-.topo-loja p {
-    color: #000;
-}
-
-
-.sidebar-filtros h3{
-    color: #000;
-}
-
-.sidebar-filtros h4 {
-    color: #000;
 }

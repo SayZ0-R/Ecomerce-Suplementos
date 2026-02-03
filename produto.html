@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,18 +13,25 @@
 
     <title>Produto - Nutrir Vida</title>
 </head>
+
 <body>
-    
+
     <nav>
         <a class="logo" href="index.html">
             <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
         </a>
 
-
+        <ul class="nav-list">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="Loja.html">Loja</a></li>
+            <li><a href="index.html#nossas-categorias">Categorias</a></li>
+            <li><a href="Loja.html">Pacotes</a></li>
+            <li><a href="contato.html">Contato</a></li>
+        </ul>
 
         <div class="nav-right">
             <div class="nav-icons">
-                <a href="Carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
+                <a href="#" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
                     <i class="fas fa-shopping-cart"></i>
                     <span id="cart-count" class="cart-badge"></span>
                 </a>
@@ -41,8 +49,7 @@
                     </ul>
                 </div>
             </div>
-
-            <div class="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -51,42 +58,91 @@
     </nav>
 
     <main class="container-produto">
-    <div class="produto-main-flex">
-        <div class="produto-galeria">
-            <img id="detalhe-img" src="" alt="">
-        </div>
-        
-        <div class="produto-infos-compra">
-            <h1 id="detalhe-nome">Nome do Produto</h1>
-            <div class="rating-box">
-                <i class="fas fa-star"></i> <span id="detalhe-rating">4.8</span>
+        <div class="produto-main-flex">
+            <div class="produto-galeria">
+                <img id="detalhe-img" src="" alt="">
             </div>
-            <div class="precos-detalhe">
-                <span id="detalhe-preco-antigo"></span>
-                <h2 id="detalhe-preco-atual"></h2>
-            </div>
-            
-            <div class="compra-acoes">
-                <input type="number" id="qtd-produto" value="1" min="1">
-                <button id="btn-comprar-detalhe" class="btn-principal">Adicionar ao Carrinho</button>
-            </div>
-        </div>
-    </div>
 
-    <section class="produto-detalhes-extras">
-        <div class="abas-info">
-            <button class="aba-item active" onclick="mudarAba('descricao')">Descrição</button>
-            <button class="aba-item" onclick="mudarAba('nutricional')">Tabela Nutricional</button>
-            <button class="aba-item" onclick="mudarAba('receitas')">Como usar/Receitas</button>
-        </div>
-        <div id="conteudo-aba" class="aba-content">
+            <div class="produto-infos-compra">
+                <h1 id="detalhe-nome">Nome do Produto</h1>
+                <div class="rating-box">
+                    <i class="fas fa-star"></i> <span id="detalhe-rating">4.8</span>
+                </div>
+                <div class="precos-detalhe">
+                    <span id="detalhe-preco-antigo"></span>
+                    <h2 id="detalhe-preco-atual"></h2>
+                </div>
+
+                <div class="compra-acoes">
+                    <input type="number" id="qtd-produto" value="1" min="1">
+                    <button id="btn-comprar-detalhe" class="btn-principal">Adicionar ao Carrinho</button>
+                </div>
             </div>
-    </section>
-</main>
+        </div>
+
+        <section class="produto-detalhes-extras">
+            <div class="abas-info">
+                <button class="aba-item active" onclick="mudarAba('descricao')">Descrição</button>
+                <button class="aba-item" onclick="mudarAba('nutricional')">Tabela Nutricional</button>
+                <button class="aba-item" onclick="mudarAba('receitas')">Como usar/Receitas</button>
+            </div>
+            <div id="conteudo-aba" class="aba-content">
+            </div>
+        </section>
+    </main>
+
+        <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>NUTRIR<span>VIDA</span></h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Links rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="Loja.html">Loja</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                    <li><a href="#">Sobre nós</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Informações legais</h3>
+                <ul>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Termos e condições</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Entrega</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Siga-nos</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                <h3>Formas de pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                    <i class="fas fa-mobile-alt" title="Pix"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 
 
-<script src="javascript/script.js"></script>
-<script src="javascript/produtos.js"></script>
+    <script src="javascript/script.js"></script>
+    <script src="javascript/produtos.js"></script>
 
 </body>
+
 </html>
