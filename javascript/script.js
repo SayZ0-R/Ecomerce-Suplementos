@@ -1,22 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
     // --- MENU MOBILE ---
-    // Selecionamos pelo ID que você adicionou
     const mobileMenu = document.getElementById("mobile-menu");
     const navList = document.querySelector(".nav-list");
 
     if (mobileMenu) {
-        // Usamos .onclick para garantir que apenas um evento dispare
         mobileMenu.onclick = function() {
-            // Alterna o X (Animação das linhas)
             this.classList.toggle('active');
-            
-            // Abre/Fecha o menu
-            if (navList) {
-                navList.classList.toggle('active');
-            }
-            
-            // Log para você conferir no F12 se o clique está sendo registrado
+            if (navList) navList.classList.toggle('active');
             console.log("Status do menu:", this.classList.contains('active') ? "Aberto (X)" : "Fechado (≡)");
         };
     }
@@ -38,10 +28,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- BOTÃO IR PARA CHECKOUT ---
+    const btnCheckout = document.getElementById('btn-checkout');
+    if (btnCheckout) {
+        btnCheckout.addEventListener('click', () => {
+            const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+            if (carrinho.length > 0) {
+                window.location.href = 'checkout.html';
+            } else {
+                alert("Seu carrinho está vazio!");
+                window.location.href = 'Loja.html';
+            }
+        });
+    }
+
     // --- INICIALIZAÇÃO ---
     atualizarBadgeCarrinho();
     carregarPaginaProduto();
 });
+
+// --- LÓGICA DO FRETE POR BAIRRO (Para a página Carrinho) ---
+function calcularFretePorBairro() {
+    const inputBairro = document.getElementById('bairro-input').value.toLowerCase().trim();
+    const displayFrete = document.getElementById('shipping-value');
+    const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+
+    let valorFrete = -1;
+
+    const grupo4 = ["canaã", "canaãzinho", "bethânia", "jardim vitória", "residencial bethânia"];
+    const grupo7 = ["jardim panorama", "panorama", "caravelas", "veneza 1", "veneza 2", "centro", "cidade nobre", "parque das águas", "planalto 1", "planalto 2", "iguaçu"];
+    const grupo9 = ["limoeiro", "bom jardim", "bairro das águas", "bela vista", "cariru"];
+
+    if (grupo4.includes(inputBairro)) valorFrete = subtotal >= 200 ? 0 : 4.00;
+    else if (grupo7.includes(inputBairro)) valorFrete = subtotal >= 250 ? 0 : 7.00;
+    else if (grupo9.includes(inputBairro)) valorFrete = subtotal >= 250 ? 0 : 9.00;
+
+    if (valorFrete !== -1) {
+        localStorage.setItem('nutrirVida_frete', valorFrete);
+        localStorage.setItem('nutrirVida_bairro', inputBairro);
+        if (displayFrete) displayFrete.innerText = valorFrete === 0 ? "Grátis" : `R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
+        // Se houver uma função de atualizar total na página de carrinho, chame-a aqui
+    } else {
+        alert("Bairro não encontrado na lista de entregas.");
+    }
+}
 
 // --- LÓGICA DO CARRINHO ---
 function adicionarAoCarrinho(produto) {
@@ -89,7 +120,6 @@ function carregarPaginaProduto() {
         if(document.getElementById('detalhe-preco-atual')) document.getElementById('detalhe-preco-atual').innerText = `R$ ${p.preco.toFixed(2)}`;
         if(document.getElementById('detalhe-preco-antigo')) document.getElementById('detalhe-preco-antigo').innerText = `R$ ${p.precoAntigo.toFixed(2)}`;
         if(document.getElementById('detalhe-rating')) document.getElementById('detalhe-rating').innerText = p.avaliacao;
-        
         mudarAba('descricao');
 
         const btnComprar = document.getElementById('btn-comprar-detalhe');
@@ -97,9 +127,7 @@ function carregarPaginaProduto() {
             btnComprar.onclick = () => {
                 const qtdInput = document.getElementById('qtd-produto');
                 const qtd = qtdInput ? parseInt(qtdInput.value) : 1;
-                for(let i=0; i<qtd; i++) { 
-                    adicionarAoCarrinho(p); 
-                }
+                for(let i=0; i<qtd; i++) { adicionarAoCarrinho(p); }
             };
         }
     }
@@ -113,10 +141,8 @@ function mudarAba(tipo) {
     if (!p || !container) return;
 
     document.querySelectorAll('.aba-item').forEach(btn => btn.classList.remove('active'));
-    
-    // Tenta encontrar o botão que foi clicado
-    const btnAtivo = document.querySelector(`[onclick*="mudarAba('${tipo}')"]`) || event?.currentTarget;
-    if(btnAtivo && btnAtivo.classList) btnAtivo.classList.add('active');
+    const btnAtivo = document.querySelector(`[onclick*="mudarAba('${tipo}')"]`);
+    if(btnAtivo) btnAtivo.classList.add('active');
 
     if (tipo === 'descricao') container.innerText = p.descricao;
     if (tipo === 'nutricional') container.innerText = p.nutricional;
