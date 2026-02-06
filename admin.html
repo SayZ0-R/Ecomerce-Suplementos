@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - NutrirVida</title>
+    <link rel="stylesheet" href="Styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMenu()"></div>
+
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span>NUTRIR</span>VIDA
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" onclick="mostrarSecao('dashboard')">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" class="menu-item" onclick="mostrarSecao('produtos')">
+                    <i class="fas fa-box-open"></i> Gerenciar Produtos
+                </a>
+                <a href="#" class="menu-item" onclick="mostrarSecao('pedidos')">
+                    <i class="fas fa-shopping-cart"></i> Pedidos Recebidos
+                </a>
+                <div class="menu-divider"></div>
+                <a href="index.html" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Sair da Loja
+                </a>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <header class="content-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" onclick="toggleMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="secao-titulo">Painel de Controle</h1>
+                </div>
+                
+                <div class="admin-profile">
+                    <span class="admin-name">Olá, <strong>Admin</strong></span>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+
+            <section id="sec-dashboard" class="admin-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="stat-info">
+                            <p>Vendas do Mês</p>
+                            <h2>R$ 4.580,00</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-truck-loading"></i></div>
+                        <div class="stat-info">
+                            <p>Pedidos Pendentes</p>
+                            <h2>12</h2>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-produtos" class="admin-section">
+                <div class="section-actions">
+                    <h2>Estoque Atual</h2>
+                    <button class="btn-add" onclick="abrirModalProduto()">
+                        <i class="fas fa-plus"></i> <span class="btn-text">Novo Produto</span>
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-produtos-admin">
+                            <tr>
+                                <td>Whey Protein Isolado</td>
+                                <td>R$ 149,90</td>
+                                <td>25 un</td>
+                                <td><span class="badge badge-success">Em promoção</span></td>
+                                <td class="actions-cell">
+                                    <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sec-pedidos" class="admin-section">
+                <h2>Pedidos Realizados</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Pedido</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Pagamento</th>
+                                <th>Endereço</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-pedidos-admin"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="javascript/admin.js"></script>
+</body>
+</html>

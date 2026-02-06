@@ -76,7 +76,7 @@
             <a href="Loja.html" class="btn-continue"><i class="fas fa-arrow-left"></i> Continuar Comprando</a>
         </main>
 
-        <aside class="cart-summary">
+<aside class="cart-summary">
             <h2>Resumo do Pedido</h2>
             <div class="summary-details">
                 <div class="summary-line">
@@ -90,7 +90,7 @@
                 </div>
 
                 <div class="shipping-calc">
-                    <select id="bairro-input" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 10px;">
+                    <select id="bairro-input" onchange="calcularFretePorBairro(true)" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 10px;">
                         <option value="">Selecione seu bairro...</option>
                         
                         <optgroup label="Frete R$ 4,00 (Grátis acima de 200)">
@@ -152,120 +152,49 @@
                 <h3>NUTRIR<span>VIDA</span></h3>
                 <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
+
+            <div class="footer-column">
+                <h3>Links rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="Loja.html">Loja</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                    <li><a href="#">Sobre nós</a></li>
+                </ul>
             </div>
+
+            <div class="footer-column">
+                <h3>Informações legais</h3>
+                <ul>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Termos e condições</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Entrega</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Siga-nos</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                <h3>Formas de pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                    <i class="fas fa-mobile-alt" title="Pix"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <script>
-        function carregarCarrinho() {
-            const cartList = document.getElementById('cart-list');
-            const subtotalElement = document.getElementById('subtotal');
-            const finalTotalElement = document.getElementById('final-total');
-
-            if (!cartList) return;
-
-            let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-
-            if (carrinho.length === 0) {
-                cartList.innerHTML = `<div style="text-align:center; padding: 50px;"><p>Seu carrinho está vazio.</p></div>`;
-                subtotalElement.innerText = "R$ 0,00";
-                finalTotalElement.innerText = "R$ 0,00";
-                localStorage.setItem('nutrirVida_frete', 0);
-                return;
-            }
-
-            let subtotal = 0;
-            cartList.innerHTML = carrinho.map((item, index) => {
-                const totalItem = (parseFloat(item.preco) || 0) * (parseInt(item.quantidade) || 1);
-                subtotal += totalItem;
-                return `
-                    <div class="cart-item">
-                        <div class="item-product">
-                            <img src="${item.imagem}" alt="${item.nome}">
-                            <div class="item-info">
-                                <h3>${item.nome}</h3>
-                                <p style="font-size: 0.85rem; color: #666;">Categoria: <strong>${item.categoria || 'Geral'}</strong></p>
-                            </div>
-                        </div>
-                        <div class="item-price">R$ ${parseFloat(item.preco).toFixed(2).replace('.', ',')}</div>
-                        <div class="item-quantity">
-                            <button onclick="alterarQuantidade(${index}, -1)">-</button>
-                            <input type="number" value="${item.quantidade}" readonly>
-                            <button onclick="alterarQuantidade(${index}, 1)">+</button>
-                        </div>
-                        <div class="item-total">R$ ${totalItem.toFixed(2).replace('.', ',')}</div>
-                        <button class="btn-remove" onclick="removerDoCarrinho(${index})"><i class="fas fa-trash"></i></button>
-                    </div>`;
-            }).join('');
-
-            subtotalElement.innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-            
-            // Re-calcula o frete sempre que o carrinho muda (para checar regra de frete grátis)
-            atualizarValoresFinais(subtotal);
-            
-            if (window.atualizarBadgeCarrinho) window.atualizarBadgeCarrinho();
-        }
-
-        function calcularFretePorBairro() {
-            const inputBairro = document.getElementById('bairro-input').value.toLowerCase().trim();
-            if (!inputBairro) {
-                alert("Por favor, selecione um bairro.");
-                return;
-            }
-
-            let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-            const subtotal = carrinho.reduce((acc, item) => acc + (parseFloat(item.preco) * item.quantidade), 0);
-            
-            let valorFrete = -1;
-
-            const grupo4 = ["canaã", "canaãzinho", "bethânia", "jardim vitória", "residencial bethânia"];
-            const grupo7 = ["jardim panorama", "panorama", "caravelas", "veneza 1", "veneza 2", "centro", "cidade nobre", "parque das águas", "planalto 1", "planalto 2", "iguaçu"];
-            const grupo9 = ["limoeiro", "bom jardim", "bairro das águas", "bela vista", "cariru"];
-
-            if (grupo4.includes(inputBairro)) valorFrete = subtotal >= 200 ? 0 : 4.00;
-            else if (grupo7.includes(inputBairro)) valorFrete = subtotal >= 250 ? 0 : 7.00;
-            else if (grupo9.includes(inputBairro)) valorFrete = subtotal >= 250 ? 0 : 9.00;
-
-            if (valorFrete !== -1) {
-                localStorage.setItem('nutrirVida_frete', valorFrete);
-                localStorage.setItem('nutrirVida_bairro', inputBairro);
-                atualizarValoresFinais(subtotal);
-                alert(`Frete calculado! Valor: ${valorFrete === 0 ? 'Grátis' : 'R$ ' + valorFrete.toFixed(2)}`);
-            } else {
-                alert("Bairro não localizado.");
-            }
-        }
-
-        function atualizarValoresFinais(subtotal) {
-            const frete = parseFloat(localStorage.getItem('nutrirVida_frete')) || 0;
-            const shippingDisplay = document.getElementById('shipping-value');
-            const totalDisplay = document.getElementById('final-total');
-
-            if (shippingDisplay) shippingDisplay.innerText = frete === 0 ? "Grátis" : `R$ ${frete.toFixed(2).replace('.', ',')}`;
-            if (totalDisplay) totalDisplay.innerText = `R$ ${(subtotal + frete).toFixed(2).replace('.', ',')}`;
-        }
-
-        function alterarQuantidade(index, delta) {
-            let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-            carrinho[index].quantidade += delta;
-            if (carrinho[index].quantidade < 1) removerDoCarrinho(index);
-            else {
-                localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
-                carregarCarrinho();
-            }
-        }
-
-        function removerDoCarrinho(index) {
-            let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-            carrinho.splice(index, 1);
-            localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
-            carregarCarrinho();
-        }
-
-        document.addEventListener('DOMContentLoaded', carregarCarrinho);
-    </script>
+  
     <script src="javascript/script.js"></script>
 </body>
 </html>

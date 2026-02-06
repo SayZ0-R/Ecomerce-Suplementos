@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+:root {
+    --primary-green: #00FF88;
+    --dark-green: #00CC6D;
+    --sidebar-bg: #111111;
+    --bg-main: #F4F7F6;
+    --text-black: #000000;
+    --white: #FFFFFF;
+    --edit-blue: #4488FF;
+    --delete-red: #FF4444;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* GLOBAL - Previne a barra de rolagem lateral no corpo da página */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+
+html, body { 
+    max-width: 100vw; 
+    overflow-x: hidden; 
+    background-color: var(--bg-main); 
+    color: var(--text-black); 
+}
+
+.admin-layout { display: flex; min-height: 100vh; width: 100%; }
+
+/* SIDEBAR */
+.sidebar {
+    width: 280px;
+    background: var(--sidebar-bg);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    position: fixed;
+    height: 100vh;
+    z-index: 1001;
+    transition: var(--transition);
+}
+
+.sidebar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.sidebar-brand span { color: var(--primary-green); }
+
+.sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
+
+.menu-item {
+    color: #888;
+    text-decoration: none;
+    padding: 15px 20px;
+    border-radius: 12px;
+    transition: var(--transition);
+    display: flex;
+    align-items: center; gap: 15px; font-weight: 600;
+}
+
+.menu-item:hover, .menu-item.active {
+    background: var(--primary-green);
+    color: var(--sidebar-bg);
+}
+
+.menu-divider { height: 1px; background: #333; margin: 20px 0; }
+.logout:hover { background: #ff4444; color: white; }
+
+/* MAIN CONTENT AREA */
+.content-area { 
+    flex: 1; 
+    margin-left: 280px; 
+    padding: 40px; 
+    transition: var(--transition);
+    max-width: calc(100% - 280px); /* Garante que não ultrapasse a tela */
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    gap: 20px;
+}
+
+.header-left { display: flex; align-items: center; gap: 15px; }
+
+/* AJUSTE NOME ADMIN (Sem quebra) */
+.admin-profile { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    white-space: nowrap; /* Garante que o nome fique em uma única frase */
+    flex-shrink: 0;
+}
+
+.admin-name { font-size: 0.95rem; }
+
+.avatar {
+    width: 40px; height: 40px;
+    background: var(--primary-green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: var(--sidebar-bg);
+}
+
+.mobile-toggle {
+    display: none;
+    background: var(--sidebar-bg);
+    color: var(--white);
+    border: none;
+    width: 45px; height: 45px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+/* CARDS DASHBOARD */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 40px; }
+
+.stat-card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center; gap: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.stat-icon {
+    width: 60px; height: 60px;
+    background: #f0f0f0; border-radius: 15px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+}
+.stat-icon.green { color: var(--primary-green); background: #e0fff0; }
+
+/* AJUSTE DO BOTÃO NOVO PRODUTO */
+.section-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.btn-add {
+    background: var(--text-black);
+    color: var(--primary-green);
+    border: none; 
+    padding: 12px 20px; 
+    border-radius: 12px;
+    font-weight: 700; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; gap: 10px;
+    margin-bottom: 10px;
+    transition: transform 0.2s, background 0.3s;
+}
+.btn-add:hover { background: #222; }
+.btn-add:active { transform: scale(0.95); }
+
+/* TABELAS */
+.table-container {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table { width: 100%; border-collapse: collapse; min-width: 650px; }
+
+th { padding: 15px; text-align: left; color: #777; font-size: 0.85rem; border-bottom: 2px solid var(--bg-main); text-transform: uppercase; }
+td { padding: 15px; border-bottom: 1px solid var(--bg-main); font-weight: 600; font-size: 0.95rem; vertical-align: middle; }
+
+/* ESTILIZAÇÃO BOTÕES EDITAR E EXCLUIR */
+.actions-cell { display: flex; gap: 10px; }
+
+.btn-edit, .btn-delete {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.btn-edit {
+    background: #eef4ff;
+    color: var(--edit-blue);
+}
+
+.btn-edit:hover {
+    background: var(--edit-blue);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-delete {
+    background: #fff1f1;
+    color: var(--delete-red);
+}
+
+.btn-delete:hover {
+    background: var(--delete-red);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* SEÇÕES */
+.admin-section { display: none; }
+.admin-section.active { display: block; animation: fadeIn 0.4s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* RESPONSIVIDADE (MOBILE) */
+@media (max-width: 992px) {
+    .sidebar { left: -280px; }
+    .sidebar.active { left: 0; }
+    
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .content-area { 
+        margin-left: 0; 
+        padding: 20px; 
+        max-width: 100%; 
+    }
+    
+    .mobile-toggle { display: block; }
+
+    /* No Mobile, ajustamos o header para não quebrar com o botão toggle */
+    .content-header { gap: 10px; }
+    .admin-name { font-size: 0.85rem; }
+    
+    .btn-text { display: none; } 
+    .btn-add { padding: 12px; margin-bottom: 20px; } 
+    
+    .section-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

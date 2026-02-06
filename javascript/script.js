@@ -45,14 +45,69 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INICIALIZAÇÃO ---
     atualizarBadgeCarrinho();
     carregarPaginaProduto();
+    
+    // Inicia o carrinho se estiver na página dele
+    if (document.getElementById('cart-list')) {
+        carregarCarrinho();
+    }
 });
 
-// --- LÓGICA DO FRETE POR BAIRRO (Para a página Carrinho) ---
-function calcularFretePorBairro() {
-    const inputBairro = document.getElementById('bairro-input').value.toLowerCase().trim();
-    const displayFrete = document.getElementById('shipping-value');
+// --- LÓGICA DO CARRINHO (Desenhar Itens) ---
+function carregarCarrinho() {
+    const cartList = document.getElementById('cart-list');
+    if (!cartList) return;
+
+    let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+
+    if (carrinho.length === 0) {
+        cartList.innerHTML = `<div style="text-align:center; padding: 50px;"><p>Seu carrinho está vazio.</p></div>`;
+        atualizarDisplays(0, 0);
+        return;
+    }
+
+    let subtotal = 0;
+    cartList.innerHTML = carrinho.map((item, index) => {
+        const totalItem = (parseFloat(item.preco) || 0) * (parseInt(item.quantidade) || 1);
+        subtotal += totalItem;
+        return `
+            <div class="cart-item">
+                <div class="item-product">
+                    <img src="${item.imagem}" alt="${item.nome}">
+                    <div class="item-info">
+                        <h3>${item.nome}</h3>
+                        <p style="font-size: 0.85rem; color: #666;">Categoria: <strong>${item.categoria || 'Geral'}</strong></p>
+                    </div>
+                </div>
+                <div class="item-price">R$ ${parseFloat(item.preco).toFixed(2).replace('.', ',')}</div>
+                <div class="item-quantity">
+                    <button onclick="alterarQuantidade(${index}, -1)">-</button>
+                    <input type="number" value="${item.quantidade}" readonly>
+                    <button onclick="alterarQuantidade(${index}, 1)">+</button>
+                </div>
+                <div class="item-total">R$ ${totalItem.toFixed(2).replace('.', ',')}</div>
+                <button class="btn-remove" onclick="removerDoCarrinho(${index})"><i class="fas fa-trash"></i></button>
+            </div>`;
+    }).join('');
+
+    // Tenta recalcular frete se já houver bairro salvo
+    const bairroSalvo = localStorage.getItem('nutrirVida_bairro');
+    if (bairroSalvo) {
+        const input = document.getElementById('bairro-input');
+        if(input) input.value = bairroSalvo;
+        calcularFretePorBairro(true); 
+    } else {
+        atualizarDisplays(subtotal, 0);
+    }
+}
+
+// --- LÓGICA DO FRETE POR BAIRRO ---
+function calcularFretePorBairro(silencioso = false) {
+    const inputElement = document.getElementById('bairro-input');
+    if (!inputElement) return;
+
+    const inputBairro = inputElement.value.toLowerCase().trim();
     const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+    const subtotal = carrinho.reduce((acc, item) => acc + (parseFloat(item.preco) * item.quantidade), 0);
 
     let valorFrete = -1;
 
@@ -67,14 +122,44 @@ function calcularFretePorBairro() {
     if (valorFrete !== -1) {
         localStorage.setItem('nutrirVida_frete', valorFrete);
         localStorage.setItem('nutrirVida_bairro', inputBairro);
-        if (displayFrete) displayFrete.innerText = valorFrete === 0 ? "Grátis" : `R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
-        // Se houver uma função de atualizar total na página de carrinho, chame-a aqui
-    } else {
+        atualizarDisplays(subtotal, valorFrete);
+        if (!silencioso) alert("Frete calculado com sucesso!");
+    } else if (inputBairro !== "") {
         alert("Bairro não encontrado na lista de entregas.");
     }
 }
 
-// --- LÓGICA DO CARRINHO ---
+// Auxiliar para atualizar valores na tela
+function atualizarDisplays(subtotal, frete) {
+    const subtotalEl = document.getElementById('subtotal');
+    const freteEl = document.getElementById('shipping-value');
+    const totalEl = document.getElementById('final-total');
+
+    if (subtotalEl) subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+    if (freteEl) freteEl.innerText = frete === 0 ? "Grátis" : `R$ ${frete.toFixed(2).replace('.', ',')}`;
+    if (totalEl) totalEl.innerText = `R$ ${(subtotal + frete).toFixed(2).replace('.', ',')}`;
+}
+
+function alterarQuantidade(index, delta) {
+    let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    carrinho[index].quantidade += delta;
+    if (carrinho[index].quantidade < 1) {
+        removerDoCarrinho(index);
+    } else {
+        localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
+        carregarCarrinho();
+        atualizarBadgeCarrinho();
+    }
+}
+
+function removerDoCarrinho(index) {
+    let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    carrinho.splice(index, 1);
+    localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
+    carregarCarrinho();
+    atualizarBadgeCarrinho();
+}
+
 function adicionarAoCarrinho(produto) {
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
     const index = carrinho.findIndex(item => item.id === produto.id);
@@ -107,7 +192,7 @@ function atualizarBadgeCarrinho() {
     }
 }
 
-// --- PÁGINA DE PRODUTO ---
+// --- PÁGINA DE PRODUTO & ABAS ---
 function carregarPaginaProduto() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
