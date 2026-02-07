@@ -276,3 +276,9 @@
 .user-profile-card h3 {
     color: #000;
 }
+
+.orders-container p {
+    color: #000 !important;
+    font-size: 1rem;
+    margin-top: 20px;
+}

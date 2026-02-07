@@ -253,3 +253,80 @@ async function acessarPerfil() {
         window.location.href = 'perfil.html';
     }
 }
+
+// --- CARREGAMENTO DINÂMICO DA INDEX ---
+
+async function carregarConteudoIndex() {
+    await carregarBannerPromocional();
+    await carregarDestaquesMaisVendidos();
+}
+
+// 1. Busca o Banner Configurado no Admin
+async function carregarBannerPromocional() {
+    const bannerContainer = document.getElementById('banner-dinamico');
+    if (!bannerContainer) return;
+
+    const { data, error } = await _supabase
+        .from('configuracoes_site')
+        .select('*')
+        .eq('chave', 'banner_principal')
+        .single();
+
+    if (error || !data) return;
+
+    bannerContainer.innerHTML = `
+        <div class="promo-banner" style="background-image: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('${data.imagem_url}');">
+            <div class="promo-content">
+                <span class="promo-badge">OFERTA ESPECIAL</span>
+                <h2 class="promo-title">${data.titulo}</h2>
+                <p class="promo-subtitle">${data.descricao} - <strong>R$ ${parseFloat(data.preco).toFixed(2)}</strong></p>
+                <a href="Loja.html" class="promo-button">
+                    Aproveitar Agora <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+// 2. Busca Produtos marcados como "Mais Vendido"
+async function carregarDestaquesMaisVendidos() {
+    const vitrine = document.getElementById('vitrine-mais-vendidos');
+    if (!vitrine) return;
+
+    const { data: produtos, error } = await _supabase
+        .from('produtos')
+        .select('*')
+        .eq('mais_vendido', true)
+        .limit(4); // Mostra os 4 primeiros mais vendidos
+
+    if (error || !produtos) return;
+
+    vitrine.innerHTML = produtos.map(p => `
+        <article class="product-card">
+            <div class="product-image">
+                <img src="${p.imagem_url}" alt="${p.nome}">
+            </div>
+            <div class="product-info">
+                <span class="product-category">${p.categoria}</span>
+                <h3 class="product-title">${p.nome}</h3>
+                <div class="product-rating">
+                    <span class="star">⭐</span>
+                    <span class="rating-value">4.9</span>
+                    <span class="reviews">(Novo)</span>
+                </div>
+                <div class="product-price-container">
+                    <div class="prices">
+                        ${p.preco_antigo ? `<span class="old-price">R$ ${p.preco_antigo.toFixed(2)}</span>` : ''}
+                        <span class="current-price">R$ ${p.preco.toFixed(2)}</span>
+                    </div>
+                    <button class="btn-cart" onclick="adicionarAoCarrinho(${p.id})" aria-label="Adicionar ao carrinho">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                </div>
+            </div>
+        </article>
+    `).join('');
+}
+
+// Inicia o carregamento ao abrir a página
+document.addEventListener('DOMContentLoaded', carregarConteudoIndex);

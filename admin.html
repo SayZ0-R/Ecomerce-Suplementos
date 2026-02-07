@@ -7,7 +7,26 @@
     <title>Painel Admin - NutrirVida</title>
     <link rel="stylesheet" href="Styles/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .badge-destaque { background: #ffc107; color: #000; padding: 2px 5px; border-radius: 4px; font-size: 10px; }
+        .btn-whats { background: #25d366; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-whats:hover { background: #128c7e; }
+        .status-select { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        
+        /* Estilo para os novos inputs de arquivo */
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9f9f9;
+            transition: 0.3s;
+        }
+        .upload-area:hover { border-color: #000; background: #f0f0f0; }
+        .file-name-display { display: block; margin-top: 5px; font-size: 12px; color: #666; }
+        input[type="file"] { display: none; }
+    </style>
 </head>
 
 <body>
@@ -29,6 +48,9 @@
                 </a>
                 <a href="#" class="menu-item" onclick="mostrarSecao('pedidos')">
                     <i class="fas fa-shopping-cart"></i> Pedidos Recebidos
+                </a>
+                <a href="#" class="menu-item" onclick="mostrarSecao('banners')">
+                    <i class="fas fa-ad"></i> Banner Promocional
                 </a>
                 <div class="menu-divider"></div>
                 <a href="index.html" class="menu-item logout">
@@ -58,14 +80,14 @@
                         <div class="stat-icon"><i class="fas fa-wallet"></i></div>
                         <div class="stat-info">
                             <p>Vendas do Mês</p>
-                            <h2>R$ 4.580,00</h2>
+                            <h2 id="stats-vendas">R$ 0,00</h2>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon green"><i class="fas fa-truck-loading"></i></div>
                         <div class="stat-info">
                             <p>Pedidos Pendentes</p>
-                            <h2>12</h2>
+                            <h2 id="stats-pendentes">0</h2>
                         </div>
                     </div>
                 </div>
@@ -85,78 +107,13 @@
                             <tr>
                                 <th>Produto</th>
                                 <th>Preço</th>
-                                <th>Estoque</th>
+                                <th>Destaque</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="lista-produtos-admin">
-                        </tbody>
+                        <tbody id="lista-produtos-admin"></tbody>
                     </table>
-                </div>
-
-                <div id="modal-produto" class="modal-overlay">
-                    <div class="modal-content modal-large">
-                        <div class="modal-header">
-                            <h2 id="modal-titulo">Configurar Produto</h2>
-                            <button class="btn-close-modal" onclick="fecharModalProduto()">&times;</button>
-                        </div>
-
-                        <form id="form-produto" onsubmit="salvarNovoProduto(event)">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Nome do Produto</label>
-                                    <input type="text" id="prod-nome" placeholder="Ex: Whey Protein Premium" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Categoria</label>
-                                    <select id="prod-categoria" required>
-                                        <option value="proteinas">Proteínas</option>
-                                        <option value="creatina">Creatina</option>
-                                        <option value="pre-treino">Pré-Treino</option>
-                                        <option value="vitaminas">Vitaminas</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Preço Atual (R$)</label>
-                                    <input type="number" id="prod-preco" step="0.01" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Estoque Inicial</label>
-                                    <input type="number" id="prod-estoque" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Imagem do Produto</label>
-                                <div class="upload-container">
-                                    <label for="prod-imagem" class="btn-upload">
-                                        <i class="fas fa-image"></i> Inserir Imagem
-                                    </label>
-                                    <input type="file" id="prod-imagem" accept="image/*"
-                                        onchange="mostrarNomeArquivo()">
-                                    <span id="nome-arquivo">Nenhuma imagem selecionada</span>
-                                </div>
-                            </div>
-
-                            <hr class="modal-divider">
-
-                            <div class="form-group">
-                                <label><i class="fas fa-align-left"></i> Descrição do Produto</label>
-                                <textarea id="prod-descricao" rows="4"
-                                    placeholder="Descreva o produto, tabela nutricional e como usar..."></textarea>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancelar"
-                                    onclick="fecharModalProduto()">Cancelar</button>
-                                <button type="submit" class="btn-salvar">Salvar Produto</button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
             </section>
 
@@ -166,26 +123,121 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>ID Pedido</th>
+                                <th>Data</th>
                                 <th>Cliente</th>
                                 <th>Total</th>
-                                <th>Pagamento</th>
-                                <th>Endereço</th>
+                                <th>Status</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="lista-pedidos-admin"></tbody>
                     </table>
                 </div>
             </section>
+
+            <section id="sec-banners" class="admin-section">
+                <h2>Gerenciar Banner Inicial</h2>
+                <div class="card-config">
+                    <form id="form-banner" onsubmit="atualizarBanner(event)">
+                        <div class="form-group">
+                            <label>Imagem do Banner</label>
+                            <label for="banner-upload" class="upload-area">
+                                <i class="fas fa-cloud-upload-alt"></i> Selecionar Imagem do Banner
+                                <input type="file" id="banner-upload" accept="image/*" onchange="document.getElementById('banner-file-name').innerText = this.files[0].name">
+                                <span id="banner-file-name" class="file-name-display">Nenhuma imagem selecionada</span>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Título da Promoção</label>
+                                <input type="text" id="banner-titulo" placeholder="Ex: Combo Whey + Creatina">
+                            </div>
+                            <div class="form-group">
+                                <label>Preço Combo (R$)</label>
+                                <input type="number" id="banner-preco" step="0.01">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrição Curta</label>
+                            <textarea id="banner-desc" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn-salvar">Atualizar Banner no Site</button>
+                    </form>
+                </div>
+            </section>
         </main>
     </div>
 
-    <script src="javascript/admin.js"></script>
-    
+    <div id="modal-produto" class="modal-overlay">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="modal-titulo">Configurar Produto</h2>
+                <button class="btn-close-modal" onclick="fecharModalProduto()">&times;</button>
+            </div>
+
+            <form id="form-produto" onsubmit="salvarNovoProduto(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome do Produto</label>
+                        <input type="text" id="prod-nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="prod-categoria">
+                            <option value="proteinas">Proteínas</option>
+                            <option value="creatina">Creatina</option>
+                            <option value="bcaa">BCAA</option>
+                            <option value="pre-treino">Pré-Treino</option>
+                            <option value="vitaminas">Vitaminas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Configurações de Vitrine</label>
+                        <div style="display: flex; gap: 20px; padding-top: 10px;">
+                            <label><input type="checkbox" id="prod-mais-vendido"> Mais Vendido</label>
+                            <label><input type="checkbox" id="prod-promocao"> Em Promoção</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Preço Atual (R$)</label>
+                        <input type="number" id="prod-preco" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço Antigo (Para Promoção)</label>
+                        <input type="number" id="prod-preco-antigo" step="0.01">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagem do Produto</label>
+                    <label for="prod-upload" class="upload-area">
+                        <i class="fas fa-image"></i> Escolher Foto do Produto
+                        <input type="file" id="prod-upload" accept="image/*" onchange="document.getElementById('prod-file-name').innerText = this.files[0].name">
+                        <span id="prod-file-name" class="file-name-display">Nenhuma imagem selecionada</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="prod-descricao" rows="3"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancelar" onclick="fecharModalProduto()">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Salvar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="javascript/database.js"></script>
-
     <script src="javascript/admin.js"></script>
 </body>
 

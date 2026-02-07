@@ -8,6 +8,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="Styles/perfil.css">
+    <style>
+        /* Estilos específicos para os Cards de Pedidos */
+        .order-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f9f9f9;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .order-id { font-weight: bold; color: #333; }
+        .order-date { font-size: 0.85rem; color: #888; }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        /* Cores dos Status */
+        .status-pendente { background: #fff3cd; color: #856404; }
+        .status-aprovado { background: #d4edda; color: #155724; }
+        .status-enviado { background: #cce5ff; color: #004085; }
+        .status-finalizado { background: #d1d1d1; color: #333; }
+        .status-cancelado { background: #f8d7da; color: #721c24; }
+
+        .order-details p { margin: 5px 0; font-size: 0.9rem; }
+        .order-items { color: #555; font-style: italic; }
+    </style>
 </head>
 
 <body>
@@ -97,7 +136,7 @@
                             <input type="text" id="api-cpf" readonly class="readonly" style="background-color: #f4f4f4; cursor: not-allowed;">
                         </div>
                         <div class="input-group">
-                            <label>Data de Nascimento (Não editável)</label>
+                            <label>Data de Nascimento</label>
                             <input type="date" id="api-nascimento" readonly class="readonly" style="background-color: #f4f4f4; cursor: not-allowed;">
                         </div>
                     </div>
@@ -105,58 +144,45 @@
                 </form>
             </section>
 
-            <section id="minhas-compras" class="tab-content">
+            <section id="minhas-compras" class="tab-content" style="display: none;">
                 <h2>Minhas Compras</h2>
-                <div class="orders-container">
-                    <p>Você ainda não possui pedidos realizados.</p>
+                <div class="orders-container" id="lista-pedidos">
+                    <p>Carregando seus pedidos...</p>
                 </div>
             </section>
         </main>
     </div>
 
-       <footer class="main-footer">
+     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
-                <h3>NUTRIR<span>VIDA</span></h3>
-                <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
+                <h3>FitSuplementos</h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos de qualidade premium.</p>
             </div>
-
             <div class="footer-column">
                 <h3>Links rápidos</h3>
                 <ul>
                     <li><a href="index.html">Início</a></li>
                     <li><a href="Loja.html">Loja</a></li>
                     <li><a href="contato.html">Contato</a></li>
-                    <li><a href="#">Sobre nós</a></li>
                 </ul>
             </div>
-
             <div class="footer-column">
                 <h3>Informações legais</h3>
                 <ul>
-                    <li><a href="#">Termos de uso</a></li>
-                    <li><a href="#">Termos e condições</a></li>
-                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="#">Privacidade</a></li>
+                    <li><a href="#">Termos</a></li>
                     <li><a href="#">Entrega</a></li>
                 </ul>
             </div>
-
             <div class="footer-column">
                 <h3>Siga-nos</h3>
                 <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                </div>
-                <h3>Formas de pagamento</h3>
-                <div class="payment-icons">
-                    <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
-                    <i class="fas fa-mobile-alt" title="Pix"></i>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
-
         <div class="footer-bottom">
             <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
         </div>
@@ -197,7 +223,7 @@
             evt.currentTarget.classList.add("active");
         }
 
-        // CARREGAR DADOS DO PERFIL
+        // CARREGAR DADOS DO PERFIL E PEDIDOS
         async function carregarDadosPerfil() {
             const { data: { user }, error } = await _supabase.auth.getUser();
 
@@ -209,6 +235,7 @@
 
             const meta = user.user_metadata;
 
+            // Preenche Interface
             if(document.getElementById('display-user-name')) 
                 document.getElementById('display-user-name').innerText = meta.full_name || "Usuário";
             
@@ -218,13 +245,11 @@
             if(document.getElementById('api-email')) 
                 document.getElementById('api-email').value = user.email || "";
 
-            // Aplicando Máscara de Telefone ao carregar
             if(document.getElementById('api-telefone')) {
                 let tel = meta.telefone || "";
                 document.getElementById('api-telefone').value = tel.length >= 10 ? formatarTelefone(tel) : tel;
             }
 
-            // Aplicando Máscara de CPF ao carregar
             if(document.getElementById('api-cpf')) {
                 let cpf = meta.cpf || "";
                 document.getElementById('api-cpf').value = cpf.length === 11 ? formatarCPF(cpf) : cpf;
@@ -232,6 +257,61 @@
 
             if(document.getElementById('api-nascimento')) 
                 document.getElementById('api-nascimento').value = meta.nascimento || "";
+
+            // Chama a função para carregar os pedidos
+            buscarPedidosDoUsuario(user.email);
+        }
+
+        // BUSCAR PEDIDOS NO SUPABASE
+        async function buscarPedidosDoUsuario(email) {
+            const container = document.getElementById('lista-pedidos');
+            
+            const { data: pedidos, error } = await _supabase
+                .from('pedidos')
+                .select('*')
+                .eq('cliente_email', email)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = "<p>Erro ao carregar pedidos.</p>";
+                return;
+            }
+
+            if (pedidos.length === 0) {
+                container.innerHTML = "<p>Você ainda não possui pedidos realizados.</p>";
+                return;
+            }
+
+            container.innerHTML = pedidos.map(pedido => {
+                const data = new Date(pedido.created_at).toLocaleDateString('pt-BR');
+                
+                // Lógica de classe CSS baseada no status
+                let statusClass = 'status-pendente';
+                const s = pedido.status.toLowerCase();
+                if(s.includes('aprovado') || s.includes('pago')) statusClass = 'status-aprovado';
+                if(s.includes('enviado') || s.includes('rota')) statusClass = 'status-enviado';
+                if(s.includes('finalizado') || s.includes('entregue')) statusClass = 'status-finalizado';
+                if(s.includes('cancelado')) statusClass = 'status-cancelado';
+
+                // Formata os itens para exibição
+                const nomesItens = pedido.itens.map(i => `${i.quantidade}x ${i.nome}`).join(', ');
+
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Pedido #${pedido.id.toString().slice(-5)}</div>
+                                <div class="order-date">Realizado em ${data}</div>
+                            </div>
+                            <span class="status-badge ${statusClass}">${pedido.status}</span>
+                        </div>
+                        <div class="order-details">
+                            <p class="order-items"><strong>Produtos:</strong> ${nomesItens}</p>
+                            <p><strong>Total:</strong> R$ ${parseFloat(pedido.total).toFixed(2).replace('.', ',')}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // SALVAR ALTERAÇÕES
@@ -244,7 +324,6 @@
 
             const novoNome = document.getElementById('api-nome').value;
             const novoEmail = document.getElementById('api-email').value;
-            // Remove a máscara antes de salvar o telefone para manter o banco limpo apenas com números
             const novoTelefone = document.getElementById('api-telefone').value.replace(/\D/g, "");
 
             const { error: errorMeta } = await _supabase.auth.updateUser({
@@ -266,7 +345,6 @@
             btn.disabled = false;
         });
 
-        // Evento para aplicar máscara em tempo real enquanto o usuário digita no telefone
         document.getElementById('api-telefone').addEventListener('input', (e) => {
             e.target.value = formatarTelefone(e.target.value);
         });

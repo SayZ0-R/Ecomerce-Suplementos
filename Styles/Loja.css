@@ -297,3 +297,8 @@ body.loja-page {
         margin-bottom: 30px;
     }
 }
+
+#contador-produtos {
+    color: #000;
+    font-weight: 500; /* Deixa um pouco mais visível, opcional */
+}

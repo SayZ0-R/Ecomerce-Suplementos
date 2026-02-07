@@ -4,7 +4,7 @@ const SUPABASE_KEY = 'sb_publishable_qVyBTyr2S5dj97i2w9vj9g_8zLkqn5Z';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // CENTRALIZADO: Mude o e-mail do dono aqui
-const EMAIL_ADMIN = 'seu-email-admin@teste.com'; 
+const EMAIL_ADMIN = 'marquespk98@gmail.com'; 
 
 async function checarNivelAcesso() {
     try {
