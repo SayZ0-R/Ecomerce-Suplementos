@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Cadastro - NutrirVida</title>
+    <link rel="stylesheet" href="Styles/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+    <div class="bg-overlay"></div>
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <div class="auth-brand">
+                <a href="index.html"><span>NUTRIR</span>VIDA</a>
+            </div>
+
+            <div class="auth-tabs">
+                <button id="btn-tab-login" class="tab-btn active" onclick="alternarTab('login')">Entrar</button>
+                <button id="btn-tab-cad" class="tab-btn" onclick="alternarTab('cadastro')">Criar Conta</button>
+            </div>
+
+            <form id="form-login" class="auth-form active">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> E-mail</label>
+                    <input type="email" id="login-email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="login-senha" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">ACESSAR MINHA CONTA</button>
+            </form>
+
+            <form id="form-cadastro" class="auth-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nome Completo</label>
+                    <input type="text" id="cad-nome" placeholder="Seu nome" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> E-mail</label>
+                    <input type="email" id="cad-email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <button type="submit" class="btn-primary">CRIAR MINHA CONTA</button>
+            </form>
+
+            <div class="auth-footer">
+                <a href="index.html"><i class="fas fa-arrow-left"></i> Voltar para a loja</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="javascript/database.js"></script>
+    <script src="javascript/login.js"></script>
+    <script src=""></script>
+    <script src="javascript/database.js"></script>
+</body>
+
+</html>

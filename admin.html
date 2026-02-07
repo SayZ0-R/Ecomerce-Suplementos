@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
 
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMenu()"></div>
@@ -17,7 +19,7 @@
             <div class="sidebar-brand">
                 <span>NUTRIR</span>VIDA
             </div>
-            
+
             <nav class="sidebar-menu">
                 <a href="#" class="menu-item active" onclick="mostrarSecao('dashboard')">
                     <i class="fas fa-chart-line"></i> Dashboard
@@ -43,7 +45,7 @@
                     </button>
                     <h1 id="secao-titulo">Painel de Controle</h1>
                 </div>
-                
+
                 <div class="admin-profile">
                     <span class="admin-name">Olá, <strong>Admin</strong></span>
                     <div class="avatar">A</div>
@@ -76,7 +78,7 @@
                         <i class="fas fa-plus"></i> <span class="btn-text">Novo Produto</span>
                     </button>
                 </div>
-                
+
                 <div class="table-container">
                     <table>
                         <thead>
@@ -89,18 +91,72 @@
                             </tr>
                         </thead>
                         <tbody id="lista-produtos-admin">
-                            <tr>
-                                <td>Whey Protein Isolado</td>
-                                <td>R$ 149,90</td>
-                                <td>25 un</td>
-                                <td><span class="badge badge-success">Em promoção</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div id="modal-produto" class="modal-overlay">
+                    <div class="modal-content modal-large">
+                        <div class="modal-header">
+                            <h2 id="modal-titulo">Configurar Produto</h2>
+                            <button class="btn-close-modal" onclick="fecharModalProduto()">&times;</button>
+                        </div>
+
+                        <form id="form-produto">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome do Produto</label>
+                                    <input type="text" id="prod-nome" placeholder="Ex: Whey Protein Premium" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Categoria</label>
+                                    <select id="prod-categoria" required>
+                                        <option value="proteinas">Proteínas</option>
+                                        <option value="creatina">Creatina</option>
+                                        <option value="pre-treino">Pré-Treino</option>
+                                        <option value="vitaminas">Vitaminas</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Preço Atual (R$)</label>
+                                    <input type="number" id="prod-preco" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Estoque Inicial</label>
+                                    <input type="number" id="prod-estoque" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Imagem do Produto</label>
+                                <div class="upload-container">
+                                    <label for="prod-imagem" class="btn-upload">
+                                        <i class="fas fa-image"></i> Inserir Imagem
+                                    </label>
+                                    <input type="file" id="prod-imagem" accept="image/*"
+                                        onchange="mostrarNomeArquivo()">
+                                    <span id="nome-arquivo">Nenhuma imagem selecionada</span>
+                                </div>
+                            </div>
+
+                            <hr class="modal-divider">
+
+                            <div class="form-group">
+                                <label><i class="fas fa-align-left"></i> Descrição do Produto</label>
+                                <textarea id="prod-descricao" rows="4"
+                                    placeholder="Descreva o produto, tabela nutricional e como usar..."></textarea>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn-cancelar"
+                                    onclick="fecharModalProduto()">Cancelar</button>
+                                <button type="submit" class="btn-salvar">Salvar Produto</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </section>
 
@@ -126,4 +182,5 @@
 
     <script src="javascript/admin.js"></script>
 </body>
+
 </html>
