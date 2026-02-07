@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login & Cadastro - NutrirVida</title>
     <link rel="stylesheet" href="Styles/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 
     <div class="bg-overlay"></div>
@@ -22,7 +19,7 @@
 
             <div class="auth-tabs">
                 <button id="btn-tab-login" class="tab-btn active" onclick="alternarTab('login')">Entrar</button>
-                <button id="btn-tab-cad" class="tab-btn" onclick="alternarTab('cadastro')">Criar Conta</button>
+                <button id="btn-tab-cad" class="tab-btn" onclick="alternarTab('cad')">Criar Conta</button>
             </div>
 
             <form id="form-login" class="auth-form active">
@@ -47,6 +44,18 @@
                     <input type="email" id="cad-email" placeholder="seu@email.com" required>
                 </div>
                 <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Telefone</label>
+                    <input type="text" id="cad-telefone" placeholder="(00) 00000-0000" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> CPF</label>
+                    <input type="text" id="cad-cpf" placeholder="000.000.000-00" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt"></i> Data de Nascimento</label>
+                    <input type="date" id="cad-nascimento" required>
+                </div>
+                <div class="form-group">
                     <label><i class="fas fa-lock"></i> Senha</label>
                     <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" required>
                 </div>
@@ -59,10 +68,9 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="javascript/database.js"></script>
     <script src="javascript/login.js"></script>
-    <script src=""></script>
-    <script src="javascript/database.js"></script>
-</body>
 
+</body>
 </html>

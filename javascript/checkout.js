@@ -1,105 +1,57 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Atualiza o valor total logo ao carregar
+    // --- TRAVA DE SEGURANÇA CHECKOUT ---
+    const nivel = await checarNivelAcesso();
+    if (!nivel) {
+        alert("Faça login para finalizar sua compra.");
+        window.location.replace('login.html');
+        return;
+    }
+
     atualizarTotalCheckout();
-
     const form = document.getElementById('form-checkout');
-    const divCartao = document.getElementById('dados-cartao');
 
-    // 2. Lógica para mostrar/esconder campos de cartão
-    document.getElementsByName('metodo-pagamento').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            if (e.target.value === 'cartao') {
-                divCartao.classList.remove('hidden');
-            } else {
-                divCartao.classList.add('hidden');
-            }
-        });
-    });
-
-    // 3. Evento de envio do formulário (Finalizar Compra)
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Bloqueia o botão para evitar cliques duplos
-        const btnFinalizar = form.querySelector('button[type="submit"]');
-        btnFinalizar.innerText = "Processando...";
-        btnFinalizar.disabled = true;
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.innerText = "Enviando...";
 
-        // Pegar dados do localStorage
         const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-        const frete = parseFloat(localStorage.getItem('nutrirVida_frete')) || 0;
-
-        if (carrinho.length === 0) {
-            alert("Seu carrinho está vazio!");
-            window.location.href = 'index.html';
-            return;
-        }
-
-        // Calcular total novamente por segurança
-        const subtotal = carrinho.reduce((acc, item) => acc + (parseFloat(item.preco) * item.quantidade), 0);
-        const totalGeral = subtotal + frete;
-
-        // Montar o objeto do pedido para o Banco de Dados
         const pedido = {
             cliente_nome: document.getElementById('nome-completo').value,
-            cliente_email: document.getElementById('email').value, // Certifique-se que o ID no HTML é 'email'
-            whatsapp: document.getElementById('whatsapp').value,   // Certifique-se que o ID no HTML é 'whatsapp'
-            endereco: `${document.getElementById('rua').value}, ${document.getElementById('numero').value} - ${localStorage.getItem('nutrirVida_bairro')}`,
-            itens: carrinho, // O Supabase salva o array como JSON automaticamente
-            subtotal: subtotal,
-            frete: frete,
-            total: totalGeral,
-            metodo_pagamento: document.querySelector('input[name="metodo-pagamento"]:checked').value,
-            status: 'Pendente',
-            created_at: new Date().toISOString()
+            cliente_email: document.getElementById('email').value,
+            whatsapp: document.getElementById('whatsapp').value,
+            endereco: `${document.getElementById('rua').value}, ${document.getElementById('numero').value}`,
+            itens: carrinho,
+            total: parseFloat(localStorage.getItem('nutrirVida_total')) || 0,
+            status: 'Pendente'
         };
 
-        try {
-            // --- ENVIO PARA O SUPABASE ---
-            const { data, error } = await _supabase
-                .from('pedidos')
-                .insert([pedido]);
-
-            if (error) throw error;
-
-            // --- SUCESSO ---
-            console.log("Pedido salvo no banco:", data);
-            alert("Pedido enviado com sucesso! Aguarde nosso contato via WhatsApp.");
-
-            // Limpeza pós-compra
-            localStorage.removeItem('nutrirVida_cart');
-            localStorage.removeItem('nutrirVida_frete');
-            localStorage.removeItem('nutrirVida_bairro');
-            
+        const { error } = await _supabase.from('pedidos').insert([pedido]);
+        if (!error) {
+            alert("Pedido realizado!");
+            localStorage.clear();
             window.location.href = 'index.html';
-
-        } catch (error) {
-            console.error("Erro ao salvar pedido:", error);
-            alert("Erro ao processar pedido: " + error.message);
-            btnFinalizar.innerText = "FINALIZAR COMPRA";
-            btnFinalizar.disabled = false;
+        } else {
+            alert("Erro: " + error.message);
+            btn.disabled = false;
         }
     });
 });
 
-// Função para calcular e exibir o total na tela de checkout
+// 1. Defina a função fora do DOMContentLoaded para estar disponível
 function atualizarTotalCheckout() {
-    const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    const campoTotal = document.getElementById('total-final-checkout');
-    const freteSalvo = parseFloat(localStorage.getItem('nutrirVida_frete')) || 0;
-
-    if (carrinho.length === 0) {
-        if (campoTotal) campoTotal.innerText = "R$ 0,00";
-        return;
-    }
-
-    const subtotalProdutos = carrinho.reduce((acc, item) => {
-        return acc + (parseFloat(item.preco) * parseInt(item.quantidade));
-    }, 0);
-
-    const totalGeral = subtotalProdutos + freteSalvo;
-
-    if (campoTotal) {
-        campoTotal.innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+    const total = localStorage.getItem('nutrirVida_total') || "0.00";
+    const elementoTotal = document.getElementById('total-final-checkout');
+    if (elementoTotal) {
+        elementoTotal.innerText = `R$ ${parseFloat(total).toFixed(2).replace('.', ',')}`;
     }
 }
+
+// 2. Chame ela IMEDIATAMENTE no início do carregamento
+atualizarTotalCheckout();
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // 3. Depois você faz as verificações lentas (Supabase/Segurança)
+    const nivel = await checarNivelAcesso();
+    // ... restante do código
+});

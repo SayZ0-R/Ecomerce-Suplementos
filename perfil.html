@@ -33,19 +33,18 @@
                 </a>
 
                 <div class="profile-container">
-                    <a href="#" aria-label="Minha conta" class="profile-icon">
+                    <a href="javascript:void(0)" class="profile-icon">
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
                         <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
                         <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
-                        
                         <li class="dropdown-divider"></li>
-                        <li><a href="logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="javascript:void(0)" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -54,14 +53,12 @@
     </nav>
 
     <div class="container profile-layout">
-
         <aside class="profile-sidebar-container">
-
             <div class="user-profile-card">
                 <div class="user-avatar-main">
                     <i class="fas fa-user"></i>
                 </div>
-                <h3 id="display-user-name">João Silva</h3>
+                <h3 id="display-user-name">Carregando...</h3>
             </div>
 
             <section class="side-nav">
@@ -72,25 +69,24 @@
                     <i class="fas fa-shopping-bag"></i> Minhas Compras
                 </button>
                 <div class="nav-divider"></div>
-                <a href="logout.php" class="nav-link logout-link">
+                <a href="javascript:void(0)" onclick="deslogar()" class="nav-link logout-link">
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </a>
             </section>
         </aside>
 
         <main class="profile-content">
-
             <section id="meus-dados" class="tab-content active">
                 <h2>Meus Dados</h2>
-                <form class="profile-form">
+                <form class="profile-form" id="form-perfil">
                     <div class="form-grid">
                         <div class="input-group">
                             <label>Nome Completo</label>
-                            <input type="text" id="api-nome" value="João Silva">
+                            <input type="text" id="api-nome" placeholder="Seu nome">
                         </div>
                         <div class="input-group">
                             <label>E-mail</label>
-                            <input type="email" id="api-email" value="joao@email.com">
+                            <input type="email" id="api-email" placeholder="seu@email.com">
                         </div>
                         <div class="input-group">
                             <label>Telefone</label>
@@ -98,11 +94,11 @@
                         </div>
                         <div class="input-group">
                             <label>CPF</label>
-                            <input type="text" id="api-cpf" value="***.***.***-**" readonly class="readonly">
+                            <input type="text" id="api-cpf" readonly class="readonly" style="background-color: #f4f4f4; cursor: not-allowed;">
                         </div>
                         <div class="input-group">
-                            <label>Data de Nascimento</label>
-                            <input type="date" id="api-nascimento">
+                            <label>Data de Nascimento (Não editável)</label>
+                            <input type="date" id="api-nascimento" readonly class="readonly" style="background-color: #f4f4f4; cursor: not-allowed;">
                         </div>
                     </div>
                     <button type="submit" class="btn-save-changes">Salvar Alterações</button>
@@ -112,45 +108,13 @@
             <section id="minhas-compras" class="tab-content">
                 <h2>Minhas Compras</h2>
                 <div class="orders-container">
-                    <div class="order-item">
-                        <div class="order-header" onclick="toggleOrder(this)">
-                            <div class="order-info-summary">
-                                <strong>Pedido #12345</strong>
-                                <span>15/01/2026</span>
-                                <span class="order-price">R$ 249,90</span>
-                            </div>
-                            <i class="fas fa-chevron-down arrow-btn"></i>
-                        </div>
-                        <div class="order-body">
-                            <div class="order-status-box">
-                                <p>Status: <span class="status-badge entregue">Entregue</span></p>
-                                <p>O seu pedido já foi entregue ao destinatário.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="order-item">
-                        <div class="order-header" onclick="toggleOrder(this)">
-                            <div class="order-info-summary">
-                                <strong>Pedido #12346</strong>
-                                <span>28/01/2026</span>
-                                <span class="order-price">R$ 180,00</span>
-                            </div>
-                            <i class="fas fa-chevron-down arrow-btn"></i>
-                        </div>
-                        <div class="order-body">
-                            <div class="order-status-box">
-                                <p>Status: <span class="status-badge caminho">A caminho</span></p>
-                                <p>O pedido está com a transportadora.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <p>Você ainda não possui pedidos realizados.</p>
                 </div>
             </section>
         </main>
     </div>
 
-    <footer class="main-footer">
+       <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
                 <h3>NUTRIR<span>VIDA</span></h3>
@@ -198,9 +162,27 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="javascript/database.js"></script>
+    <script src="javascript/script.js"></script>
+
     <script>
+        // Funções de Máscara
+        function formatarCPF(v) {
+            v = v.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        }
+
+        function formatarTelefone(v) {
+            v = v.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            return v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        }
+
+        // Alternar entre abas
         function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
+            let i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tab-content");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
@@ -215,13 +197,86 @@
             evt.currentTarget.classList.add("active");
         }
 
-        function toggleOrder(element) {
-            element.parentElement.classList.toggle("open");
+        // CARREGAR DADOS DO PERFIL
+        async function carregarDadosPerfil() {
+            const { data: { user }, error } = await _supabase.auth.getUser();
+
+            if (error || !user) {
+                localStorage.clear();
+                window.location.replace('login.html');
+                return;
+            }
+
+            const meta = user.user_metadata;
+
+            if(document.getElementById('display-user-name')) 
+                document.getElementById('display-user-name').innerText = meta.full_name || "Usuário";
+            
+            if(document.getElementById('api-nome')) 
+                document.getElementById('api-nome').value = meta.full_name || "";
+
+            if(document.getElementById('api-email')) 
+                document.getElementById('api-email').value = user.email || "";
+
+            // Aplicando Máscara de Telefone ao carregar
+            if(document.getElementById('api-telefone')) {
+                let tel = meta.telefone || "";
+                document.getElementById('api-telefone').value = tel.length >= 10 ? formatarTelefone(tel) : tel;
+            }
+
+            // Aplicando Máscara de CPF ao carregar
+            if(document.getElementById('api-cpf')) {
+                let cpf = meta.cpf || "";
+                document.getElementById('api-cpf').value = cpf.length === 11 ? formatarCPF(cpf) : cpf;
+            }
+
+            if(document.getElementById('api-nascimento')) 
+                document.getElementById('api-nascimento').value = meta.nascimento || "";
         }
 
-    </script>
+        // SALVAR ALTERAÇÕES
+        document.getElementById('form-perfil').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Salvando...";
+            btn.disabled = true;
 
-    <script src="javascript/script.js"></script>
+            const novoNome = document.getElementById('api-nome').value;
+            const novoEmail = document.getElementById('api-email').value;
+            // Remove a máscara antes de salvar o telefone para manter o banco limpo apenas com números
+            const novoTelefone = document.getElementById('api-telefone').value.replace(/\D/g, "");
+
+            const { error: errorMeta } = await _supabase.auth.updateUser({
+                email: novoEmail,
+                data: { 
+                    full_name: novoNome,
+                    telefone: novoTelefone
+                }
+            });
+
+            if (errorMeta) {
+                alert("Erro ao atualizar: " + errorMeta.message);
+            } else {
+                alert("Dados atualizados com sucesso!");
+                carregarDadosPerfil();
+            }
+
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+
+        // Evento para aplicar máscara em tempo real enquanto o usuário digita no telefone
+        document.getElementById('api-telefone').addEventListener('input', (e) => {
+            e.target.value = formatarTelefone(e.target.value);
+        });
+
+        document.addEventListener('DOMContentLoaded', carregarDadosPerfil);
+
+        window.onpageshow = function(event) {
+            if (event.persisted) window.location.reload();
+        };
+    </script>
 </body>
 
 </html>

@@ -39,10 +39,11 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
-                        <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
+                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
+                                Perfil</a></li>
                         <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                     </ul>
                 </div>
             </div>
@@ -76,23 +77,24 @@
             <a href="Loja.html" class="btn-continue"><i class="fas fa-arrow-left"></i> Continuar Comprando</a>
         </main>
 
-<aside class="cart-summary">
+        <aside class="cart-summary">
             <h2>Resumo do Pedido</h2>
             <div class="summary-details">
                 <div class="summary-line">
                     <span>Subtotal</span>
                     <span id="subtotal">R$ 0,00</span>
                 </div>
-                
+
                 <div class="summary-line">
                     <span>Frete</span>
                     <span id="shipping-value">R$ 0,00</span>
                 </div>
 
                 <div class="shipping-calc">
-                    <select id="bairro-input" onchange="calcularFretePorBairro(true)" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 10px;">
+                    <select id="bairro-input" onchange="calcularFretePorBairro(true)"
+                        style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 10px;">
                         <option value="">Selecione seu bairro...</option>
-                        
+
                         <optgroup label="Frete R$ 4,00 (Grátis acima de 200)">
                             <option value="canaã">Canaã</option>
                             <option value="canaãzinho">Canaãzinho</option>
@@ -194,7 +196,12 @@
         </div>
     </footer>
 
-  
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="javascript/database.js"></script>
+
     <script src="javascript/script.js"></script>
 </body>
+
 </html>

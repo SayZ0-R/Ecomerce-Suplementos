@@ -102,7 +102,7 @@
                             <button class="btn-close-modal" onclick="fecharModalProduto()">&times;</button>
                         </div>
 
-                        <form id="form-produto">
+                        <form id="form-produto" onsubmit="salvarNovoProduto(event)">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Nome do Produto</label>
@@ -179,6 +179,12 @@
             </section>
         </main>
     </div>
+
+    <script src="javascript/admin.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="javascript/database.js"></script>
 
     <script src="javascript/admin.js"></script>
 </body>

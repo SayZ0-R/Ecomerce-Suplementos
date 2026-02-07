@@ -135,9 +135,15 @@ function atualizarDisplays(subtotal, frete) {
     const freteEl = document.getElementById('shipping-value');
     const totalEl = document.getElementById('final-total');
 
+    const valorTotalCalculado = (subtotal + frete).toFixed(2);
+
     if (subtotalEl) subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
     if (freteEl) freteEl.innerText = frete === 0 ? "Grátis" : `R$ ${frete.toFixed(2).replace('.', ',')}`;
-    if (totalEl) totalEl.innerText = `R$ ${(subtotal + frete).toFixed(2).replace('.', ',')}`;
+    if (totalEl) totalEl.innerText = `R$ ${valorTotalCalculado.replace('.', ',')}`;
+
+    // --- ESTA LINHA ABAIXO É A QUE FALTA ---
+    // Salva o total como string (ex: "150.50") para o checkout ler
+    localStorage.setItem('nutrirVida_total', valorTotalCalculado);
 }
 
 function alterarQuantidade(index, delta) {
@@ -232,4 +238,18 @@ function mudarAba(tipo) {
     if (tipo === 'descricao') container.innerText = p.descricao;
     if (tipo === 'nutricional') container.innerText = p.nutricional;
     if (tipo === 'receitas') container.innerText = p.receitas;
+}
+
+
+async function acessarPerfil() {
+    const { data: { user }, error } = await _supabase.auth.getUser();
+
+    if (error || !user) {
+        // Se não estiver logado, manda para o login
+        alert("Por favor, faça login para acessar seu perfil.");
+        window.location.href = 'login.html';
+    } else {
+        // Se estiver logado, manda para a página de perfil
+        window.location.href = 'perfil.html';
+    }
 }

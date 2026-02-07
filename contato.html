@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Entre em contato com a FitSuplementos. Suporte ao cliente, dúvidas sobre produtos e atendimento via WhatsApp e E-mail.">
+    <meta name="description"
+        content="Entre em contato com a FitSuplementos. Suporte ao cliente, dúvidas sobre produtos e atendimento via WhatsApp e E-mail.">
     <meta name="keywords" content="contato fitsuplementos, atendimento academia, suporte suplementos">
-    
+
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="Styles/contato.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -20,8 +21,8 @@
             <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
         </a>
 
-        
-        
+
+
         <ul class="nav-list">
             <li><a href="index.html">Início</a></li>
             <li><a href="Loja.html">Loja</a></li>
@@ -30,7 +31,7 @@
             <li><a href="contato.html" class="active">Contato</a></li>
         </ul>
 
-                <div class="nav-right">
+        <div class="nav-right">
             <div class="nav-icons">
                 <a href="Carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
                     <i class="fas fa-shopping-cart"></i>
@@ -42,16 +43,17 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
-                        <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
+                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
+                                Perfil</a></li>
                         <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
 
                         <li class="dropdown-divider"></li>
-                        <li><a href="logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div  class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -60,93 +62,95 @@
     </nav>
 
     <main class="contact-page">
-    <section class="contact-header">
-        <h1>Entre em Contato</h1>
-        <p>Tem alguma dúvida? Precisa de ajuda? Nossa equipe está aqui para responder.</p>
-    </section>
-
-    <div class="info-grid">
-        <div class="info-card">
-            <div class="icon-circle blue" aria-hidden="true"><i class="fas fa-phone-alt"></i></div>
-            <h3>Telefone</h3>
-            <p><a href="tel:+551112345678">+55 11 1234-5678</a></p>
-            <span>Seg-Sex 9h-18h</span>
-        </div>
-
-        <div class="info-card">
-            <div class="icon-circle green" aria-hidden="true"><i class="fas fa-envelope"></i></div>
-            <h3>Email</h3>
-            <p><a href="mailto:contato@fitsuplementos.com.br">contato@fitsuplementos.com.br</a></p>
-            <span>Resposta em 24h</span>
-        </div>
-
-        <div class="info-card">
-            <div class="icon-circle blue" aria-hidden="true"><i class="fas fa-clock"></i></div>
-            <h3>Horários</h3>
-            <p>Seg-Sex: 9h-18h</p>
-            <span>Sáb: 10h-16h</span>
-        </div>
-    </div>
-
-    <div class="contact-container">
-        <section class="form-section">
-            <h3>Envie-nos uma mensagem</h3>
-            <form action="#" method="POST">
-                <div class="input-box">
-                    <label for="nome">Nome completo</label>
-                    <input type="text" id="nome" name="nome" placeholder="João Silva" required>
-                </div>
-                <div class="input-box">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="joao.silva@email.com" required>
-                </div>
-                <div class="input-box">
-                    <label for="assunto">Assunto</label>
-                    <input type="text" id="assunto" name="assunto" placeholder="Dúvida sobre um produto">
-                </div>
-                <div class="input-box">
-                    <label for="mensagem">Mensagem</label>
-                    <textarea id="mensagem" name="mensagem" rows="6" placeholder="Sua mensagem..." required></textarea>
-                </div>
-                <button type="submit" class="btn-enviar">
-                    <i class="fas fa-paper-plane"></i> Enviar mensagem
-                </button>
-            </form>
+        <section class="contact-header">
+            <h1>Entre em Contato</h1>
+            <p>Tem alguma dúvida? Precisa de ajuda? Nossa equipe está aqui para responder.</p>
         </section>
 
-        <aside class="info-side">
-            <div class="address-card-dark">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                <h4>Nosso Endereço</h4>
-                <address>
-                    <p>Rua do Fitness, 123</p>
-                    <p>São Paulo, SP - Brasil</p>
-                </address>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+do+Fitness+123+Sao+Paulo" target="_blank" class="btn-rota">
-                     Rota
-                </a>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="icon-circle blue" aria-hidden="true"><i class="fas fa-phone-alt"></i></div>
+                <h3>Telefone</h3>
+                <p><a href="tel:+551112345678">+55 11 1234-5678</a></p>
+                <span>Seg-Sex 9h-18h</span>
             </div>
 
-            <section class="extra-details">
-                <h4>Informações adicionais</h4>
-                <div class="detail-item">
-                    <span class="dot blue"></span>
-                    <div>
-                        <strong>WhatsApp</strong>
-                        <p>(11) 91234-5678</p>
+            <div class="info-card">
+                <div class="icon-circle green" aria-hidden="true"><i class="fas fa-envelope"></i></div>
+                <h3>Email</h3>
+                <p><a href="mailto:contato@fitsuplementos.com.br">contato@fitsuplementos.com.br</a></p>
+                <span>Resposta em 24h</span>
+            </div>
+
+            <div class="info-card">
+                <div class="icon-circle blue" aria-hidden="true"><i class="fas fa-clock"></i></div>
+                <h3>Horários</h3>
+                <p>Seg-Sex: 9h-18h</p>
+                <span>Sáb: 10h-16h</span>
+            </div>
+        </div>
+
+        <div class="contact-container">
+            <section class="form-section">
+                <h3>Envie-nos uma mensagem</h3>
+                <form action="#" method="POST">
+                    <div class="input-box">
+                        <label for="nome">Nome completo</label>
+                        <input type="text" id="nome" name="nome" placeholder="João Silva" required>
                     </div>
-                </div>
-                <div class="detail-item">
-                    <span class="dot green"></span>
-                    <div>
-                        <strong>Suporte por email</strong>
-                        <p>Resposta em até 24h úteis</p>
+                    <div class="input-box">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="joao.silva@email.com" required>
                     </div>
-                </div>
+                    <div class="input-box">
+                        <label for="assunto">Assunto</label>
+                        <input type="text" id="assunto" name="assunto" placeholder="Dúvida sobre um produto">
+                    </div>
+                    <div class="input-box">
+                        <label for="mensagem">Mensagem</label>
+                        <textarea id="mensagem" name="mensagem" rows="6" placeholder="Sua mensagem..."
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="btn-enviar">
+                        <i class="fas fa-paper-plane"></i> Enviar mensagem
+                    </button>
+                </form>
             </section>
-        </aside>
-    </div>
-</main>
+
+            <aside class="info-side">
+                <div class="address-card-dark">
+                    <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                    <h4>Nosso Endereço</h4>
+                    <address>
+                        <p>Rua do Fitness, 123</p>
+                        <p>São Paulo, SP - Brasil</p>
+                    </address>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+do+Fitness+123+Sao+Paulo"
+                        target="_blank" class="btn-rota">
+                        Rota
+                    </a>
+                </div>
+
+                <section class="extra-details">
+                    <h4>Informações adicionais</h4>
+                    <div class="detail-item">
+                        <span class="dot blue"></span>
+                        <div>
+                            <strong>WhatsApp</strong>
+                            <p>(11) 91234-5678</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="dot green"></span>
+                        <div>
+                            <strong>Suporte por email</strong>
+                            <p>Resposta em até 24h úteis</p>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </main>
 
     <footer class="main-footer">
         <div class="footer-container">
@@ -195,6 +199,10 @@
             <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="javascript/database.js"></script>
 
     <script src="javascript/script.js"></script>
 </body>
