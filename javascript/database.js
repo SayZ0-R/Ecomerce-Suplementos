@@ -3,14 +3,23 @@ const SUPABASE_URL = 'https://kmmowmfrfshaazvfuheg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_qVyBTyr2S5dj97i2w9vj9g_8zLkqn5Z';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// CENTRALIZADO: Mude o e-mail do dono aqui
-const EMAIL_ADMIN = 'marquespk98@gmail.com'; 
+// CENTRALIZADO: Lista de e-mails com permissão de administrador
+const ADMINS_PERMITIDOS = [
+    'jose.barbosajunior91@icloud.com', // Proprietário
+    'marquespk98@gmail.com',           // Desenvolvedor (Você)
+    'amaliaribeiro2016@icloud.com'     // Esposa
+];
 
 async function checarNivelAcesso() {
     try {
         const { data: { user }, error } = await _supabase.auth.getUser();
         if (error || !user) return null;
-        if (user.email === EMAIL_ADMIN) return 'admin';
+
+        // Verifica se o e-mail do usuário logado está na nossa lista de permissões
+        if (ADMINS_PERMITIDOS.includes(user.email)) {
+            return 'admin';
+        }
+        
         return 'cliente';
     } catch (e) {
         return null;

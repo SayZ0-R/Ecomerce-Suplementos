@@ -475,3 +475,52 @@ td { padding: 15px; border-bottom: 1px solid var(--bg-main); font-weight: 600; f
         padding: 14px;
     }
 }
+
+/* --- AJUSTE DE RESPONSIVIDADE PARA O HEADER --- */
+
+@media (max-width: 768px) {
+    /* Faz o header aceitar quebra de linha */
+    .content-header {
+        flex-wrap: wrap;
+        height: auto; /* Permite que a altura cresça se o nome pular linha */
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .header-left {
+        width: 100%; /* Título ocupa a linha toda */
+        display: flex;
+        align-items: center;
+    }
+
+    .admin-profile {
+        width: 100%; /* Nome do admin ocupa a linha toda abaixo do título */
+        justify-content: flex-start; /* Alinha o nome à esquerda */
+        border-top: 1px solid #f0f0f0; /* Divisória sutil */
+        padding-top: 10px;
+    }
+
+    .admin-name {
+        display: block;
+        white-space: normal; /* Permite que o nome quebre linha se for muito longo */
+        font-size: 14px;
+        line-height: 1.2;
+    }
+
+    .admin-name strong {
+        display: inline-block; /* Garante que o nome em negrito não corte */
+    }
+
+    /* Ajuste do Avatar para não esmagar */
+    .avatar {
+        min-width: 35px;
+        height: 35px;
+    }
+}
+
+/* Ajuste para telas minúsculas (ex: iPhone SE) */
+@media (max-width: 400px) {
+    #secao-titulo {
+        font-size: 1.2rem; /* Diminui um pouco o título para caber tudo */
+    }
+}

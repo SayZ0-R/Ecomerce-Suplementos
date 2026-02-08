@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Entre em contato com a FitSuplementos. Suporte ao cliente, dúvidas sobre produtos e atendimento via WhatsApp e E-mail.">
-    <meta name="keywords" content="contato fitsuplementos, atendimento academia, suporte suplementos">
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="Styles/produto.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <title>Produto - Nutrir Vida</title>
 </head>
-
 <body>
 
     <nav>
@@ -22,7 +16,7 @@
         </a>
 
         <ul class="nav-list">
-            <li><a href="index.html">Início</a></li>
+            <li><a href="index.html" class="active">Início</a></li>
             <li><a href="Loja.html">Loja</a></li>
             <li><a href="index.html#nossas-categorias">Categorias</a></li>
             <li><a href="Loja.html">Pacotes</a></li>
@@ -31,7 +25,7 @@
 
         <div class="nav-right">
             <div class="nav-icons">
-                <a href="carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
+                <a href="Carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
                     <i class="fas fa-shopping-cart"></i>
                     <span id="cart-count" class="cart-badge"></span>
                 </a>
@@ -49,7 +43,8 @@
                     </ul>
                 </div>
             </div>
-            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
+
+            <div  class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -57,20 +52,24 @@
         </div>
     </nav>
 
+    </div>
+
     <main class="container-produto">
         <div class="produto-main-flex">
             <div class="produto-galeria">
-                <img id="detalhe-img" src="" alt="">
+                <img id="detalhe-img" src="Imagens/placeholder.png" alt="Carregando...">
             </div>
 
             <div class="produto-infos-compra">
-                <h1 id="detalhe-nome">Nome do Produto</h1>
+                <h1 id="detalhe-nome">Carregando produto...</h1>
+                
                 <div class="rating-box">
-                    <i class="fas fa-star"></i> <span id="detalhe-rating">4.8</span>
+                    <i class="fas fa-star"></i> <span>4.8</span>
                 </div>
+
                 <div class="precos-detalhe">
-                    <span id="detalhe-preco-antigo"></span>
-                    <h2 id="detalhe-preco-atual"></h2>
+                    <span id="detalhe-preco-antigo" style="text-decoration: line-through; color: #888; display: none;"></span>
+                    <h2 id="detalhe-preco-atual">R$ 0,00</h2>
                 </div>
 
                 <div class="compra-acoes">
@@ -82,16 +81,15 @@
 
         <section class="produto-detalhes-extras">
             <div class="abas-info">
-                <button class="aba-item active" onclick="mudarAba('descricao')">Descrição</button>
-                <button class="aba-item" onclick="mudarAba('nutricional')">Tabela Nutricional</button>
-                <button class="aba-item" onclick="mudarAba('receitas')">Como usar/Receitas</button>
+                <button class="aba-item active">Descrição</button>
             </div>
-            <div id="conteudo-aba" class="aba-content">
+            <div class="aba-content">
+                <p id="detalhe-descricao">Buscando informações do produto...</p>
             </div>
         </section>
     </main>
 
-        <footer class="main-footer">
+      <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
                 <h3>NUTRIR<span>VIDA</span></h3>
@@ -139,10 +137,59 @@
         </div>
     </footer>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="javascript/database.js"></script> 
     <script src="javascript/script.js"></script>
-    <script src="javascript/produtos.js"></script>
+    
 
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        // 1. Captura o ID da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const produtoId = urlParams.get('id');
+
+        if (!produtoId) {
+            console.error("ID não encontrado na URL");
+            const nomeEl = document.getElementById('detalhe-nome');
+            if(nomeEl) nomeEl.innerText = "Produto não especificado";
+            return;
+        }
+
+        // 2. Busca os dados no Supabase
+        const { data: produto, error } = await _supabase
+            .from('produtos')
+            .select('*')
+            .eq('id', produtoId)
+            .single();
+
+        if (error || !produto) {
+            console.error("Erro ao buscar no banco:", error);
+            const nomeEl = document.getElementById('detalhe-nome');
+            if(nomeEl) nomeEl.innerText = "Produto não encontrado";
+            return;
+        }
+
+        // 3. Preenche o HTML com os dados do banco
+        // Nota: O clique do botão agora é gerenciado exclusivamente pelo carregarPaginaProduto() no script.js
+        if(document.getElementById('detalhe-nome')) document.getElementById('detalhe-nome').innerText = produto.nome;
+        if(document.getElementById('detalhe-preco-atual')) document.getElementById('detalhe-preco-atual').innerText = `R$ ${produto.preco.toFixed(2)}`;
+        if(document.getElementById('detalhe-descricao')) document.getElementById('detalhe-descricao').innerText = produto.descricao || "Sem descrição disponível.";
+        
+        const imgElement = document.getElementById('detalhe-img');
+        if(imgElement) {
+            imgElement.src = produto.imagem_url || 'Imagens/placeholder.png';
+            imgElement.alt = produto.nome;
+        }
+
+        const precoAntigo = document.getElementById('detalhe-preco-antigo');
+        if (precoAntigo && produto.preco_antigo) {
+            precoAntigo.innerText = `R$ ${produto.preco_antigo.toFixed(2)}`;
+            precoAntigo.style.display = 'inline';
+        }
+
+        // Definimos o produto no escopo global apenas para que o script.js possa usá-lo se necessário
+        window.produtoAtual = produto; 
+    });
+</script>
 </body>
-
 </html>

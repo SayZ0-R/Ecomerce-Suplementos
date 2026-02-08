@@ -1,4 +1,4 @@
-// Função para alternar entre Login e Cadastro
+// --- 1. NAVEGAÇÃO ENTRE ABAS ---
 function alternarTab(tipo) {
     const isLogin = tipo === 'login';
 
@@ -11,27 +11,52 @@ function alternarTab(tipo) {
     document.getElementById('btn-tab-cad').classList.toggle('active', !isLogin);
 }
 
-// Evento de Login
+// --- 2. EVENTO DE LOGIN ---
 document.getElementById('form-login').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = e.target.querySelector('button');
     const email = document.getElementById('login-email').value;
     const senha = document.getElementById('login-senha').value;
 
-    const { error } = await _supabase.auth.signInWithPassword({ email, password: senha });
-    
-    if (error) {
-        alert("Erro no login: Verifique seu e-mail e senha.");
-    } else {
+    // Feedback visual
+    btn.innerText = "Entrando...";
+    btn.disabled = true;
+
+    try {
+        const { data, error } = await _supabase.auth.signInWithPassword({ email, password: senha });
+        
+        if (error) {
+            // TRATAMENTO ESPECÍFICO: E-mail não confirmado
+            if (error.message.includes("Email not confirmed")) {
+                alert("Sua conta ainda não foi ativada! Verifique seu e-mail e clique no link de confirmação.");
+            } else {
+                alert("Erro no login: Verifique seu e-mail e senha.");
+            }
+            return;
+        }
+
+        // Login sucesso: Checa se é um dos admins na lista do Database.js
         const nivel = await checarNivelAcesso();
-        if (nivel === 'admin') window.location.href = 'admin.html';
-        else window.location.href = 'index.html';
+        if (nivel === 'admin') {
+            window.location.replace('admin.html');
+        } else {
+            window.location.replace('index.html');
+        }
+
+    } catch (err) {
+        alert("Erro de conexão com o servidor.");
+    } finally {
+        btn.innerText = "Entrar";
+        btn.disabled = false;
     }
 });
 
-// Evento de Cadastro (Atualizado com Telefone, CPF e Nascimento)
+// --- 3. EVENTO DE CADASTRO (UNIFICADO COM TODOS OS CAMPOS) ---
 document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = e.target.querySelector('button');
 
+    // Captura de TODOS os dados que você incluiu nas duas versões
     const email = document.getElementById('cad-email').value;
     const senha = document.getElementById('cad-senha').value;
     const nome = document.getElementById('cad-nome').value;
@@ -39,23 +64,34 @@ document.getElementById('form-cadastro').addEventListener('submit', async (e) =>
     const cpf = document.getElementById('cad-cpf').value;
     const nascimento = document.getElementById('cad-nascimento').value;
 
-    const { error } = await _supabase.auth.signUp({
-        email: email,
-        password: senha,
-        options: { 
-            data: { 
-                full_name: nome,
-                telefone: telefone,
-                cpf: cpf,
-                nascimento: nascimento
-            } 
-        }
-    });
+    // Feedback visual
+    btn.innerText = "Criando conta...";
+    btn.disabled = true;
 
-    if (error) {
-        alert("Erro ao cadastrar: " + error.message);
-    } else { 
-        alert("Sucesso! Verifique seu e-mail para confirmar a conta antes de fazer o login."); 
-        alternarTab('login'); 
+    try {
+        const { error } = await _supabase.auth.signUp({
+            email: email,
+            password: senha,
+            options: { 
+                data: { 
+                    full_name: nome,
+                    telefone: telefone,
+                    cpf: cpf,
+                    nascimento: nascimento
+                } 
+            }
+        });
+
+        if (error) {
+            alert("Erro ao cadastrar: " + error.message);
+        } else { 
+            alert("Sucesso! Verifique seu e-mail para confirmar a conta antes de fazer o login."); 
+            alternarTab('login'); 
+        }
+    } catch (err) {
+        alert("Erro ao processar cadastro.");
+    } finally {
+        btn.innerText = "Criar Conta";
+        btn.disabled = false;
     }
 });

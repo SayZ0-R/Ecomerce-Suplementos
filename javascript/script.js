@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCheckout = document.getElementById('btn-checkout');
     if (btnCheckout) {
         btnCheckout.addEventListener('click', () => {
+            // CORREÇÃO: Unificado para usar 'nutrirVida_cart'
             const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
             if (carrinho.length > 0) {
                 window.location.href = 'checkout.html';
@@ -57,6 +58,7 @@ function carregarCarrinho() {
     const cartList = document.getElementById('cart-list');
     if (!cartList) return;
 
+    // CORREÇÃO: Unificado para 'nutrirVida_cart'
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
 
     if (carrinho.length === 0) {
@@ -67,6 +69,7 @@ function carregarCarrinho() {
 
     let subtotal = 0;
     cartList.innerHTML = carrinho.map((item, index) => {
+        // CORREÇÃO: Garantindo que quantidade seja Number para o cálculo de subtotal
         const totalItem = (parseFloat(item.preco) || 0) * (parseInt(item.quantidade) || 1);
         subtotal += totalItem;
         return `
@@ -89,7 +92,6 @@ function carregarCarrinho() {
             </div>`;
     }).join('');
 
-    // Tenta recalcular frete se já houver bairro salvo
     const bairroSalvo = localStorage.getItem('nutrirVida_bairro');
     if (bairroSalvo) {
         const input = document.getElementById('bairro-input');
@@ -106,8 +108,9 @@ function calcularFretePorBairro(silencioso = false) {
     if (!inputElement) return;
 
     const inputBairro = inputElement.value.toLowerCase().trim();
+    // CORREÇÃO: Unificado para 'nutrirVida_cart'
     const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    const subtotal = carrinho.reduce((acc, item) => acc + (parseFloat(item.preco) * item.quantidade), 0);
+    const subtotal = carrinho.reduce((acc, item) => acc + (parseFloat(item.preco) * parseInt(item.quantidade)), 0);
 
     let valorFrete = -1;
 
@@ -125,11 +128,10 @@ function calcularFretePorBairro(silencioso = false) {
         atualizarDisplays(subtotal, valorFrete);
         if (!silencioso) alert("Frete calculado com sucesso!");
     } else if (inputBairro !== "") {
-        alert("Bairro não encontrado na lista de entregas.");
+        if(!silencioso) alert("Bairro não encontrado na lista de entregas.");
     }
 }
 
-// Auxiliar para atualizar valores na tela
 function atualizarDisplays(subtotal, frete) {
     const subtotalEl = document.getElementById('subtotal');
     const freteEl = document.getElementById('shipping-value');
@@ -141,14 +143,14 @@ function atualizarDisplays(subtotal, frete) {
     if (freteEl) freteEl.innerText = frete === 0 ? "Grátis" : `R$ ${frete.toFixed(2).replace('.', ',')}`;
     if (totalEl) totalEl.innerText = `R$ ${valorTotalCalculado.replace('.', ',')}`;
 
-    // --- ESTA LINHA ABAIXO É A QUE FALTA ---
-    // Salva o total como string (ex: "150.50") para o checkout ler
     localStorage.setItem('nutrirVida_total', valorTotalCalculado);
 }
 
 function alterarQuantidade(index, delta) {
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    carrinho[index].quantidade += delta;
+    // CORREÇÃO: Garantindo soma aritmética
+    carrinho[index].quantidade = parseInt(carrinho[index].quantidade) + delta;
+    
     if (carrinho[index].quantidade < 1) {
         removerDoCarrinho(index);
     } else {
@@ -167,30 +169,35 @@ function removerDoCarrinho(index) {
 }
 
 function adicionarAoCarrinho(produto) {
-    let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    const index = carrinho.findIndex(item => item.id === produto.id);
+    // CORREÇÃO: Lê sempre do storage no momento do clique para sincronizar abas
+    let carrinhoAtual = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    const index = carrinhoAtual.findIndex(item => item.id === produto.id);
+
+    // CORREÇÃO: Pega a quantidade vinda do produto ou 1
+    const qtdAdicional = parseInt(produto.quantidade) || 1;
 
     if (index > -1) {
-        carrinho[index].quantidade += 1;
+        carrinhoAtual[index].quantidade = parseInt(carrinhoAtual[index].quantidade) + qtdAdicional;
     } else {
-        carrinho.push({
+        carrinhoAtual.push({
             id: produto.id,
             nome: produto.nome,
             preco: produto.preco,
             imagem: produto.imagem,
             categoria: produto.categoria, 
-            quantidade: 1
+            quantidade: qtdAdicional
         });
     }
 
-    localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
+    localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinhoAtual));
     atualizarBadgeCarrinho();
     alert(`${produto.nome} adicionado ao carrinho!`);
 }
 
 function atualizarBadgeCarrinho() {
-    let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    const total = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+    // CORREÇÃO: Lê sempre do storage para o contador estar certo
+    let carrinhoParaBadge = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    const total = carrinhoParaBadge.reduce((acc, item) => acc + (parseInt(item.quantidade) || 0), 0);
     const badge = document.getElementById('cart-count');
     if (badge) {
         badge.textContent = total;
@@ -198,30 +205,47 @@ function atualizarBadgeCarrinho() {
     }
 }
 
-// --- PÁGINA DE PRODUTO & ABAS ---
+// --- PÁGINA DE PRODUTO & ABAS (CORREÇÃO DO ALERTA DUPLO) ---
+// --- PÁGINA DE PRODUTO & ABAS (VERSÃO CORRIGIDA PARA SUPABASE) ---
 function carregarPaginaProduto() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
-    if (!id || typeof produtos === 'undefined') return;
+    if (!id) return;
 
-    const p = produtos.find(item => item.id == id);
-    if (p) {
-        if(document.getElementById('detalhe-nome')) document.getElementById('detalhe-nome').innerText = p.nome;
-        if(document.getElementById('detalhe-img')) document.getElementById('detalhe-img').src = p.imagem;
-        if(document.getElementById('detalhe-preco-atual')) document.getElementById('detalhe-preco-atual').innerText = `R$ ${p.preco.toFixed(2)}`;
-        if(document.getElementById('detalhe-preco-antigo')) document.getElementById('detalhe-preco-antigo').innerText = `R$ ${p.precoAntigo.toFixed(2)}`;
-        if(document.getElementById('detalhe-rating')) document.getElementById('detalhe-rating').innerText = p.avaliacao;
-        mudarAba('descricao');
+    // CORREÇÃO: Em vez de procurar no array "produtos" (que pode estar vazio),
+    // vamos usar o produto que você já buscou do Supabase no script da página.
+    // Usamos um pequeno intervalo para garantir que o Supabase já respondeu.
+    setTimeout(() => {
+        const p = window.produtoAtual; 
+        
+        if (p) {
+            // Sincroniza a imagem (alguns bancos usam imagem_url, outros imagem)
+            const imagemFinal = p.imagem_url || p.imagem;
 
-        const btnComprar = document.getElementById('btn-comprar-detalhe');
-        if (btnComprar) {
-            btnComprar.onclick = () => {
-                const qtdInput = document.getElementById('qtd-produto');
-                const qtd = qtdInput ? parseInt(qtdInput.value) : 1;
-                for(let i=0; i<qtd; i++) { adicionarAoCarrinho(p); }
-            };
+            const btnComprar = document.getElementById('btn-comprar-detalhe');
+            if (btnComprar) {
+                btnComprar.onclick = null; 
+                btnComprar.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    const qtdInput = document.getElementById('qtd-produto');
+                    const qtd = qtdInput ? parseInt(qtdInput.value) : 1;
+                    
+                    const pComQtd = {
+                        id: p.id,
+                        nome: p.nome,
+                        preco: p.preco,
+                        imagem: imagemFinal,
+                        categoria: p.categoria,
+                        quantidade: qtd
+                    };
+
+                    adicionarAoCarrinho(pComQtd);
+                };
+            }
         }
-    }
+    }, 500); // Aguarda o carregamento do banco
 }
 
 function mudarAba(tipo) {
@@ -240,93 +264,57 @@ function mudarAba(tipo) {
     if (tipo === 'receitas') container.innerText = p.receitas;
 }
 
-
 async function acessarPerfil() {
     const { data: { user }, error } = await _supabase.auth.getUser();
-
     if (error || !user) {
-        // Se não estiver logado, manda para o login
         alert("Por favor, faça login para acessar seu perfil.");
         window.location.href = 'login.html';
     } else {
-        // Se estiver logado, manda para a página de perfil
         window.location.href = 'perfil.html';
     }
 }
-
-// --- CARREGAMENTO DINÂMICO DA INDEX ---
 
 async function carregarConteudoIndex() {
     await carregarBannerPromocional();
     await carregarDestaquesMaisVendidos();
 }
 
-// 1. Busca o Banner Configurado no Admin
 async function carregarBannerPromocional() {
     const bannerContainer = document.getElementById('banner-dinamico');
     if (!bannerContainer) return;
-
-    const { data, error } = await _supabase
-        .from('configuracoes_site')
-        .select('*')
-        .eq('chave', 'banner_principal')
-        .single();
-
+    const { data, error } = await _supabase.from('configuracoes_site').select('*').eq('chave', 'banner_principal').single();
     if (error || !data) return;
-
     bannerContainer.innerHTML = `
         <div class="promo-banner" style="background-image: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('${data.imagem_url}');">
             <div class="promo-content">
                 <span class="promo-badge">OFERTA ESPECIAL</span>
                 <h2 class="promo-title">${data.titulo}</h2>
                 <p class="promo-subtitle">${data.descricao} - <strong>R$ ${parseFloat(data.preco).toFixed(2)}</strong></p>
-                <a href="Loja.html" class="promo-button">
-                    Aproveitar Agora <i class="fas fa-arrow-right"></i>
-                </a>
+                <a href="Loja.html" class="promo-button">Aproveitar Agora <i class="fas fa-arrow-right"></i></a>
             </div>
-        </div>
-    `;
+        </div>`;
 }
 
-// 2. Busca Produtos marcados como "Mais Vendido"
 async function carregarDestaquesMaisVendidos() {
     const vitrine = document.getElementById('vitrine-mais-vendidos');
     if (!vitrine) return;
-
-    const { data: produtos, error } = await _supabase
-        .from('produtos')
-        .select('*')
-        .eq('mais_vendido', true)
-        .limit(4); // Mostra os 4 primeiros mais vendidos
-
+    const { data: produtos, error } = await _supabase.from('produtos').select('*').eq('mais_vendido', true).limit(4);
     if (error || !produtos) return;
-
     vitrine.innerHTML = produtos.map(p => `
         <article class="product-card">
-            <div class="product-image">
-                <img src="${p.imagem_url}" alt="${p.nome}">
-            </div>
+            <div class="product-image"><img src="${p.imagem_url}" alt="${p.nome}"></div>
             <div class="product-info">
                 <span class="product-category">${p.categoria}</span>
                 <h3 class="product-title">${p.nome}</h3>
-                <div class="product-rating">
-                    <span class="star">⭐</span>
-                    <span class="rating-value">4.9</span>
-                    <span class="reviews">(Novo)</span>
-                </div>
                 <div class="product-price-container">
                     <div class="prices">
                         ${p.preco_antigo ? `<span class="old-price">R$ ${p.preco_antigo.toFixed(2)}</span>` : ''}
                         <span class="current-price">R$ ${p.preco.toFixed(2)}</span>
                     </div>
-                    <button class="btn-cart" onclick="adicionarAoCarrinho(${p.id})" aria-label="Adicionar ao carrinho">
+                    <button class="btn-cart" onclick="adicionarAoCarrinho({id:'${p.id}', nome:'${p.nome}', preco:${p.preco}, imagem:'${p.imagem_url}', categoria:'${p.categoria}'})" aria-label="Adicionar ao carrinho">
                         <i class="fas fa-shopping-cart"></i>
                     </button>
                 </div>
             </div>
-        </article>
-    `).join('');
+        </article>`).join('');
 }
-
-// Inicia o carregamento ao abrir a página
-document.addEventListener('DOMContentLoaded', carregarConteudoIndex);
