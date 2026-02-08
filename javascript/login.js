@@ -95,3 +95,24 @@ document.getElementById('form-cadastro').addEventListener('submit', async (e) =>
         btn.disabled = false;
     }
 });
+
+
+// Sobrescrevendo o alert nativo do navegador
+window.alert = function(mensagem) {
+    // 1. Criar o elemento na hora (ele passa a existir aqui)
+    const notification = document.createElement('div');
+    notification.className = 'custom-alert';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle" style="color: #27ae60;"></i>
+        <span>${mensagem}</span>
+    `;
+
+    // 2. Adicionar ao corpo do site
+    document.body.appendChild(notification);
+
+    // 3. Remover automaticamente após 3 segundos
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 400);
+    }, 3000);
+};

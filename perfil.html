@@ -16,8 +16,9 @@
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
+
         .order-header {
             display: flex;
             justify-content: space-between;
@@ -26,9 +27,17 @@
             padding-bottom: 10px;
             margin-bottom: 10px;
         }
-        .order-id { font-weight: bold; color: #333; }
-        .order-date { font-size: 0.85rem; color: #888; }
-        
+
+        .order-id {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .order-date {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
         .status-badge {
             padding: 5px 12px;
             border-radius: 20px;
@@ -36,16 +45,42 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        
-        /* Cores dos Status */
-        .status-pendente { background: #fff3cd; color: #856404; }
-        .status-aprovado { background: #d4edda; color: #155724; }
-        .status-enviado { background: #cce5ff; color: #004085; }
-        .status-finalizado { background: #d1d1d1; color: #333; }
-        .status-cancelado { background: #f8d7da; color: #721c24; }
 
-        .order-details p { margin: 5px 0; font-size: 0.9rem; }
-        .order-items { color: #555; font-style: italic; }
+        /* Cores dos Status */
+        .status-pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-aprovado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-enviado {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-finalizado {
+            background: #d1d1d1;
+            color: #333;
+        }
+
+        .status-cancelado {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-details p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .order-items {
+            color: #555;
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -77,9 +112,10 @@
                     </a>
                     <ul class="profile-dropdown">
                         <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
-                        <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
+                        
                         <li class="dropdown-divider"></li>
-                        <li><a href="javascript:void(0)" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="javascript:void(0)" onclick="deslogar()" class="logout"><i
+                                    class="fas fa-sign-out-alt"></i> Sair</a></li>
                     </ul>
                 </div>
             </div>
@@ -133,11 +169,13 @@
                         </div>
                         <div class="input-group">
                             <label>CPF</label>
-                            <input type="text" id="api-cpf" readonly class="readonly" style="background-color: #f4f4f4; cursor: not-allowed;">
+                            <input type="text" id="api-cpf" readonly class="readonly"
+                                style="background-color: #f4f4f4; cursor: not-allowed;">
                         </div>
                         <div class="input-group">
                             <label>Data de Nascimento</label>
-                            <input type="date" id="api-nascimento" readonly class="readonly" style="background-color: #f4f4f4; cursor: not-allowed;">
+                            <input type="date" id="api-nascimento" readonly class="readonly"
+                                style="background-color: #f4f4f4; cursor: not-allowed;">
                         </div>
                     </div>
                     <button type="submit" class="btn-save-changes">Salvar Alterações</button>
@@ -153,40 +191,54 @@
         </main>
     </div>
 
-     <footer class="main-footer">
+    <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
-                <h3>FitSuplementos</h3>
-                <p>Seu parceiro de confiança para todos os seus suplementos esportivos de qualidade premium.</p>
+                <h3>NUTRIR<span>VIDA</span></h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
             </div>
+
             <div class="footer-column">
                 <h3>Links rápidos</h3>
                 <ul>
                     <li><a href="index.html">Início</a></li>
                     <li><a href="Loja.html">Loja</a></li>
                     <li><a href="contato.html">Contato</a></li>
+
                 </ul>
             </div>
+
             <div class="footer-column">
                 <h3>Informações legais</h3>
                 <ul>
-                    <li><a href="#">Privacidade</a></li>
-                    <li><a href="#">Termos</a></li>
-                    <li><a href="#">Entrega</a></li>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Termos e condições</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+
                 </ul>
             </div>
+
             <div class="footer-column">
                 <h3>Siga-nos</h3>
                 <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/nutrirvidasuplementos?igsh=cWplanlxZWFkNTV6&utm_source=qr"
+                        aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+
+                </div>
+                <h3>Formas de pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                    <i class="fas fa-mobile-alt" title="Pix"></i>
                 </div>
             </div>
         </div>
+
         <div class="footer-bottom">
-            <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
+            <p>&copy; 2025 NutrirVida. Todos os direitos reservados.</p>
         </div>
     </footer>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="javascript/database.js"></script>
@@ -236,26 +288,26 @@
             const meta = user.user_metadata;
 
             // Preenche Interface
-            if(document.getElementById('display-user-name')) 
+            if (document.getElementById('display-user-name'))
                 document.getElementById('display-user-name').innerText = meta.full_name || "Usuário";
-            
-            if(document.getElementById('api-nome')) 
+
+            if (document.getElementById('api-nome'))
                 document.getElementById('api-nome').value = meta.full_name || "";
 
-            if(document.getElementById('api-email')) 
+            if (document.getElementById('api-email'))
                 document.getElementById('api-email').value = user.email || "";
 
-            if(document.getElementById('api-telefone')) {
+            if (document.getElementById('api-telefone')) {
                 let tel = meta.telefone || "";
                 document.getElementById('api-telefone').value = tel.length >= 10 ? formatarTelefone(tel) : tel;
             }
 
-            if(document.getElementById('api-cpf')) {
+            if (document.getElementById('api-cpf')) {
                 let cpf = meta.cpf || "";
                 document.getElementById('api-cpf').value = cpf.length === 11 ? formatarCPF(cpf) : cpf;
             }
 
-            if(document.getElementById('api-nascimento')) 
+            if (document.getElementById('api-nascimento'))
                 document.getElementById('api-nascimento').value = meta.nascimento || "";
 
             // Chama a função para carregar os pedidos
@@ -265,7 +317,7 @@
         // BUSCAR PEDIDOS NO SUPABASE
         async function buscarPedidosDoUsuario(email) {
             const container = document.getElementById('lista-pedidos');
-            
+
             const { data: pedidos, error } = await _supabase
                 .from('pedidos')
                 .select('*')
@@ -284,14 +336,14 @@
 
             container.innerHTML = pedidos.map(pedido => {
                 const data = new Date(pedido.created_at).toLocaleDateString('pt-BR');
-                
+
                 // Lógica de classe CSS baseada no status
                 let statusClass = 'status-pendente';
                 const s = pedido.status.toLowerCase();
-                if(s.includes('aprovado') || s.includes('pago')) statusClass = 'status-aprovado';
-                if(s.includes('enviado') || s.includes('rota')) statusClass = 'status-enviado';
-                if(s.includes('finalizado') || s.includes('entregue')) statusClass = 'status-finalizado';
-                if(s.includes('cancelado')) statusClass = 'status-cancelado';
+                if (s.includes('aprovado') || s.includes('pago')) statusClass = 'status-aprovado';
+                if (s.includes('enviado') || s.includes('rota')) statusClass = 'status-enviado';
+                if (s.includes('finalizado') || s.includes('entregue')) statusClass = 'status-finalizado';
+                if (s.includes('cancelado')) statusClass = 'status-cancelado';
 
                 // Formata os itens para exibição
                 const nomesItens = pedido.itens.map(i => `${i.quantidade}x ${i.nome}`).join(', ');
@@ -328,7 +380,7 @@
 
             const { error: errorMeta } = await _supabase.auth.updateUser({
                 email: novoEmail,
-                data: { 
+                data: {
                     full_name: novoNome,
                     telefone: novoTelefone
                 }
@@ -351,7 +403,7 @@
 
         document.addEventListener('DOMContentLoaded', carregarDadosPerfil);
 
-        window.onpageshow = function(event) {
+        window.onpageshow = function (event) {
             if (event.persisted) window.location.reload();
         };
     </script>

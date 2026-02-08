@@ -1148,3 +1148,35 @@ nav {
 #mobile-menu.active .line1 { transform: rotate(-45deg) translate(-8px, 8px); }
 #mobile-menu.active .line2 { opacity: 0; }
 #mobile-menu.active .line3 { transform: rotate(45deg) translate(-5px, -7px); }
+
+/* Container que surgirá na tela */
+.custom-alert {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: #1a1a1a; /* Fundo escuro elegante */
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    border-left: 5px solid #27ae60; /* Verde Nutrir Vida */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    font-family: 'Poppins', sans-serif;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); }
+    to { transform: translateX(0); }
+}
+
+.custom-alert.hide {
+    animation: slideOut 0.4s ease-in forwards;
+}
+
+@keyframes slideOut {
+    to { transform: translateX(120%); opacity: 0; }
+}

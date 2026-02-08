@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - NutrirVida</title>
-    <link rel="stylesheet" href="Styles/styless.css"> <link rel="stylesheet" href="Styles/checkout.css">
+    <link rel="stylesheet" href="Styles/styless.css">
+    <link rel="stylesheet" href="Styles/checkout.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <>
-   <nav>
+    <nav>
         <a class="logo" href="index.html">
             <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
         </a>
@@ -33,11 +35,13 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
-                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
-                        <li><a href="pedidos.html"><i class="fas fa-box"></i> Meus Pedidos</a></li>
+                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
+                                Perfil</a></li>
+                        
 
                         <li class="dropdown-divider"></li>
-                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
+                                Sair</a></li>
                     </ul>
                 </div>
             </div>
@@ -50,69 +54,69 @@
         </div>
     </nav>
 
-<main class="checkout-container">
-    <h1 class="section-title">Finalizar seu Pedido</h1>
+    <main class="checkout-container">
+        <h1 class="section-title">Finalizar seu Pedido</h1>
 
-    <form id="form-checkout" class="checkout-grid">
-        <section class="checkout-section">
-            <h3><i class="fas fa-user"></i> Informações Pessoais</h3>
-            <div class="input-group">
-                <input type="text" id="nome-completo" placeholder="Nome Completo" required>
-                <input type="email" id="email-checkout" placeholder="E-mail" required>
-            </div>
+        <form id="form-checkout" class="checkout-grid">
+            <section class="checkout-section">
+                <h3><i class="fas fa-user"></i> Informações Pessoais</h3>
+                <div class="input-group">
+                    <input type="text" id="nome-completo" placeholder="Nome Completo" required>
+                    <input type="email" id="email-checkout" placeholder="E-mail" required>
+                </div>
 
-            <h3><i class="fas fa-map-marker-alt"></i> Entrega</h3>
-            <div class="input-group">
-                <input type="text" id="cep-checkout" placeholder="CEP" maxlength="9" required>
-                <input type="text" id="logradouro" placeholder="Endereço (Rua, Av...)" required>
-            </div>
-            <div class="input-row">
-                <input type="text" id="numero" placeholder="Nº" required>
-                <input type="text" id="bairro" placeholder="Bairro" required>
-            </div>
-        </section>
-
-        <section class="checkout-section payment-box">
-            <h3><i class="fas fa-credit-card"></i> Pagamento</h3>
-            <div class="payment-options">
-                <label class="payment-card">
-                    <input type="radio" name="metodo-pagamento" value="pix" checked>
-                    <span><i class="fab fa-pix"></i> Pix (Aprovação Instantânea)</span>
-                </label>
-                <label class="payment-card">
-                    <input type="radio" name="metodo-pagamento" value="cartao">
-                    <span><i class="fas fa-credit-card"></i> Cartão de Crédito</span>
-                </label>
-            </div>
-
-            <div id="dados-cartao" class="hidden">
-                <input type="text" placeholder="Número do Cartão">
+                <h3><i class="fas fa-map-marker-alt"></i> Entrega</h3>
+                <div class="input-group">
+                    <input type="text" id="cep-checkout" placeholder="CEP" maxlength="9" required>
+                    <input type="text" id="logradouro" placeholder="Endereço (Rua, Av...)" required>
+                </div>
                 <div class="input-row">
-                    <input type="text" placeholder="MM/AA">
-                    <input type="text" placeholder="CVV">
+                    <input type="text" id="numero" placeholder="Nº" required>
+                    <input type="text" id="bairro" placeholder="Bairro" required>
                 </div>
-            </div>
+            </section>
 
-            <div class="checkout-summary">
-                <div class="summary-line">
-                    <span>Total a pagar (com frete):</span>
-                    <span id="total-final-checkout" class="total-highlight">R$ 0,00</span>
+            <section class="checkout-section payment-box">
+                <h3><i class="fas fa-credit-card"></i> Pagamento</h3>
+                <div class="payment-options">
+                    <label class="payment-card">
+                        <input type="radio" name="metodo-pagamento" value="pix" checked>
+                        <span><i class="fab fa-pix"></i> Pix (Aprovação Instantânea)</span>
+                    </label>
+                    <label class="payment-card">
+                        <input type="radio" name="metodo-pagamento" value="cartao">
+                        <span><i class="fas fa-credit-card"></i> Cartão de Crédito</span>
+                    </label>
                 </div>
-            </div>
 
-            <button type="submit" class="btn-finalizar-pedido">
-                CONCLUIR PEDIDO <i class="fas fa-check"></i>
-            </button>
-        </section>
-    </form>
-</main>
+                <div id="dados-cartao" class="hidden">
+                    <input type="text" placeholder="Número do Cartão">
+                    <div class="input-row">
+                        <input type="text" placeholder="MM/AA">
+                        <input type="text" placeholder="CVV">
+                    </div>
+                </div>
+
+                <div class="checkout-summary">
+                    <div class="summary-line">
+                        <span>Total a pagar (com frete):</span>
+                        <span id="total-final-checkout" class="total-highlight">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-finalizar-pedido">
+                    CONCLUIR PEDIDO <i class="fas fa-check"></i>
+                </button>
+            </section>
+        </form>
+    </main>
 
 
     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
-                <h3>FitSuplementos</h3>
-                <p>Seu parceiro de confiança para todos os seus suplementos esportivos de qualidade premium.</p>
+                <h3>NUTRIR<span>VIDA</span></h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
             </div>
 
             <div class="footer-column">
@@ -121,7 +125,7 @@
                     <li><a href="index.html">Início</a></li>
                     <li><a href="Loja.html">Loja</a></li>
                     <li><a href="contato.html">Contato</a></li>
-                    <li><a href="#">Sobre nós</a></li>
+
                 </ul>
             </div>
 
@@ -131,7 +135,7 @@
                     <li><a href="#">Termos de uso</a></li>
                     <li><a href="#">Termos e condições</a></li>
                     <li><a href="#">Política de privacidade</a></li>
-                    <li><a href="#">Entrega</a></li>
+
                 </ul>
             </div>
 
@@ -139,9 +143,9 @@
                 <h3>Siga-nos</h3>
                 <div class="social-icons">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/nutrirvidasuplementos?igsh=cWplanlxZWFkNTV6&utm_source=qr"
+                        aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+
                 </div>
                 <h3>Formas de pagamento</h3>
                 <div class="payment-icons">
@@ -152,7 +156,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2026 FitSuplementos. Todos os direitos reservados.</p>
+            <p>&copy; 2025 NutrirVida. Todos os direitos reservados.</p>
         </div>
     </footer>
 
@@ -163,7 +167,7 @@
 
     <script src="javascript/database.js"></script>
 
-     
+
 
 
     </body>

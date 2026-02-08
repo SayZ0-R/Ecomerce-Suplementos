@@ -192,3 +192,35 @@ body::after {
 
     .btn-primary { font-size: 0.9rem; padding: 14px; }
 }
+
+/* Container que surgirá na tela */
+.custom-alert {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: #1a1a1a; /* Fundo escuro elegante */
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    border-left: 5px solid #27ae60; /* Verde Nutrir Vida */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    font-family: 'Poppins', sans-serif;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); }
+    to { transform: translateX(0); }
+}
+
+.custom-alert.hide {
+    animation: slideOut 0.4s ease-in forwards;
+}
+
+@keyframes slideOut {
+    to { transform: translateX(120%); opacity: 0; }
+}
