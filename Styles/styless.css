@@ -37,7 +37,7 @@
     --section-padding: 60px 10%;
     --section-padding-narrow: 40px 10%;
     --container-padding: 10%;
-    --hero-bg: url("../Imagens/Group 2.png");
+    --hero-bg: url("../Imagens/iPhone 17 - 1.png");
 
     --radius-sm: 8px;
     --radius: 10px;
@@ -277,7 +277,7 @@ nav {
     display: inline-flex;
     align-items: center;
     padding: 15px 35px;
-    background: var(--primary);
+    background: #37AD44;
     color: var(--text);
     text-decoration: none;
     font-size: 1rem;
@@ -1179,4 +1179,11 @@ nav {
 
 @keyframes slideOut {
     to { transform: translateX(120%); opacity: 0; }
+}
+
+@media (min-width: 1025px) {
+    :root {
+        --hero-bg: url("../Imagens/Group 2.png"); /* Sua imagem original */
+        
+    }
 }
