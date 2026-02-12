@@ -107,14 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ESTE É O SEU NOVO MOLDE (TEMPLATE)
+    // ESTE É O SEU NOVO MOLDE (TEMPLATE) ATUALIZADO
     function renderizarProdutos(produtos, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        container.innerHTML = produtos.map(p => `
+        container.innerHTML = produtos.map(p => {
+            // --- LÓGICA DE CÁLCULO PARA O CARTÃO ---
+            const valorPix = Number(p.preco);
+            const valorCartao = p.preco_cartao ? Number(p.preco_cartao) : valorPix;
+            const parcelas = p.max_parcelas || 4;
+
+            const pixFormatado = valorPix.toFixed(2).replace('.', ',');
+            const cartaoFormatado = valorCartao.toFixed(2).replace('.', ',');
+
+            return `
         <article class="product-card">
-            <div class="product-image">
+            <div class="product-image" onclick="window.location.href='produto.html?id=${p.id}'" style="cursor:pointer">
                 <img src="${p.imagem_url}" alt="${p.nome}">
             </div>
             <div class="product-info">
@@ -125,18 +134,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="rating-value">4.8</span>
                     <span class="reviews">(Novo)</span>
                 </div>
+                
                 <div class="product-price-container">
                     <div class="prices">
                         ${p.preco_antigo ? `<span class="old-price">R$ ${Number(p.preco_antigo).toFixed(2).replace('.', ',')}</span>` : ''}
-                        <span class="current-price">R$ ${Number(p.preco).toFixed(2).replace('.', ',')}</span>
+                        
+                        <div class="price-pix-row">
+                            <span class="current-price">R$ ${pixFormatado}</span>
+                            <small class="pix-label">no Pix</small>
+                        </div>
+
+                        <div class="price-card-row">
+                            <small class="card-details">Ou R$ ${cartaoFormatado} em até ${parcelas}x</small>
+                        </div>
                     </div>
-                    <button class="btn-cart" onclick="adicionarAoCarrinho({id:'${p.id}', nome:'${p.nome}', preco:${p.preco}, imagem:'${p.imagem_url}'})">
+                    
+                    <button class="btn-cart" onclick="adicionarAoCarrinho({id:'${p.id}', nome:'${p.nome}', preco:${p.preco}, preco_cartao:${valorCartao}, imagem:'${p.imagem_url}'})">
                         <i class="cart-icon">🛒</i>
                     </button>
                 </div>
             </div>
         </article>
-    `).join('');
+    `;
+        }).join('');
+
     }
 });
 
@@ -235,7 +256,7 @@ function atualizarDisplays(subtotal, frete) {
 
 function alterarQuantidade(index, delta) {
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    
+
     carrinho[index].quantidade = parseInt(carrinho[index].quantidade) + delta;
 
     if (carrinho[index].quantidade < 1) {
@@ -256,20 +277,18 @@ function removerDoCarrinho(index) {
 }
 
 function adicionarAoCarrinho(produto) {
-    // CORREÇÃO: Lê sempre do storage no momento do clique para sincronizar abas
     let carrinhoAtual = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
     const index = carrinhoAtual.findIndex(item => item.id === produto.id);
-
-    // CORREÇÃO: Pega a quantidade vinda do produto ou 1
     const qtdAdicional = parseInt(produto.quantidade) || 1;
 
     if (index > -1) {
-        carrinhoAtual[index].quantidade = parseInt(carrinhoAtual[index].quantidade) + qtdAdicional;
+        carrinhoAtual[index].quantidade += qtdAdicional;
     } else {
         carrinhoAtual.push({
             id: produto.id,
             nome: produto.nome,
             preco: produto.preco,
+            preco_cartao: produto.preco_cartao, // <--- ADICIONE ESTA LINHA
             imagem: produto.imagem,
             categoria: produto.categoria,
             quantidade: qtdAdicional
@@ -323,6 +342,7 @@ function carregarPaginaProduto() {
                         id: p.id,
                         nome: p.nome,
                         preco: p.preco,
+                        preco_cartao: p.preco_cartao, 
                         imagem: imagemFinal,
                         categoria: p.categoria,
                         quantidade: qtd

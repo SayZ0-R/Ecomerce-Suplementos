@@ -208,15 +208,32 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Preço Atual (R$)</label>
-                        <input type="number" id="prod-preco" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Preço Antigo (Para Promoção)</label>
-                        <input type="number" id="prod-preco-antigo" step="0.01">
-                    </div>
-                </div>
+    <div class="form-group">
+        <label>Preço à Vista/Pix (R$)</label>
+        <input type="number" id="prod-preco" step="0.01" required>
+    </div>
+    <div class="form-group">
+        <label>Preço no Cartão (R$)</label>
+        <input type="number" id="prod-preco-cartao" step="0.01">
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label>Preço Antigo (Promoção)</label>
+        <input type="number" id="prod-preco-antigo" step="0.01">
+    </div>
+    <div class="form-group">
+        <label>Max. Parcelas (Cartão)</label>
+        <select id="prod-max-parcelas">
+            <option value="1">1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="4" selected>4x</option>
+            <option value="5">6x</option>
+        </select>
+    </div>
+</div>
 
                 <div class="form-group">
                     <label>Imagem do Produto</label>

@@ -1234,3 +1234,33 @@ nav {
 }
 
 
+/* Ajustes para os novos preços no card da Index */
+.price-pix-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.pix-label {
+    color: #27ae60;
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.price-card-row {
+    margin-top: 2px;
+}
+
+.card-details {
+    color: #666;
+    font-size: 0.7rem;
+    display: block;
+}
+
+/* Garante que o container de preços tenha espaço */
+.product-price-container {
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: flex-end;
+}

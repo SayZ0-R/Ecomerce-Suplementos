@@ -74,7 +74,7 @@ function filtrar() {
     renderizarVitrine(filtrados);
 }
 
-// 4. Renderiza a vitrine de produtos
+// 4. Renderiza a vitrine de produtos (ATUALIZADA COM PREÇO NO CARTÃO)
 function renderizarVitrine(lista) {
     const grid = document.getElementById('grid-produtos');
     const contador = document.getElementById('contador-produtos');
@@ -86,7 +86,16 @@ function renderizarVitrine(lista) {
         return;
     }
 
-    grid.innerHTML = lista.map(p => `
+    grid.innerHTML = lista.map(p => {
+        // --- LOGICA DE PREÇO NO CARTÃO ---
+        const valorPix = Number(p.preco);
+        const valorCartao = p.preco_cartao ? Number(p.preco_cartao) : valorPix;
+        const parcelas = p.max_parcelas || 4;
+        
+        const pixFormatado = valorPix.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const cartaoFormatado = valorCartao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        return `
         <div class="card-produto">
             <div class="imagem-link" onclick="window.location.href='produto.html?id=${p.id}'" style="cursor:pointer">
                 <img src="${p.imagem_url || 'Imagens/placeholder.png'}" alt="${p.nome}">
@@ -95,10 +104,20 @@ function renderizarVitrine(lista) {
                 <span class="categoria-label">${p.categoria}</span>
                 <h3 onclick="window.location.href='produto.html?id=${p.id}'" style="cursor:pointer">${p.nome}</h3>
                 <div class="rating"><i class="fas fa-star"></i> 4.8</div>
+                
                 <div class="preco-box">
-                    ${p.preco_antigo ? `<span class="preco-antigo">R$ ${p.preco_antigo.toFixed(2)}</span>` : ''}
-                    <span class="preco-atual">R$ ${p.preco.toFixed(2)}</span>
+                    ${p.preco_antigo ? `<span class="preco-antigo">R$ ${Number(p.preco_antigo).toFixed(2).replace('.', ',')}</span>` : ''}
+                    
+                    <div class="preco-pix-loja">
+                        <span class="preco-atual">${pixFormatado}</span>
+                        <small>no Pix</small>
+                    </div>
+                    
+                    <div class="preco-cartao-loja">
+                        <small>ou ${cartaoFormatado} em até ${parcelas}x</small>
+                    </div>
                 </div>
+
                 <div class="botoes-card">
                     <a href="produto.html?id=${p.id}" class="btn-saiba-mais">Ver Detalhes</a>
                     <button class="btn-add-cart" onclick="adicionarAoCarrinhoRapido('${p.id}')">
@@ -107,14 +126,14 @@ function renderizarVitrine(lista) {
                 </div>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     if (contador) contador.innerText = `${lista.length} produto(s) encontrado(s)`;
 }
 
-// 5. FUNÇÃO DO CARRINHO (CORRIGIDA)
+// 5. FUNÇÃO DO CARRINHO (CORRIGIDA COM PREÇO CARTÃO)
 function adicionarAoCarrinhoRapido(id) {
-    // Busca o produto completo no array local para ter nome, preço e imagem
+    // Busca o produto completo no array local
     const p = produtosBanco.find(item => item.id == id);
 
     if (!p) {
@@ -122,12 +141,13 @@ function adicionarAoCarrinhoRapido(id) {
         return;
     }
 
-    // Formata o objeto para o padrão que seu script.js espera
+    // Formata o objeto INCLUINDO o preco_cartao para o checkout entender a diferença
     const produtoParaCarrinho = {
         id: p.id,
         nome: p.nome,
-        preco: p.preco,
-        imagem: p.imagem_url, // Aqui estava o erro (era imagem_url no banco)
+        preco: p.preco, // Preço Pix
+        preco_cartao: p.preco_cartao, // <--- ESTA LINHA FALTAVA!
+        imagem: p.imagem_url,
         quantidade: 1
     };
 
@@ -135,11 +155,13 @@ function adicionarAoCarrinhoRapido(id) {
     if (typeof adicionarAoCarrinho === 'function') {
         adicionarAoCarrinho(produtoParaCarrinho);
         
-        // Feedback visual simples
+        // Feedback visual
         const btn = event.currentTarget;
-        const icon = btn.querySelector('i');
-        icon.className = 'fas fa-check';
-        setTimeout(() => icon.className = 'fas fa-cart-plus', 2000);
+        const icon = btn?.querySelector('i');
+        if (icon) {
+            icon.className = 'fas fa-check';
+            setTimeout(() => icon.className = 'fas fa-cart-plus', 2000);
+        }
     } else {
         alert('Erro: Sistema de carrinho não carregado.');
     }

@@ -11,7 +11,7 @@ async function validarAdmin() {
     carregarCategoriasNoSelect();
     carregarProdutosDoBanco();
     carregarPedidosAdmin();
-    carregarDadosBanner(); 
+    carregarDadosBanner();
 }
 
 async function identificarAdmin() {
@@ -20,7 +20,7 @@ async function identificarAdmin() {
         const nomeCompleto = user.user_metadata.full_name || "Administrador";
         const adminNameElement = document.querySelector('.admin-name strong');
         const avatarElement = document.querySelector('.avatar');
-        
+
         if (adminNameElement) adminNameElement.innerText = nomeCompleto;
         if (avatarElement) avatarElement.innerText = nomeCompleto.charAt(0).toUpperCase();
     }
@@ -54,7 +54,7 @@ async function salvarNovaCategoria() {
         alert("Categoria adicionada!");
         document.getElementById('novo-nome-cat').value = "";
         fecharModalCategoria();
-        carregarCategoriasNoSelect(); 
+        carregarCategoriasNoSelect();
     }
 }
 
@@ -64,6 +64,9 @@ async function salvarNovaCategoria() {
 async function editarProduto(id) {
     const { data: p, error } = await _supabase.from('produtos').select('*').eq('id', id).single();
     if (error) return alert("Erro ao carregar produto");
+
+    document.getElementById('prod-preco-cartao').value = p.preco_cartao || "";
+    document.getElementById('prod-max-parcelas').value = p.max_parcelas || 4;
 
     // Preenche os campos do formulário
     document.getElementById('prod-id').value = p.id;
@@ -75,12 +78,12 @@ async function editarProduto(id) {
     document.getElementById('prod-descricao').value = p.descricao || "";
     document.getElementById('prod-mais-vendido').checked = p.mais_vendido;
     document.getElementById('prod-promocao').checked = p.promocao;
-    
+
     // Ajustes visuais do modal
     document.getElementById('modal-titulo').innerText = "Editar Produto";
     document.getElementById('aviso-imagem').style.display = "block";
     document.getElementById('prod-file-name').innerText = "Alterar Foto (Opcional)";
-    
+
     abrirModalProduto();
 }
 
@@ -107,6 +110,10 @@ async function salvarProduto(event) {
         const dados = {
             nome: document.getElementById('prod-nome').value,
             preco: parseFloat(document.getElementById('prod-preco').value),
+            // NOVOS CAMPOS ABAIXO:
+            preco_cartao: document.getElementById('prod-preco-cartao').value ? parseFloat(document.getElementById('prod-preco-cartao').value) : null,
+            max_parcelas: parseInt(document.getElementById('prod-max-parcelas').value),
+
             preco_antigo: document.getElementById('prod-preco-antigo').value ? parseFloat(document.getElementById('prod-preco-antigo').value) : null,
             descricao: document.getElementById('prod-descricao').value,
             categoria: document.getElementById('prod-categoria').value,
@@ -134,10 +141,10 @@ async function salvarProduto(event) {
         alert(idExistente ? "Produto atualizado!" : "Produto cadastrado!");
         fecharModalProduto();
         carregarProdutosDoBanco();
-    } catch (e) { 
-        alert("Erro: " + e.message); 
-    } finally { 
-        btn.innerText = "Salvar Produto"; btn.disabled = false; 
+    } catch (e) {
+        alert("Erro: " + e.message);
+    } finally {
+        btn.innerText = "Salvar Produto"; btn.disabled = false;
     }
 }
 
@@ -214,7 +221,7 @@ async function atualizarStatusPedido(id, novoStatus) {
         alert("Erro ao atualizar status: " + error.message);
     } else {
         // Se aprovou, recarrega os produtos para ver o estoque novo na aba de produtos
-        carregarProdutosDoBanco(); 
+        carregarProdutosDoBanco();
         alert(`Pedido #${id} atualizado para ${novoStatus}!`);
     }
 }
@@ -257,17 +264,19 @@ async function carregarDadosBanner() {
 }
 
 // --- 7. UTILITÁRIOS ATUALIZADOS ---
-function abrirModalProduto() { 
-    document.getElementById('modal-produto').classList.add('active'); 
+function abrirModalProduto() {
+    document.getElementById('modal-produto').classList.add('active');
 }
 
-function fecharModalProduto() { 
-    document.getElementById('modal-produto').classList.remove('active'); 
-    document.getElementById('form-produto').reset(); 
+function fecharModalProduto() {
+    document.getElementById('modal-produto').classList.remove('active');
+    document.getElementById('form-produto').reset();
     document.getElementById('prod-id').value = ""; // Limpa o ID para não editar o errado depois
     document.getElementById('modal-titulo').innerText = "Configurar Produto";
     document.getElementById('aviso-imagem').style.display = "none";
     document.getElementById('prod-file-name').innerText = "Escolher Foto do Produto";
+    document.getElementById('prod-preco-cartao').value = "";
+    document.getElementById('prod-max-parcelas').value = 4;
 }
 
 async function deletarProduto(id) {
@@ -311,7 +320,7 @@ function mostrarSecao(secaoId) {
 
 
 // Sobrescrevendo o alert nativo do navegador
-window.alert = function(mensagem) {
+window.alert = function (mensagem) {
     // 1. Criar o elemento na hora (ele passa a existir aqui)
     const notification = document.createElement('div');
     notification.className = 'custom-alert';

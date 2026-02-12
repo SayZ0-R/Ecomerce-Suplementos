@@ -308,3 +308,28 @@ body.loja-page {
     color: #000; 
 }
 
+.preco-pix-loja {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    margin-bottom: 2px;
+}
+
+.preco-pix-loja small {
+    color: #27ae60;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+.preco-cartao-loja small {
+    color: #666;
+    font-size: 0.75rem;
+    display: block;
+}
+
+.preco-box {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+

@@ -37,7 +37,7 @@
                     <ul class="profile-dropdown">
                         <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
                                 Perfil</a></li>
-                        
+
 
                         <li class="dropdown-divider"></li>
                         <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
@@ -87,6 +87,13 @@
                         <input type="radio" name="metodo-pagamento" value="cartao">
                         <span><i class="fas fa-credit-card"></i> Cartão de Crédito</span>
                     </label>
+                    <div id="parcelamento-container" style="display: none; margin-top: 10px; padding-left: 30px;">
+                        <label style="display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px;">Parcelar
+                            em:</label>
+                        <select id="select-parcelas"
+                            style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                        </select>
+                    </div>
                 </div>
 
                 <div id="dados-cartao" class="hidden">
