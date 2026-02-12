@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navList = document.querySelector(".nav-list");
 
     if (mobileMenu) {
-        mobileMenu.onclick = function() {
+        mobileMenu.onclick = function () {
             this.classList.toggle('active');
             if (navList) navList.classList.toggle('active');
             console.log("Status do menu:", this.classList.contains('active') ? "Aberto (X)" : "Fechado (≡)");
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DROPDOWN PERFIL ---
     const profileIcon = document.querySelector('.profile-icon');
     const dropdown = document.querySelector('.profile-dropdown');
-    
+
     if (profileIcon && dropdown) {
         profileIcon.onclick = (e) => {
             e.preventDefault();
@@ -28,28 +28,115 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- BOTÃO IR PARA CHECKOUT ---
+    // --- BOTÃO IR PARA CHECKOUT (COM TRAVA DE FRETE) ---
     const btnCheckout = document.getElementById('btn-checkout');
     if (btnCheckout) {
         btnCheckout.addEventListener('click', () => {
-            // CORREÇÃO: Unificado para usar 'nutrirVida_cart'
             const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-            if (carrinho.length > 0) {
-                window.location.href = 'checkout.html';
-            } else {
+            const freteSalvo = localStorage.getItem('nutrirVida_frete'); // Verifica se o frete existe
+
+            if (carrinho.length === 0) {
                 alert("Seu carrinho está vazio!");
                 window.location.href = 'Loja.html';
+                return;
             }
+
+            // --- A NOVA TRAVA AQUI ---
+            if (freteSalvo === null || freteSalvo === undefined) {
+                alert("Por favor, informe seu bairro para calcular o frete antes de continuar.");
+                document.getElementById('bairro-input')?.focus(); // Dá foco no campo de bairro
+                return;
+            }
+
+            // Se passou pelas duas travas, vai para o checkout
+            window.location.href = 'checkout.html';
         });
+    }
+
+    // --- 3. NOVAS CONEXÕES (VINCULANDO O BANNER E OUTROS) ---
+    // Chamamos a função do banner aqui para que o JS busque os dados do Supabase
+    carregarBannerPromocional();
+
+    // Mantemos as outras inicializações do seu sistema
+    atualizarBadgeCarrinho();
+    carregarPaginaProduto();
+
+    if (document.getElementById('cart-list')) {
+        carregarCarrinho();
     }
 
     // --- INICIALIZAÇÃO ---
     atualizarBadgeCarrinho();
     carregarPaginaProduto();
-    
+
     // Inicia o carrinho se estiver na página dele
     if (document.getElementById('cart-list')) {
         carregarCarrinho();
+    }
+
+    carregarDestaquesMaisVendidos()
+    if (document.getElementById('cart-list')) {
+        carregarCarrinho();
+    }
+
+    async function carregarDestaquesMaisVendidos() {
+        const container = document.getElementById('mais-vendidos-container');
+        if (!container) return;
+
+        try {
+            // Busca os produtos marcados como mais_vendido
+            const { data, error } = await _supabase
+                .from('produtos')
+                .select('*')
+                .eq('mais_vendido', true)
+                .limit(4);
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                container.innerHTML = "<p class='aviso-vazio'>Nenhuma oferta em destaque no momento.</p>";
+                return;
+            }
+
+            // Limpa e Renderiza
+            container.innerHTML = '';
+            renderizarProdutos(data, 'mais-vendidos-container');
+
+        } catch (e) {
+            console.error("Erro ao carregar destaques:", e);
+        }
+    }
+
+    // ESTE É O SEU NOVO MOLDE (TEMPLATE)
+    function renderizarProdutos(produtos, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = produtos.map(p => `
+        <article class="product-card">
+            <div class="product-image">
+                <img src="${p.imagem_url}" alt="${p.nome}">
+            </div>
+            <div class="product-info">
+                <span class="product-category">${p.categoria || 'Suplementos'}</span>
+                <h3 class="product-title">${p.nome}</h3>
+                <div class="product-rating">
+                    <span class="star">⭐</span>
+                    <span class="rating-value">4.8</span>
+                    <span class="reviews">(Novo)</span>
+                </div>
+                <div class="product-price-container">
+                    <div class="prices">
+                        ${p.preco_antigo ? `<span class="old-price">R$ ${Number(p.preco_antigo).toFixed(2).replace('.', ',')}</span>` : ''}
+                        <span class="current-price">R$ ${Number(p.preco).toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    <button class="btn-cart" onclick="adicionarAoCarrinho({id:'${p.id}', nome:'${p.nome}', preco:${p.preco}, imagem:'${p.imagem_url}'})">
+                        <i class="cart-icon">🛒</i>
+                    </button>
+                </div>
+            </div>
+        </article>
+    `).join('');
     }
 });
 
@@ -95,8 +182,8 @@ function carregarCarrinho() {
     const bairroSalvo = localStorage.getItem('nutrirVida_bairro');
     if (bairroSalvo) {
         const input = document.getElementById('bairro-input');
-        if(input) input.value = bairroSalvo;
-        calcularFretePorBairro(true); 
+        if (input) input.value = bairroSalvo;
+        calcularFretePorBairro(true);
     } else {
         atualizarDisplays(subtotal, 0);
     }
@@ -128,7 +215,7 @@ function calcularFretePorBairro(silencioso = false) {
         atualizarDisplays(subtotal, valorFrete);
         if (!silencioso) alert("Frete calculado com sucesso!");
     } else if (inputBairro !== "") {
-        if(!silencioso) alert("Bairro não encontrado na lista de entregas.");
+        if (!silencioso) alert("Bairro não encontrado na lista de entregas.");
     }
 }
 
@@ -150,7 +237,7 @@ function alterarQuantidade(index, delta) {
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
     // CORREÇÃO: Garantindo soma aritmética
     carrinho[index].quantidade = parseInt(carrinho[index].quantidade) + delta;
-    
+
     if (carrinho[index].quantidade < 1) {
         removerDoCarrinho(index);
     } else {
@@ -184,7 +271,7 @@ function adicionarAoCarrinho(produto) {
             nome: produto.nome,
             preco: produto.preco,
             imagem: produto.imagem,
-            categoria: produto.categoria, 
+            categoria: produto.categoria,
             quantidade: qtdAdicional
         });
     }
@@ -216,22 +303,22 @@ function carregarPaginaProduto() {
     // vamos usar o produto que você já buscou do Supabase no script da página.
     // Usamos um pequeno intervalo para garantir que o Supabase já respondeu.
     setTimeout(() => {
-        const p = window.produtoAtual; 
-        
+        const p = window.produtoAtual;
+
         if (p) {
             // Sincroniza a imagem (alguns bancos usam imagem_url, outros imagem)
             const imagemFinal = p.imagem_url || p.imagem;
 
             const btnComprar = document.getElementById('btn-comprar-detalhe');
             if (btnComprar) {
-                btnComprar.onclick = null; 
+                btnComprar.onclick = null;
                 btnComprar.onclick = (e) => {
                     e.preventDefault();
                     e.stopImmediatePropagation();
 
                     const qtdInput = document.getElementById('qtd-produto');
                     const qtd = qtdInput ? parseInt(qtdInput.value) : 1;
-                    
+
                     const pComQtd = {
                         id: p.id,
                         nome: p.nome,
@@ -257,7 +344,7 @@ function mudarAba(tipo) {
 
     document.querySelectorAll('.aba-item').forEach(btn => btn.classList.remove('active'));
     const btnAtivo = document.querySelector(`[onclick*="mudarAba('${tipo}')"]`);
-    if(btnAtivo) btnAtivo.classList.add('active');
+    if (btnAtivo) btnAtivo.classList.add('active');
 
     if (tipo === 'descricao') container.innerText = p.descricao;
     if (tipo === 'nutricional') container.innerText = p.nutricional;
@@ -274,53 +361,50 @@ async function acessarPerfil() {
     }
 }
 
-async function carregarConteudoIndex() {
-    await carregarBannerPromocional();
-    await carregarDestaquesMaisVendidos();
-}
-
 async function carregarBannerPromocional() {
-    const bannerContainer = document.getElementById('banner-dinamico');
-    if (!bannerContainer) return;
-    const { data, error } = await _supabase.from('configuracoes_site').select('*').eq('chave', 'banner_principal').single();
-    if (error || !data) return;
-    bannerContainer.innerHTML = `
-        <div class="promo-banner" style="background-image: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('${data.imagem_url}');">
-            <div class="promo-content">
-                <span class="promo-badge">OFERTA ESPECIAL</span>
-                <h2 class="promo-title">${data.titulo}</h2>
-                <p class="promo-subtitle">${data.descricao} - <strong>R$ ${parseFloat(data.preco).toFixed(2)}</strong></p>
-                <a href="Loja.html" class="promo-button">Aproveitar Agora <i class="fas fa-arrow-right"></i></a>
-            </div>
-        </div>`;
+    // 1. Elementos que vamos manipular
+    const bannerImg = document.getElementById('banner-img-alvo');
+    const bannerTitulo = document.getElementById('banner-titulo-alvo');
+    const bannerDesc = document.getElementById('banner-desc-alvo');
+
+    if (!bannerImg || !bannerTitulo || !bannerDesc) return;
+
+    try {
+        // 2. Busca o banner ativo no banco (chave 'banner_principal')
+        const { data, error } = await _supabase
+            .from('configuracoes_site')
+            .select('*')
+            .eq('chave', 'banner_principal')
+            .single();
+
+        if (error || !data) {
+            console.warn("Usando banner padrão do HTML.");
+            return;
+        }
+
+        // 3. VINCULAÇÃO DIRETA (A mágica acontece aqui)
+        // Atualiza a Imagem com o tratamento de alta resolução que você pediu
+        bannerImg.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('${data.imagem_url}')`;
+        bannerImg.style.imageRendering = "high-quality";
+
+        // Atualiza o Título
+        bannerTitulo.innerText = data.titulo;
+
+        // Atualiza a Descrição + Preço (formatado em Real)
+        const precoFormatado = parseFloat(data.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        bannerDesc.innerHTML = `${data.descricao} <br><strong>Por apenas ${precoFormatado}</strong>`;
+
+    } catch (err) {
+        console.error("Erro na vinculação do banner:", err);
+    }
 }
 
-async function carregarDestaquesMaisVendidos() {
-    const vitrine = document.getElementById('vitrine-mais-vendidos');
-    if (!vitrine) return;
-    const { data: produtos, error } = await _supabase.from('produtos').select('*').eq('mais_vendido', true).limit(4);
-    if (error || !produtos) return;
-    vitrine.innerHTML = produtos.map(p => `
-        <article class="product-card">
-            <div class="product-image"><img src="${p.imagem_url}" alt="${p.nome}"></div>
-            <div class="product-info">
-                <span class="product-category">${p.categoria}</span>
-                <h3 class="product-title">${p.nome}</h3>
-                <div class="product-price-container">
-                    <div class="prices">
-                        ${p.preco_antigo ? `<span class="old-price">R$ ${p.preco_antigo.toFixed(2)}</span>` : ''}
-                        <span class="current-price">R$ ${p.preco.toFixed(2)}</span>
-                    </div>
-                    <button class="btn-cart" onclick="adicionarAoCarrinho({id:'${p.id}', nome:'${p.nome}', preco:${p.preco}, imagem:'${p.imagem_url}', categoria:'${p.categoria}'})" aria-label="Adicionar ao carrinho">
-                        <i class="fas fa-shopping-cart"></i>
-                    </button>
-                </div>
-            </div>
-        </article>`).join('');
-}
+
+
+
 
 // Sobrescrevendo o alert nativo do navegador
-window.alert = function(mensagem) {
+window.alert = function (mensagem) {
     // 1. Criar o elemento na hora (ele passa a existir aqui)
     const notification = document.createElement('div');
     notification.className = 'custom-alert';

@@ -40,16 +40,18 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
-                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
-                        
+                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
+                                Perfil</a></li>
+
 
                         <li class="dropdown-divider"></li>
-                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
+                                Sair</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div  class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -107,50 +109,28 @@
 
     <section class="products-section">
         <div class="products-header">
-            <h2>Nossos Mais Vendidos</h2>
-            <p>Os produtos mais vendidos da SEMANA🔥</p>
+            <h2>Promoções da Semana</h2>
+            <p>Aproveite os melhores preços da semana🔥</p>
         </div>
 
-        <div class="products-grid" id="vitrine-mais-vendidos">
-            <article class="product-card">
-                <div class="product-image">
-                    <img src="Imagens/Image (Whey Protein Isolado Premium).png" alt="Whey Protein Isolado Premium">
-                </div>
-                <div class="product-info">
-                    <span class="product-category">Proteínas</span>
-                    <h3 class="product-title">Whey Protein Isolado Premium</h3>
-                    <div class="product-rating">
-                        <span class="star">⭐</span>
-                        <span class="rating-value">4.8</span>
-                        <span class="reviews">(2 avaliações)</span>
-                    </div>
-                    <div class="product-price-container">
-                        <div class="prices">
-                            <span class="old-price">R$59,99</span>
-                            <span class="current-price">R$49,99</span>
-                        </div>
-                        <button class="btn-cart" aria-label="Adicionar ao carrinho">
-                            <i class="cart-icon">🛒</i>
-                        </button>
-                    </div>
-                </div>
-            </article>
+        <div class="products-grid" id="mais-vendidos-container">
         </div>
     </section>
 
     <section class="promo-banner-container" id="banner-dinamico">
-        <div class="promo-banner"
+        <div class="promo-banner" id="banner-img-alvo"
             style="background-image: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('Imagens/Image (Promo).svg');">
             <div class="promo-content">
-                <span class="promo-badge">-20% DE DESCONTO</span>
-                <h2 class="promo-title">Pacote Ganho de Massa</h2>
-                <p class="promo-subtitle">Whey Protein + Creatina + BCAA com preço reduzido</p>
-                <a href="#" class="promo-button">
+                <span class="promo-badge" id="banner-badge-alvo">OFERTA ESPECIAL</span>
+                <h2 class="promo-title" id="banner-titulo-alvo">Carregando...</h2>
+                <p class="promo-subtitle" id="banner-desc-alvo">Buscando as melhores ofertas para você.</p>
+                <a href="Loja.html" class="promo-button">
                     Descobrir a oferta <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
         </div>
     </section>
+
 
     <section class="trust-signals">
         <div class="signals-container">
@@ -193,7 +173,7 @@
                     <li><a href="index.html">Início</a></li>
                     <li><a href="Loja.html">Loja</a></li>
                     <li><a href="contato.html">Contato</a></li>
-                    
+
                 </ul>
             </div>
 
@@ -203,7 +183,7 @@
                     <li><a href="#">Termos de uso</a></li>
                     <li><a href="#">Termos e condições</a></li>
                     <li><a href="#">Política de privacidade</a></li>
-                    
+
                 </ul>
             </div>
 

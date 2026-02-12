@@ -28,25 +28,7 @@ async function identificarAdmin() {
 
 document.addEventListener('DOMContentLoaded', validarAdmin);
 
-// --- 2. NAVEGAÇÃO ENTRE ABAS ---
-function mostrarSecao(secaoId) {
-    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
 
-    const menuAlvo = document.querySelector(`[onclick="mostrarSecao('${secaoId}')"]`);
-    if (menuAlvo) menuAlvo.classList.add('active');
-
-    const secaoAlvo = document.getElementById(`sec-${secaoId}`);
-    if (secaoAlvo) secaoAlvo.classList.add('active');
-
-    const titulos = {
-        'dashboard': 'Painel de Controle',
-        'produtos': 'Gerenciar Estoque',
-        'pedidos': 'Pedidos Recebidos',
-        'banners': 'Configuração de Banner'
-    };
-    document.getElementById('secao-titulo').innerText = titulos[secaoId] || 'Admin';
-}
 
 // --- 3. GESTÃO DE CATEGORIAS ---
 async function carregarCategoriasNoSelect() {

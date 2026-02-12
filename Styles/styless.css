@@ -37,7 +37,7 @@
     --section-padding: 60px 10%;
     --section-padding-narrow: 40px 10%;
     --container-padding: 10%;
-    --hero-bg: url("../Imagens/iPhone 17 - 1.png");
+    --hero-bg: url("../Imagens/Group 3.svg");
 
     --radius-sm: 8px;
     --radius: 10px;
@@ -1183,7 +1183,7 @@ nav {
 
 @media (min-width: 1025px) {
     :root {
-        --hero-bg: url("../Imagens/Group 2.png"); /* Sua imagem original */
+        --hero-bg: url("../Imagens/Group 2.svg"); /* Sua imagem original */
         
     }
 }
