@@ -235,7 +235,7 @@ function atualizarDisplays(subtotal, frete) {
 
 function alterarQuantidade(index, delta) {
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    // CORREÇÃO: Garantindo soma aritmética
+    
     carrinho[index].quantidade = parseInt(carrinho[index].quantidade) + delta;
 
     if (carrinho[index].quantidade < 1) {
@@ -422,3 +422,6 @@ window.alert = function (mensagem) {
         setTimeout(() => notification.remove(), 400);
     }, 3000);
 };
+
+
+

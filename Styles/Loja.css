@@ -302,3 +302,9 @@ body.loja-page {
     color: #000;
     font-weight: 500; /* Deixa um pouco mais visível, opcional */
 }
+
+
+.vazio {
+    color: #000; 
+}
+

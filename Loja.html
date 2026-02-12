@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Loja - NutrirVida</title>
 </head>
+
 <body class="loja-page">
 
     <nav>
@@ -19,7 +21,7 @@
             <li><a href="index.html">Início</a></li>
             <li><a href="Loja.html" class="active">Loja</a></li>
             <li><a href="index.html#nossas-categorias">Categorias</a></li>
-            <li><a href="Loja.html" >Pacotes</a></li>
+            <li><a href="Loja.html">Pacotes</a></li>
             <li><a href="contato.html">Contato</a></li>
         </ul>
 
@@ -35,16 +37,18 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
-                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
-                        
+                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
+                                Perfil</a></li>
+
 
                         <li class="dropdown-divider"></li>
-                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
+                                Sair</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div  class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -61,11 +65,15 @@
             </div>
         </section>
 
+        <button class="btn-mobile-filtros">
+            <i class="fas fa-filter"></i> Filtrar Produtos
+        </button>
+
         <div class="conteudo-principal">
             <aside class="sidebar-filtros">
                 <div class="filtro-card">
                     <h3>Filtros</h3>
-                    
+
                     <div class="grupo-filtro">
                         <h4>Categorias</h4>
                         <div id="container-categorias-dinamicas">
@@ -81,7 +89,7 @@
                             <span id="valor-preco">R$1000</span>
                         </div>
                     </div>
-                    
+
                     <button id="btn-resetar" class="btn-reset" onclick="resetarFiltros()">Limpar Filtros</button>
                 </div>
             </aside>
@@ -108,7 +116,7 @@
                     <li><a href="index.html">Início</a></li>
                     <li><a href="Loja.html">Loja</a></li>
                     <li><a href="contato.html">Contato</a></li>
-                    
+
                 </ul>
             </div>
 
@@ -118,7 +126,7 @@
                     <li><a href="#">Termos de uso</a></li>
                     <li><a href="#">Termos e condições</a></li>
                     <li><a href="#">Política de privacidade</a></li>
-                    
+
                 </ul>
             </div>
 
@@ -144,7 +152,9 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="javascript/database.js"></script> <script src="javascript/produtos.js"></script>
+    <script src="javascript/database.js"></script>
+    <script src="javascript/produtos.js"></script>
     <script src="javascript/script.js"></script>
 </body>
+
 </html>

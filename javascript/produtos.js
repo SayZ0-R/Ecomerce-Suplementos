@@ -172,3 +172,20 @@ window.alert = function(mensagem) {
         setTimeout(() => notification.remove(), 400);
     }, 3000);
 };
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btnMobile = document.querySelector('.btn-mobile-filtros');
+    const sidebar = document.querySelector('.sidebar-filtros');
+
+    if (btnMobile && sidebar) {
+        btnMobile.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            console.log("Sidebar lateral alternada");
+        });
+    }
+});
+
+
+
+
