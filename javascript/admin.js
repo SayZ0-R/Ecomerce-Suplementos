@@ -13,6 +13,7 @@ async function validarAdmin() {
     carregarPedidosAdmin();
     carregarDadosBanner();
     carregarEstatisticas();
+    renderizarGraficoVendas();
 }
 
 async function identificarAdmin() {
@@ -417,20 +418,30 @@ window.alert = function (mensagem) {
 };
 
 
-// Escuta novos pedidos em tempo real
-const canalPedidos = _supabase
+// Escuta novos pedidos em tempo real e atualiza a tela automaticamente
+const canalPedidos = _supabase 
     .channel('pedidos-em-tempo-real')
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, payload => {
-        console.log('Novo pedido recebido!', payload.new);
-        // Toca um som de notificação (opcional)
-        const audio = new Audio('Styles/notificacao.mp3');
-        audio.play();
-        // Recarrega a lista de pedidos na tela
-        carregarPedidosAdmin();
-    })
+    .on('postgres_changes', 
+        { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'pedidos' 
+        }, 
+        payload => {
+            console.log('Novo pedido detectado!', payload.new);
+            
+            // 1. CHAMA AS FUNÇÕES QUE ATUALIZAM A TELA
+            carregarPedidosAdmin(); // Isso faz a lista atualizar sem F5
+            carregarEstatisticas(); // Isso atualiza o faturamento no topo
+            
+            // 2. AVISA VOCÊ (Opcional)
+            if (typeof tocarSomNotificacao === "function") {
+                tocarSomNotificacao();
+            }
+            alert(`Novo pedido de ${payload.new.cliente_nome} recebido agora!`);
+        }
+    )
     .subscribe();
-
-
 // --- 8. GESTÃO DE FRETE E BAIRROS ---
 
 async function carregarFretes() {
@@ -535,4 +546,48 @@ function abrirModalDetalhes(jsonString) {
     `;
 
     document.getElementById('modal-detalhes').style.display = 'flex';
+}
+
+
+async function renderizarGraficoVendas() {
+    const { data: pedidos, error } = await _supabase
+        .from('pedidos')
+        .select('total, created_at')
+        .eq('status_pagamento', 'Aprovado'); // Apenas o que foi pago
+
+    if (error) return console.error("Erro ao carregar gráfico:", error);
+
+    // Criar um objeto para somar totais por mês/ano
+    const vendasPorMes = {};
+
+    pedidos.forEach(p => {
+        const data = new Date(p.created_at);
+        const mesAno = data.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+        
+        vendasPorMes[mesAno] = (vendasPorMes[mesAno] || 0) + parseFloat(p.total);
+    });
+
+    const meses = Object.keys(vendasPorMes);
+    const valores = Object.values(vendasPorMes);
+
+    const ctx = document.getElementById('graficoVendas').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar', // Pode ser 'line' para gráfico de linha
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Total Vendido (R$)',
+                data: valores,
+                backgroundColor: '#27ae60',
+                borderColor: '#219150',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
 }
