@@ -8,11 +8,33 @@
     <link rel="stylesheet" href="Styles/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        .badge-destaque { background: #ffc107; color: #000; padding: 2px 5px; border-radius: 4px; font-size: 10px; }
-        .btn-whats { background: #25d366; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
-        .btn-whats:hover { background: #128c7e; }
-        .status-select { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
-        
+        .badge-destaque {
+            background: #ffc107;
+            color: #000;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        .btn-whats {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-whats:hover {
+            background: #128c7e;
+        }
+
+        .status-select {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
         .upload-area {
             border: 2px dashed #ccc;
             padding: 15px;
@@ -23,18 +45,49 @@
             transition: 0.3s;
             display: block;
         }
-        .upload-area:hover { border-color: #000; background: #f0f0f0; }
-        .file-name-display { display: block; margin-top: 5px; font-size: 12px; color: #666; }
-        input[type="file"] { display: none; }
 
-        .categoria-input-group { display: flex; gap: 8px; }
-        .btn-add-cat { 
-            background: #000; color: #fff; border: none; padding: 0 15px; 
-            border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 18px;
+        .upload-area:hover {
+            border-color: #000;
+            background: #f0f0f0;
         }
+
+        .file-name-display {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .categoria-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-add-cat {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 0 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
         /* Status de estoque */
-        .status-aprovado { background: #d4edda; color: #155724; }
-        .status-pendente { background: #f8d7da; color: #721c24; }
+        .status-aprovado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pendente {
+            background: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 
@@ -56,6 +109,9 @@
                 </a>
                 <a href="#" class="menu-item" onclick="mostrarSecao('banners')">
                     <i class="fas fa-ad"></i> Banner Promocional
+                </a>
+                <a href="#" class="menu-item" onclick="mostrarSecao('frete')">
+                    <i class="fas fa-truck"></i> Frete e Bairros
                 </a>
                 <div class="menu-divider"></div>
                 <a href="index.html" class="menu-item logout">
@@ -124,10 +180,12 @@
                     <table>
                         <thead>
                             <tr>
+                                <th>Resumo</th>
                                 <th>Data</th>
                                 <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Status</th>
+                                <th>Qtd</th>
+                                <th>Valor</th>
+                                <th>Status Pagamento</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -135,6 +193,17 @@
                     </table>
                 </div>
             </section>
+
+            <div id="modal-detalhes" class="modal-overlay"
+                style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+                <div class="modal-content"
+                    style="background:white; padding:20px; border-radius:8px; width:90%; max-width:450px;">
+                    <h3>Resumo do Pedido</h3>
+                    <div id="detalhe-conteudo" style="margin-top:15px; line-height:1.6;"></div>
+                    <button onclick="document.getElementById('modal-detalhes').style.display='none'"
+                        style="margin-top:20px; width:100%; padding:10px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer;">Fechar</button>
+                </div>
+            </div>
 
             <section id="sec-banners" class="admin-section">
                 <h2>Gerenciar Banner Inicial</h2>
@@ -144,7 +213,8 @@
                             <label>Imagem do Banner</label>
                             <label for="banner-upload" class="upload-area">
                                 <i class="fas fa-cloud-upload-alt"></i> Selecionar Imagem do Banner
-                                <input type="file" id="banner-upload" accept="image/*" onchange="if(this.files[0]) document.getElementById('banner-file-name').innerText = this.files[0].name">
+                                <input type="file" id="banner-upload" accept="image/*"
+                                    onchange="if(this.files[0]) document.getElementById('banner-file-name').innerText = this.files[0].name">
                                 <span id="banner-file-name" class="file-name-display">Nenhuma imagem selecionada</span>
                             </label>
                         </div>
@@ -166,6 +236,45 @@
                     </form>
                 </div>
             </section>
+
+            <section id="sec-frete" class="admin-section">
+                <div class="section-actions">
+                    <h2>Taxas de Entrega por Bairro</h2>
+                </div>
+
+                <div class="card-config" style="margin-bottom: 20px;">
+                    <form id="form-frete" onsubmit="salvarFrete(event)">
+                        <div class="form-row" style="display: flex; gap: 10px; align-items: flex-end;">
+                            <div class="form-group" style="flex: 2;">
+                                <label>Nome do Bairro</label>
+                                <input type="text" id="frete-bairro" placeholder="Ex: Centro" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Valor do Frete (R$)</label>
+                                <input type="number" id="frete-valor" step="0.01" placeholder="0.00" required>
+                            </div>
+                            <button type="submit" class="btn-salvar" style="height: 42px; margin-bottom: 5px;">
+                                <i class="fas fa-plus"></i> Adicionar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bairro</th>
+                                <th>Valor da Taxa</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-fretes-admin">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -208,42 +317,43 @@
                 </div>
 
                 <div class="form-row">
-    <div class="form-group">
-        <label>Preço à Vista/Pix (R$)</label>
-        <input type="number" id="prod-preco" step="0.01" required>
-    </div>
-    <div class="form-group">
-        <label>Preço no Cartão (R$)</label>
-        <input type="number" id="prod-preco-cartao" step="0.01">
-    </div>
-</div>
+                    <div class="form-group">
+                        <label>Preço à Vista/Pix (R$)</label>
+                        <input type="number" id="prod-preco" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço no Cartão (R$)</label>
+                        <input type="number" id="prod-preco-cartao" step="0.01">
+                    </div>
+                </div>
 
-<div class="form-row">
-    <div class="form-group">
-        <label>Preço Antigo (Promoção)</label>
-        <input type="number" id="prod-preco-antigo" step="0.01">
-    </div>
-    <div class="form-group">
-        <label>Max. Parcelas (Cartão)</label>
-        <select id="prod-max-parcelas">
-            <option value="1">1x</option>
-            <option value="2">2x</option>
-            <option value="3">3x</option>
-            <option value="4" selected>4x</option>
-            <option value="5">6x</option>
-        </select>
-    </div>
-</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Preço Antigo (Promoção)</label>
+                        <input type="number" id="prod-preco-antigo" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Max. Parcelas (Cartão)</label>
+                        <select id="prod-max-parcelas">
+                            <option value="1">1x</option>
+                            <option value="2">2x</option>
+                            <option value="3">3x</option>
+                            <option value="4" selected>4x</option>
+                            <option value="5">6x</option>
+                        </select>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label>Imagem do Produto</label>
-                    <input type="file" id="prod-upload" accept="image/*" style="display: none;" 
-                           onchange="if(this.files.length > 0) document.getElementById('prod-file-name').innerText = this.files[0].name">
+                    <input type="file" id="prod-upload" accept="image/*" style="display: none;"
+                        onchange="if(this.files.length > 0) document.getElementById('prod-file-name').innerText = this.files[0].name">
                     <label for="prod-upload" class="upload-area">
-                        <i class="fas fa-image"></i> 
+                        <i class="fas fa-image"></i>
                         <span id="prod-file-name">Escolher Foto do Produto</span>
                     </label>
-                    <small id="aviso-imagem" style="color: #888; display: none; margin-top: 5px;">Deixe vazio para manter a imagem atual.</small>
+                    <small id="aviso-imagem" style="color: #888; display: none; margin-top: 5px;">Deixe vazio para
+                        manter a imagem atual.</small>
                 </div>
 
                 <div class="form-group">
@@ -263,7 +373,8 @@
         <div class="modal-content" style="max-width: 400px;">
             <h3>Nova Categoria</h3>
             <div class="form-group" style="margin: 15px 0;">
-                <input type="text" id="novo-nome-cat" placeholder="Digite o nome da categoria" style="width: 100%; padding: 10px;">
+                <input type="text" id="novo-nome-cat" placeholder="Digite o nome da categoria"
+                    style="width: 100%; padding: 10px;">
             </div>
             <div style="display: flex; gap: 10px;">
                 <button class="btn-salvar" onclick="salvarNovaCategoria()">Salvar</button>
@@ -272,8 +383,11 @@
         </div>
     </div>
 
+
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="javascript/database.js"></script>
     <script src="javascript/admin.js"></script>
 </body>
+
 </html>

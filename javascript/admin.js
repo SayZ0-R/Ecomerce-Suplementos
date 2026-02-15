@@ -12,6 +12,7 @@ async function validarAdmin() {
     carregarProdutosDoBanco();
     carregarPedidosAdmin();
     carregarDadosBanner();
+    carregarEstatisticas();
 }
 
 async function identificarAdmin() {
@@ -28,6 +29,28 @@ async function identificarAdmin() {
 
 document.addEventListener('DOMContentLoaded', validarAdmin);
 
+
+// --- 2. DASHBOARD (ESTATÍSTICAS REAIS) ---
+async function carregarEstatisticas() {
+    const { data: pedidos, error } = await _supabase.from('pedidos').select('total, status_pagamento, status_pedido');
+
+    if (error) return;
+
+    // Soma apenas pedidos com status_pagamento 'Aprovado'
+    const totalVendido = pedidos
+        .filter(p => p.status_pagamento === 'Aprovado')
+        .reduce((acc, p) => acc + parseFloat(p.total), 0);
+
+    // Conta pedidos que não estão 'Concluído'
+    const pendentes = pedidos.filter(p =>
+        p.status_pedido !== 'Concluído' &&
+        p.status_pedido !== 'Cancelado' &&
+        p.status_pedido !== 'Enviado'
+    ).length;
+
+    document.getElementById('stats-vendas').innerText = totalVendido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    document.getElementById('stats-pendentes').innerText = pendentes;
+}
 
 
 // --- 3. GESTÃO DE CATEGORIAS ---
@@ -177,32 +200,82 @@ async function carregarProdutosDoBanco() {
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
+
+            
         </tr>
     `).join('');
 }
 
-// --- 5. GESTÃO DE PEDIDOS ---
+// --- 5. GESTÃO DE PEDIDOS (VERSÃO ATUALIZADA COM TRAVA DE CANCELAMENTO) ---
 async function carregarPedidosAdmin() {
     const lista = document.getElementById('lista-pedidos-admin');
     if (!lista) return;
-    const { data, error } = await _supabase.from('pedidos').select('*').order('created_at', { ascending: false });
+
+    const { data, error } = await _supabase
+        .from('pedidos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
     if (error) return;
 
-    lista.innerHTML = data.map(p => `
+    lista.innerHTML = data.map(p => {
+        const itens = p.itens_json || [];
+        const qtdTotal = p.total_itens_quantidade || 0;
+        const nomesProdutos = itens.map(item => `${item.quantidade}x ${item.nome}`).join('<br>');
+        const pedidoJson = encodeURIComponent(JSON.stringify(p));
+
+
+        // --- NOVA LÓGICA DE TRAVA ---
+        const isCancelado = p.status_pedido === 'Cancelado';
+
+        return `
         <tr>
-            <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
-            <td>${p.cliente_nome || 'Cliente'}</td>
-            <td>R$ ${parseFloat(p.total).toFixed(2)}</td>
+            
             <td>
-                <select class="status-select" onchange="atualizarStatusPedido(${p.id}, this.value)">
-                    <option value="Pendente" ${p.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                    <option value="Aprovado" ${p.status === 'Aprovado' ? 'selected' : ''}>Aprovado</option>
-                    <option value="Enviado" ${p.status === 'Enviado' ? 'selected' : ''}>Enviado</option>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-whats" style="background: #3498db;" 
+                        onclick="abrirModalDetalhes('${pedidoJson}')">
+                    <i class="fas fa-file-alt"></i>
+                </button>
+                
+                
+            </div>
+        </td>
+        
+        <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
+            <td>
+                <strong>${p.cliente_nome || 'Cliente'}</strong><br>
+                <small style="color: #666">${nomesProdutos}</small>
+            </td>
+            <td>${qtdTotal} un.</td>
+            <td>R$ ${parseFloat(p.total).toFixed(2)}</td>
+            
+            <td>
+                <span class="status-badge ${p.status_pagamento === 'Aprovado' ? 'status-aprovado' : (isCancelado ? 'status-cancelado' : 'status-pendente')}">
+                    ${p.status_pagamento || 'Aguardando'}
+                </span>
+            </td>
+
+            <td>
+                <select class="status-select" 
+                        onchange="atualizarStatusOperacional(${p.id}, this.value)" 
+                        ${isCancelado ? 'disabled' : ''} 
+                        style="${isCancelado ? 'border-color: #e74c3c; color: #e74c3c; background-color: #fdf2f2;' : ''}">
+                    
+                    ${isCancelado ? `
+                        <option value="Cancelado" selected>Cancelado</option>
+                    ` : `
+                        <option value="Pendente" ${p.status_pedido === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                        <option value="Em separação" ${p.status_pedido === 'Em separação' ? 'selected' : ''}>Em separação</option>
+                        <option value="Enviado" ${p.status_pedido === 'Enviado' ? 'selected' : ''}>Enviado</option>
+                        <option value="Concluído" ${p.status_pedido === 'Concluído' ? 'selected' : ''}>Concluído</option>
+                    `}
                 </select>
             </td>
             <td>${criarBotaoWhats(p)}</td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
 }
 
 function criarBotaoWhats(p) {
@@ -211,17 +284,17 @@ function criarBotaoWhats(p) {
     return `<button class="btn-whats" onclick="window.open('https://wa.me/55${tel}?text=${encodeURIComponent(msg)}', '_blank')"><i class="fab fa-whatsapp"></i></button>`;
 }
 
-async function atualizarStatusPedido(id, novoStatus) {
+async function atualizarStatusOperacional(id, novoStatus) {
     const { error } = await _supabase
         .from('pedidos')
-        .update({ status: novoStatus })
+        .update({ status_pedido: novoStatus }) // Nome da coluna no banco
         .eq('id', id);
 
     if (error) {
         alert("Erro ao atualizar status: " + error.message);
     } else {
-        // Se aprovou, recarrega os produtos para ver o estoque novo na aba de produtos
-        carregarProdutosDoBanco();
+        // Recarrega estatísticas para atualizar o número de pendentes no topo
+        carregarEstatisticas();
         alert(`Pedido #${id} atualizado para ${novoStatus}!`);
     }
 }
@@ -303,6 +376,10 @@ function mostrarSecao(secaoId) {
     const secaoAlvo = document.getElementById(`sec-${secaoId}`);
     if (secaoAlvo) secaoAlvo.classList.add('active');
 
+    if (secaoId === 'frete') {
+        carregarFretes();
+    }
+
     // --- ADICIONE ISSO AQUI: ---
     // Se estiver no mobile, fecha o menu após clicar em um item
     if (window.innerWidth <= 768) {
@@ -338,3 +415,124 @@ window.alert = function (mensagem) {
         setTimeout(() => notification.remove(), 400);
     }, 3000);
 };
+
+
+// Escuta novos pedidos em tempo real
+const canalPedidos = _supabase
+    .channel('pedidos-em-tempo-real')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, payload => {
+        console.log('Novo pedido recebido!', payload.new);
+        // Toca um som de notificação (opcional)
+        const audio = new Audio('Styles/notificacao.mp3');
+        audio.play();
+        // Recarrega a lista de pedidos na tela
+        carregarPedidosAdmin();
+    })
+    .subscribe();
+
+
+// --- 8. GESTÃO DE FRETE E BAIRROS ---
+
+async function carregarFretes() {
+    console.log("Iniciando carregamento de fretes...");
+    const lista = document.getElementById('lista-fretes-admin');
+
+    if (!lista) return;
+
+    try {
+        const { data, error } = await _supabase
+            .from('frete_bairros')
+            .select('*')
+            .order('bairro', { ascending: true });
+
+        if (error) throw error;
+
+        if (data.length === 0) {
+            lista.innerHTML = '<tr><td colspan="3" style="text-align:center;">Nenhum bairro cadastrado.</td></tr>';
+            return;
+        }
+
+        lista.innerHTML = data.map(item => `
+            <tr>
+                <td>${item.bairro}</td>
+                <td>R$ ${parseFloat(item.valor).toFixed(2).replace('.', ',')}</td>
+                <td style="text-align: center;">
+                    <button onclick="deletarFrete(${item.id})" style="color:red; border:none; background:none; cursor:pointer; font-size:16px">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        console.error("Erro ao carregar fretes:", error);
+    }
+}
+
+async function salvarFrete(event) {
+    event.preventDefault();
+    const btn = event.target.querySelector('button');
+    const bairroInput = document.getElementById('frete-bairro');
+    const valorInput = document.getElementById('frete-valor');
+
+    const bairro = bairroInput.value;
+    const valor = parseFloat(valorInput.value);
+
+    btn.disabled = true;
+    btn.innerText = "Salvando...";
+
+    try {
+        const { error } = await _supabase
+            .from('frete_bairros')
+            .insert([{ bairro, valor }]);
+
+        if (error) throw error;
+
+        alert("Bairro adicionado com sucesso!");
+        bairroInput.value = "";
+        valorInput.value = "";
+        carregarFretes(); // Atualiza a lista na hora
+    } catch (error) {
+        alert("Erro ao salvar: Este bairro já pode estar cadastrado.");
+        console.error(error);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Adicionar";
+    }
+}
+
+async function deletarFrete(id) {
+    if (!confirm("Excluir esta taxa de entrega?")) return;
+
+    try {
+        const { error } = await _supabase
+            .from('frete_bairros')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        carregarFretes();
+    } catch (error) {
+        alert("Erro ao excluir.");
+    }
+}
+
+function abrirModalDetalhes(jsonString) {
+    const p = JSON.parse(decodeURIComponent(jsonString));
+    const itens = p.itens_json || p.itens || [];
+
+    const listaHtml = itens.map(i => `<li>${i.quantidade}x ${i.nome || i.titulo} - R$ ${parseFloat(i.preco).toFixed(2)}</li>`).join('');
+
+    document.getElementById('detalhe-conteudo').innerHTML = `
+        <p><strong>Cliente:</strong> ${p.cliente_nome}</p>
+        <p><strong>WhatsApp:</strong> ${p.whatsapp || 'Não informado'}</p>
+        <p><strong>Endereço:</strong> ${p.endereco || 'Não informado'}</p>
+        <hr>
+        <p><strong>Itens do Pedido:</strong></p>
+        <ul>${listaHtml}</ul>
+        <hr>
+        <p><strong>Total do Pedido:</strong> R$ ${parseFloat(p.total).toFixed(2)}</p>
+    `;
+
+    document.getElementById('modal-detalhes').style.display = 'flex';
+}

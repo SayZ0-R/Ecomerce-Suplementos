@@ -41,9 +41,10 @@
                     <ul class="profile-dropdown">
                         <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
                                 Perfil</a></li>
-                        
+
                         <li class="dropdown-divider"></li>
-                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
+                                Sair</a></li>
                     </ul>
                 </div>
             </div>
@@ -91,42 +92,18 @@
                 </div>
 
                 <div class="shipping-calc">
-                    <select id="bairro-input" onchange="calcularFretePorBairro(true)"
+                    <select id="bairro-input" onchange="atualizarValorFreteSelecionado()"
                         style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 10px;">
                         <option value="">Selecione seu bairro...</option>
-
-                        <optgroup label="Frete R$ 4,00 (Grátis acima de 200)">
-                            <option value="canaã">Canaã</option>
-                            <option value="canaãzinho">Canaãzinho</option>
-                            <option value="bethânia">Bethânia</option>
-                            <option value="jardim vitória">Jardim Vitória</option>
-                            <option value="residencial bethânia">Residencial Bethânia</option>
-                        </optgroup>
-
-                        <optgroup label="Frete R$ 7,00 (Grátis acima de 250)">
-                            <option value="jardim panorama">Jardim Panorama</option>
-                            <option value="panorama">Panorama</option>
-                            <option value="caravelas">Caravelas</option>
-                            <option value="veneza 1">Veneza 1</option>
-                            <option value="veneza 2">Veneza 2</option>
-                            <option value="centro">Centro</option>
-                            <option value="cidade nobre">Cidade Nobre</option>
-                            <option value="parque das águas">Parque das Águas</option>
-                            <option value="planalto 1">Planalto 1</option>
-                            <option value="planalto 2">Planalto 2</option>
-                            <option value="iguaçu">Iguaçu</option>
-                        </optgroup>
-
-                        <optgroup label="Frete R$ 9,00 (Grátis acima de 250)">
-                            <option value="limoeiro">Limoeiro</option>
-                            <option value="bom jardim">Bom Jardim</option>
-                            <option value="bairro das águas">Bairro das Águas</option>
-                            <option value="bela vista">Bela Vista</option>
-                            <option value="cariru">Cariru</option>
-                        </optgroup>
                     </select>
-                    <button id="btn-cep" onclick="calcularFretePorBairro()">Calcular</button>
+
+                    <button id="btn-cep" onclick="calcularFretePorBairro()"
+                        style="width: 100%; padding: 10px; background-color: #000; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        Calcular Frete
+                    </button>
                 </div>
+
+                <div id="aviso-frete-gratis" style="margin-top: 10px; font-size: 0.9rem; color: #27ae60; font-weight: bold;"></div>
 
                 <div class="summary-divider"></div>
 
@@ -148,7 +125,7 @@
         </aside>
     </div>
 
-        <footer class="main-footer">
+    <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
                 <h3>NUTRIR<span>VIDA</span></h3>
@@ -161,7 +138,7 @@
                     <li><a href="index.html">Início</a></li>
                     <li><a href="Loja.html">Loja</a></li>
                     <li><a href="contato.html">Contato</a></li>
-                    
+
                 </ul>
             </div>
 
@@ -171,7 +148,7 @@
                     <li><a href="#">Termos de uso</a></li>
                     <li><a href="#">Termos e condições</a></li>
                     <li><a href="#">Política de privacidade</a></li>
-                    
+
                 </ul>
             </div>
 

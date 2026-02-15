@@ -29,29 +29,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- BOTÃO IR PARA CHECKOUT (COM TRAVA DE FRETE) ---
-    const btnCheckout = document.getElementById('btn-checkout');
-    if (btnCheckout) {
-        btnCheckout.addEventListener('click', () => {
-            const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-            const freteSalvo = localStorage.getItem('nutrirVida_frete'); // Verifica se o frete existe
+    // --- BOTÃO IR PARA CHECKOUT (COM TRAVA DE SEGURANÇA) ---
+const btnCheckout = document.getElementById('btn-checkout');
+if (btnCheckout) {
+    btnCheckout.addEventListener('click', (e) => {
+        const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+        const selectBairro = document.getElementById('bairro-input');
+        const freteSalvo = localStorage.getItem('nutrirVida_frete');
 
-            if (carrinho.length === 0) {
-                alert("Seu carrinho está vazio!");
-                window.location.href = 'Loja.html';
-                return;
-            }
+        // 1. Verifica se o carrinho está vazio
+        if (carrinho.length === 0) {
+            alert("Seu carrinho está vazio!");
+            window.location.href = 'Loja.html';
+            return;
+        }
 
-            // --- A NOVA TRAVA AQUI ---
-            if (freteSalvo === null || freteSalvo === undefined) {
-                alert("Por favor, informe seu bairro para calcular o frete antes de continuar.");
-                document.getElementById('bairro-input')?.focus(); // Dá foco no campo de bairro
-                return;
-            }
+        // 2. Verifica se o Select está na opção padrão ("Selecione seu bairro")
+        if (!selectBairro || selectBairro.value === "") {
+            alert("⚠️ Por favor, selecione seu bairro para calcular o frete antes de continuar.");
+            selectBairro.focus();
+            selectBairro.style.borderColor = "red"; // Destaque visual de erro
+            return;
+        }
 
-            // Se passou pelas duas travas, vai para o checkout
-            window.location.href = 'checkout.html';
-        });
-    }
+        // 3. Verifica se o frete foi gravado (garante que ele clicou ou o sistema calculou)
+        if (freteSalvo === null || freteSalvo === undefined) {
+            alert("⚠️ Erro no cálculo do frete. Por favor, selecione o bairro novamente.");
+            return;
+        }
+
+        // Se passou em todas as travas, limpa o destaque de erro e segue
+        selectBairro.style.borderColor = "#ddd";
+        window.location.href = 'checkout.html';
+    });
+}
 
     // --- 3. NOVAS CONEXÕES (VINCULANDO O BANNER E OUTROS) ---
     // Chamamos a função do banner aqui para que o JS busque os dados do Supabase
@@ -166,7 +177,6 @@ function carregarCarrinho() {
     const cartList = document.getElementById('cart-list');
     if (!cartList) return;
 
-    // CORREÇÃO: Unificado para 'nutrirVida_cart'
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
 
     if (carrinho.length === 0) {
@@ -177,7 +187,6 @@ function carregarCarrinho() {
 
     let subtotal = 0;
     cartList.innerHTML = carrinho.map((item, index) => {
-        // CORREÇÃO: Garantindo que quantidade seja Number para o cálculo de subtotal
         const totalItem = (parseFloat(item.preco) || 0) * (parseInt(item.quantidade) || 1);
         subtotal += totalItem;
         return `
@@ -200,13 +209,18 @@ function carregarCarrinho() {
             </div>`;
     }).join('');
 
-    const bairroSalvo = localStorage.getItem('nutrirVida_bairro');
-    if (bairroSalvo) {
-        const input = document.getElementById('bairro-input');
-        if (input) input.value = bairroSalvo;
-        calcularFretePorBairro(true);
+    // --- LOGICA DE INICIALIZAÇÃO ---
+    const freteSalvo = localStorage.getItem('nutrirVida_frete');
+    
+    // Se já tiver um frete calculado anteriormente, aplica. 
+    // Se não, exibe o subtotal e deixa o frete zerado/vazio no display.
+    if (freteSalvo !== null) {
+        atualizarDisplays(subtotal, parseFloat(freteSalvo));
     } else {
-        atualizarDisplays(subtotal, 0);
+        atualizarDisplays(subtotal, 0); 
+        // Forçamos o texto "Selecione o bairro" no campo de frete se quiser ser mais claro
+        const freteEl = document.getElementById('shipping-value');
+        if (freteEl) freteEl.innerText = "Selecione o bairro";
     }
 }
 
@@ -244,26 +258,73 @@ function atualizarDisplays(subtotal, frete) {
     const subtotalEl = document.getElementById('subtotal');
     const freteEl = document.getElementById('shipping-value');
     const totalEl = document.getElementById('final-total');
+    const avisoFrete = document.getElementById('aviso-frete-gratis');
+    const selectBairro = document.getElementById('bairro-input');
 
-    const valorTotalCalculado = (subtotal + frete).toFixed(2);
+    // 1. Descobrir qual o valor real do frete para o bairro selecionado
+    let valorBairroOriginal = 0;
+    if (selectBairro && selectBairro.selectedIndex > 0) {
+        const option = selectBairro.options[selectBairro.selectedIndex];
+        valorBairroOriginal = parseFloat(option.dataset.valor || 0);
+    } else {
+        // Se não houver bairro selecionado, tenta pegar o que estava no frete passado pela função
+        valorBairroOriginal = frete;
+    }
 
+    // 2. REGRA DE OURO: Se subtotal >= 250, frete é 0. Se não, volta o valor original do bairro.
+    let freteFinal = subtotal >= 250 ? 0 : valorBairroOriginal;
+
+    // 3. Cálculo do Total Final
+    const valorTotalCalculado = (subtotal + freteFinal).toFixed(2);
+
+    // --- ATUALIZAÇÃO DA TELA ---
     if (subtotalEl) subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-    if (freteEl) freteEl.innerText = frete === 0 ? "Grátis" : `R$ ${frete.toFixed(2).replace('.', ',')}`;
+    
+    if (freteEl) {
+        if (freteFinal === 0 && subtotal >= 250) {
+            freteEl.innerText = "Grátis";
+            freteEl.style.color = "#27ae60";
+            freteEl.style.fontWeight = "bold";
+        } else if (selectBairro && selectBairro.value === "") {
+            freteEl.innerText = "Selecione o bairro";
+            freteEl.style.color = "#666";
+        } else {
+            freteEl.innerText = `R$ ${freteFinal.toFixed(2).replace('.', ',')}`;
+            freteEl.style.color = "#333";
+            freteEl.style.fontWeight = "normal";
+        }
+    }
+
     if (totalEl) totalEl.innerText = `R$ ${valorTotalCalculado.replace('.', ',')}`;
 
+    // Mensagem dinâmica de aviso
+    if (avisoFrete) {
+        if (subtotal >= 250) {
+            avisoFrete.innerHTML = "🎉 Parabéns! Você ganhou <strong>Frete Grátis</strong>!";
+            avisoFrete.className = "aviso-gratis-sucesso"; // Você pode estilizar no CSS
+        } else {
+            const falta = 250 - subtotal;
+            avisoFrete.innerHTML = `Faltam <strong>R$ ${falta.toFixed(2).replace('.', ',')}</strong> para o Frete Grátis!`;
+            avisoFrete.className = "aviso-gratis-falta";
+        }
+    }
+
+    // Atualiza os dados no LocalStorage para o Checkout não ir com valor errado
+    localStorage.setItem('nutrirVida_frete', freteFinal);
     localStorage.setItem('nutrirVida_total', valorTotalCalculado);
 }
 
+
 function alterarQuantidade(index, delta) {
     let carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-
     carrinho[index].quantidade = parseInt(carrinho[index].quantidade) + delta;
 
     if (carrinho[index].quantidade < 1) {
         removerDoCarrinho(index);
     } else {
         localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinho));
-        carregarCarrinho();
+        // Recarrega o carrinho e por consequência os cálculos de frete grátis
+        carregarCarrinho(); 
         atualizarBadgeCarrinho();
     }
 }
@@ -382,7 +443,6 @@ async function acessarPerfil() {
 }
 
 async function carregarBannerPromocional() {
-    // 1. Elementos que vamos manipular
     const bannerImg = document.getElementById('banner-img-alvo');
     const bannerTitulo = document.getElementById('banner-titulo-alvo');
     const bannerDesc = document.getElementById('banner-desc-alvo');
@@ -390,27 +450,22 @@ async function carregarBannerPromocional() {
     if (!bannerImg || !bannerTitulo || !bannerDesc) return;
 
     try {
-        // 2. Busca o banner ativo no banco (chave 'banner_principal')
+        // Busca o banner e força a vinda do dado mais recente
         const { data, error } = await _supabase
             .from('configuracoes_site')
             .select('*')
             .eq('chave', 'banner_principal')
             .single();
 
-        if (error || !data) {
-            console.warn("Usando banner padrão do HTML.");
-            return;
-        }
+        if (error || !data) return;
 
-        // 3. VINCULAÇÃO DIRETA (A mágica acontece aqui)
-        // Atualiza a Imagem com o tratamento de alta resolução que você pediu
-        bannerImg.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('${data.imagem_url}')`;
-        bannerImg.style.imageRendering = "high-quality";
+        // Adicionamos um ?t= timestamp para "enganar" o cache do navegador e mostrar a foto nova na hora
+        const timestamp = Date.now();
+        const urlComCacheBuster = `${data.imagem_url}?t=${timestamp}`;
 
-        // Atualiza o Título
+        bannerImg.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('${urlComCacheBuster}')`;
         bannerTitulo.innerText = data.titulo;
 
-        // Atualiza a Descrição + Preço (formatado em Real)
         const precoFormatado = parseFloat(data.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         bannerDesc.innerHTML = `${data.descricao} <br><strong>Por apenas ${precoFormatado}</strong>`;
 
@@ -443,5 +498,79 @@ window.alert = function (mensagem) {
     }, 3000);
 };
 
+// Variável global para armazenar os fretes vindo do banco
+let listaFretesBD = [];
 
+async function carregarBairrosNoSelect() {
+    const select = document.getElementById('bairro-input');
+    
+    try {
+        const { data, error } = await _supabase
+            .from('frete_bairros')
+            .select('*')
+            .order('bairro', { ascending: true });
 
+        if (error) throw error;
+
+        listaFretesBD = data; // Guarda para consulta rápida
+
+        select.innerHTML = '<option value="">Selecione seu bairro...</option>';
+        
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.bairro; // Nome do bairro
+            // Guardamos o valor no atributo data para facilitar o cálculo
+            option.dataset.valor = item.valor; 
+            option.textContent = `${item.bairro} (R$ ${parseFloat(item.valor).toFixed(2).replace('.', ',')})`;
+            select.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar bairros:", error);
+        select.innerHTML = '<option value="">Erro ao carregar fretes</option>';
+    }
+}
+
+// Chame a função quando o DOM carregar
+document.addEventListener('DOMContentLoaded', carregarBairrosNoSelect);
+
+function atualizarValorFreteSelecionado() {
+    const select = document.getElementById('bairro-input');
+    const optionSelecionada = select.options[select.selectedIndex];
+    
+    if (!optionSelecionada || optionSelecionada.value === "") {
+        alert("Por favor, selecione um bairro válido.");
+        return;
+    }
+
+    // 1. Pega o valor original do frete do banco (que está no dataset)
+    let valorFreteBase = parseFloat(optionSelecionada.dataset.valor || 0);
+    
+    // 2. Calcula o subtotal atual dos produtos
+    const carrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    const subtotal = carrinho.reduce((acc, item) => acc + (parseFloat(item.preco) * parseInt(item.quantidade)), 0);
+
+    // 3. REGRA DE FRETE GRÁTIS: Se subtotal >= 250, o valor do frete vira 0
+    let valorFinalFrete = subtotal >= 250 ? 0 : valorFreteBase;
+
+    // 4. Salva no LocalStorage
+    localStorage.setItem('nutrirVida_frete', valorFinalFrete);
+    localStorage.setItem('nutrirVida_bairro', optionSelecionada.value);
+
+    // 5. Atualiza a tela
+    atualizarDisplays(subtotal, valorFinalFrete);
+    
+    if (valorFinalFrete === 0 && subtotal >= 250) {
+        alert("Parabéns! Você atingiu o valor para Frete Grátis.");
+    } else {
+        alert("Frete calculado com sucesso!");
+    }
+}
+
+function exibirFreteNoCarrinho(valor) {
+    const freteElemento = document.getElementById('cart-shipping'); // Ajuste para o seu ID
+    if (freteElemento) {
+        freteElemento.innerText = valor === 0 ? "Grátis" : `R$ ${valor.toFixed(2).replace('.', ',')}`;
+    }
+    atualizarTotalFinal(valor); // Soma o frete ao total dos produtos
+}

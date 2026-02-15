@@ -282,3 +282,36 @@
     font-size: 1rem;
     margin-top: 20px;
 }
+
+.order-card {
+    position: relative; /* Para ajudar no alinhamento se precisar */
+}
+
+/* Deixa o botão com efeito de hover */
+button[onclick^="cancelarPedidoCliente"]:hover {
+    background: #cc0000 !important;
+}
+
+/* Adicione isso dentro da tag <style> existente */
+#sec-frete .btn-salvar {
+    width: auto;
+    padding: 0 20px;
+    white-space: nowrap;
+}
+
+.btn-delete-item {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: 0.2s;
+}
+
+.btn-delete-item:hover {
+    transform: scale(1.2);
+}
+
+#sec-frete .table-container table td {
+    padding: 15px;
+}

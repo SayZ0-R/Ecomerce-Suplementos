@@ -112,7 +112,7 @@
                     </a>
                     <ul class="profile-dropdown">
                         <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
-                        
+
                         <li class="dropdown-divider"></li>
                         <li><a href="javascript:void(0)" onclick="deslogar()" class="logout"><i
                                     class="fas fa-sign-out-alt"></i> Sair</a></li>
@@ -337,33 +337,68 @@
             container.innerHTML = pedidos.map(pedido => {
                 const data = new Date(pedido.created_at).toLocaleDateString('pt-BR');
 
-                // Lógica de classe CSS baseada no status
+                // CORREÇÃO: Usando status_pedido (nome da sua coluna no banco)
+                const statusAtual = pedido.status_pedido || 'Pendente';
+
                 let statusClass = 'status-pendente';
-                const s = pedido.status.toLowerCase();
+                const s = statusAtual.toLowerCase();
                 if (s.includes('aprovado') || s.includes('pago')) statusClass = 'status-aprovado';
-                if (s.includes('enviado') || s.includes('rota')) statusClass = 'status-enviado';
-                if (s.includes('finalizado') || s.includes('entregue')) statusClass = 'status-finalizado';
+                if (s.includes('enviado')) statusClass = 'status-enviado';
+                if (s.includes('finalizado') || s.includes('concluído')) statusClass = 'status-finalizado';
                 if (s.includes('cancelado')) statusClass = 'status-cancelado';
 
-                // Formata os itens para exibição
-                const nomesItens = pedido.itens.map(i => `${i.quantidade}x ${i.nome}`).join(', ');
+                // Só aparece o botão se estiver Pendente
+                const podeCancelar = statusAtual === 'Pendente';
+
+                const nomesItens = pedido.itens ? pedido.itens.map(i => `${i.quantidade}x ${i.nome}`).join(', ') : 'Itens não identificados';
 
                 return `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div>
-                                <div class="order-id">Pedido #${pedido.id.toString().slice(-5)}</div>
-                                <div class="order-date">Realizado em ${data}</div>
-                            </div>
-                            <span class="status-badge ${statusClass}">${pedido.status}</span>
-                        </div>
-                        <div class="order-details">
-                            <p class="order-items"><strong>Produtos:</strong> ${nomesItens}</p>
-                            <p><strong>Total:</strong> R$ ${parseFloat(pedido.total).toFixed(2).replace('.', ',')}</p>
-                        </div>
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Pedido #${pedido.id.toString().slice(-5)}</div>
+                        <div class="order-date">Realizado em ${data}</div>
                     </div>
-                `;
+                    <span class="status-badge ${statusClass}">${statusAtual}</span>
+                </div>
+                <div class="order-details">
+                    <p class="order-items"><strong>Produtos:</strong> ${nomesItens}</p>
+                    <p><strong>Total:</strong> R$ ${parseFloat(pedido.total).toFixed(2).replace('.', ',')}</p>
+                </div>
+                
+                ${podeCancelar ? `
+                <div style="text-align: right; margin-top: 10px;">
+                    <button onclick="cancelarPedidoCliente(${pedido.id})" 
+                            style="background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                        Cancelar Pedido
+                    </button>
+                </div>` : ''}
+            </div>
+        `;
             }).join('');
+        }
+
+        async function cancelarPedidoCliente(idPedido) {
+            const confirmar = confirm("Deseja realmente cancelar este pedido? Esta ação é definitiva.");
+            if (!confirmar) return;
+
+            try {
+                const { error } = await _supabase
+                    .from('pedidos')
+                    .update({
+                        status_pedido: 'Cancelado',   // Trava a operação
+                        status_pagamento: 'Cancelado' // Trava o financeiro (evita reembolso forçado no sistema)
+                    })
+                    .eq('id', idPedido)
+                    .eq('status_pedido', 'Pendente'); // Segurança: se você já começou a separar, ele não cancela mais
+
+                if (error) throw error;
+
+                alert("Pedido cancelado com sucesso!");
+                carregarDadosPerfil(); // Atualiza a lista para o cliente ver o novo status
+            } catch (err) {
+                alert("Erro ao cancelar: " + err.message);
+            }
         }
 
         // SALVAR ALTERAÇÕES
