@@ -118,12 +118,28 @@ if (form) {
         };
 
         try {
-            const { error } = await _supabase.from('pedidos').insert([pedido]);
-            if (!error) {
-                alert("Pedido recebido com sucesso!");
-                localStorage.removeItem('nutrirVida_cart');
-                window.location.href = 'index.html';
-            } else { throw error; }
+            // 1. Inserimos o pedido e pedimos para o Supabase retornar os dados inseridos (.select())
+            const { data, error } = await _supabase
+                .from('pedidos')
+                .insert([pedido])
+                .select(); // IMPORTANTE: Isso retorna o ID gerado
+
+            if (error) throw error;
+
+            const pedidoCriado = data[0]; // Aqui está o seu pedido com o ID do banco
+
+            // 2. AGORA CHAMAMOS O MERCADO PAGO (Exemplo com Checkout Pro)
+            // Vamos enviar o ID do banco para o external_reference
+            alert("Pedido registrado! Redirecionando para o pagamento...");
+            
+            // Aqui você deve chamar sua lógica de checkout do Mercado Pago
+            // Vou simular a criação da preferência:
+            await iniciarPagamentoMercadoPago(pedidoCriado);
+
+            // Limpeza e redirecionamento
+            localStorage.removeItem('nutrirVida_cart');
+            // window.location.href = 'index.html'; // Removido para não fechar antes do pagamento
+            
         } catch (err) {
             alert("Erro ao salvar pedido: " + err.message);
             btn.disabled = false;
@@ -131,6 +147,30 @@ if (form) {
         }
     });
 }
+
+
+async function iniciarPagamentoMercadoPago(pedido) {
+    // Aqui você faz o fetch para o seu backend ou função que gera a preferência
+    // O segredo está em passar o 'pedido.id' como 'external_reference'
+    
+    console.log("Iniciando MP para o ID:", pedido.id);
+
+    // Exemplo de objeto de preferência que você enviará para a API do Mercado Pago
+    const preferencia = {
+        items: pedido.itens.map(i => ({
+            title: i.nome,
+            unit_price: parseFloat(i.preco),
+            quantity: parseInt(i.quantidade)
+        })),
+        external_reference: pedido.id.toString(), // <--- O VÍNCULO ESTÁ AQUI
+        notification_url: "SUA_URL_DA_EDGE_FUNCTION_AQUI" // A URL que o terminal te deu
+    };
+
+    // Lógica para abrir o checkout do Mercado Pago (via link ou SDK)
+    // Se for Checkout Pro, você receberá um 'init_point' e fará:
+    // window.location.href = response.init_point;
+}
+
 
     // --- DENTRO DO DOMContentLoaded ---
 
