@@ -347,12 +347,13 @@ nav {
     box-shadow: var(--shadow-card-hover);
 }
 
-.category-info p {
+.category-info a {
     color: var(--text);
     font-size: 1.1rem;
     font-weight: 600;
     text-transform: capitalize;
     margin: 0;
+    text-decoration: none;
 }
 
 .card-proteina {
@@ -1263,4 +1264,50 @@ nav {
     flex-direction: row !important;
     justify-content: space-between;
     align-items: flex-end;
+}
+
+/* Container do botão */
+.ver-todos-container {
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
+/* O Botão de Promoções */
+.btn-ver-promocoes {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: #00FF88; /* Verde destaque da sua paleta */
+    color: #000000;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 50px; /* Estilo pílula, muito moderno */
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+/* Efeito ao passar o mouse */
+.btn-ver-promocoes:hover {
+    background-color: #000000;
+    color: #00FF88;
+    border-color: #00FF88;
+    transform: translateY(-3px); /* Eleva o botão levemente */
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+}
+
+/* Efeito ao clicar */
+.btn-ver-promocoes:active {
+    transform: translateY(-1px);
+}
+
+/* Responsividade para celular */
+@media (max-width: 480px) {
+    .btn-ver-promocoes {
+        width: 80%;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
 }

@@ -308,6 +308,8 @@ td { padding: 15px; border-bottom: 1px solid var(--bg-main); font-weight: 600; f
 .form-group input, 
 .form-group select, 
 .form-group textarea {
+    width: 100%;             
+    box-sizing: border-box;  
     padding: 12px 15px;
     border: 2px solid var(--bg-main);
     border-radius: 12px;
@@ -315,6 +317,14 @@ td { padding: 15px; border-bottom: 1px solid var(--bg-main); font-weight: 600; f
     font-size: 0.95rem;
     outline: none;
     transition: 0.2s;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;             
+    box-sizing: border-box;
 }
 
 .form-group input:focus { border-color: var(--primary-green); }
@@ -587,3 +597,4 @@ td { padding: 15px; border-bottom: 1px solid var(--bg-main); font-weight: 600; f
     cursor: pointer;
     margin-right: 5px;
 }
+

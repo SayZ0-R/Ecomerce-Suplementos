@@ -100,7 +100,7 @@ if (btnCheckout) {
                 .from('produtos')
                 .select('*')
                 .eq('mais_vendido', true)
-                .limit(4);
+                .limit(8);
 
             if (error) throw error;
 
@@ -450,7 +450,7 @@ async function carregarBannerPromocional() {
     if (!bannerImg || !bannerTitulo || !bannerDesc) return;
 
     try {
-        // Busca o banner e força a vinda do dado mais recente
+        
         const { data, error } = await _supabase
             .from('configuracoes_site')
             .select('*')
@@ -459,7 +459,7 @@ async function carregarBannerPromocional() {
 
         if (error || !data) return;
 
-        // Adicionamos um ?t= timestamp para "enganar" o cache do navegador e mostrar a foto nova na hora
+       
         const timestamp = Date.now();
         const urlComCacheBuster = `${data.imagem_url}?t=${timestamp}`;
 

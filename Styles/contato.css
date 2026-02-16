@@ -113,19 +113,48 @@ body {
     font-family: inherit;
 }
 
+/* Estilização do Botão de Enviar */
 .btn-enviar {
-    width: 100%;
-    padding: 15px;
-    background: #0066ff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    width: 100%; /* Ocupa a largura total do form */
+    padding: 15px;
+    background-color: #00FF88; /* Verde destaque */
+    color: #000000;
+    border: 2px solid transparent;
+    border-radius: 12px; /* Arredondado moderno */
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Efeito ao passar o mouse (Hover) */
+.btn-enviar:hover {
+    background-color: #000000;
+    color: #00FF88;
+    border-color: #00FF88;
+    transform: translateY(-3px); /* Eleva o botão */
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+}
+
+/* Efeito no ícone de aviãozinho */
+.btn-enviar i {
+    transition: transform 0.3s ease;
+}
+
+.btn-enviar:hover i {
+    transform: translateX(5px) translateY(-5px); /* O aviãozinho dá uma leve "decolada" */
+}
+
+/* Efeito ao clicar */
+.btn-enviar:active {
+    transform: translateY(-1px);
 }
 
 .info-side {
@@ -156,25 +185,35 @@ body {
     gap: 6px;
     margin: 20px auto 0;
 
+    /* Mantendo suas dimensões originais */
     padding: 6px 20px;
     width: fit-content;
     min-width: 110px;
 
-    background: #0066ff;
-    color: #fff;
+    /* Nova identidade: Verde Neon */
+    background: #00FF88;
+    color: #000000;
     text-decoration: none;
-    border-radius: 50px;
-    font-weight: 500;
+    border-radius: 50px; /* Formato pílula mantido */
+    font-weight: 700;    /* Um pouco mais de peso para destacar no verde */
     font-size: 0.85rem;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
     border: 1px solid transparent;
+    box-shadow: 0 4px 10px rgba(0, 255, 136, 0.15);
 }
 
 .btn-rota:hover {
-    background: #0052cc;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0, 102, 255, 0.2);
+    /* Inversão para Preto com borda Verde */
+    background: #000000;
+    color: #00FF88;
+    border-color: #00FF88;
+    transform: translateY(-2px); /* Elevação leve */
+    box-shadow: 0 6px 15px rgba(0, 255, 136, 0.3);
+}
+
+.btn-rota:active {
+    transform: translateY(0);
 }
 
 .extra-details {

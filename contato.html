@@ -94,15 +94,12 @@
         <div class="contact-container">
             <section class="form-section">
                 <h3>Envie-nos uma mensagem</h3>
-                <form action="#" method="POST">
+                <form onsubmit="enviarWhatsApp(event)">
                     <div class="input-box">
                         <label for="nome">Nome completo</label>
                         <input type="text" id="nome" name="nome" placeholder="João Silva" required>
                     </div>
-                    <div class="input-box">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="joao.silva@email.com" required>
-                    </div>
+                    
                     <div class="input-box">
                         <label for="assunto">Assunto</label>
                         <input type="text" id="assunto" name="assunto" placeholder="Dúvida sobre um produto">
@@ -120,7 +117,7 @@
 
             <aside class="info-side">
                 <div class="address-card-dark">
-                    <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                    <i class="fas fa-map-marker-alt" style="color: #00FF88; margin-right: 8px;" aria-hidden="true"></i>
                     <h4>Nosso Endereço</h4>
                     <address>
                         <p>Avenida Gerasa, 2170, LJ3</p>
@@ -184,7 +181,7 @@
                 <h3>Siga-nos</h3>
                 <div class="social-icons">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/nutrirvidasuplementos?igsh=cWplanlxZWFkNTV6&utm_source=qr"
+                    <a href="https://www.instagram.com/nutrirvidasuplementos/"
                         aria-label="Instagram"><i class="fab fa-instagram"></i></a>
 
                 </div>
@@ -206,6 +203,8 @@
     <script src="javascript/database.js"></script>
 
     <script src="javascript/script.js"></script>
+
+    <script src="javascript/contato.js"></script>
 </body>
 
 </html>

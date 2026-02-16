@@ -63,8 +63,23 @@ async function carregarCategoriasNoSelect() {
     }
 }
 
-function abrirModalCategoria() { document.getElementById('modal-categoria').classList.add('active'); }
-function fecharModalCategoria() { document.getElementById('modal-categoria').classList.remove('active'); }
+function abrirModalCategoria() {
+    const modalCat = document.getElementById('modal-categoria');
+    
+    // Forçamos o display e um z-index altíssimo para furar a fila
+    modalCat.style.display = 'flex';
+    modalCat.style.zIndex = '9999'; 
+    
+    // Opcional: focar no campo de texto automaticamente
+    setTimeout(() => {
+        document.getElementById('novo-nome-cat').focus();
+    }, 100);
+}
+
+function fecharModalCategoria() {
+    const modalCat = document.getElementById('modal-categoria');
+    modalCat.style.display = 'none';
+}
 
 async function salvarNovaCategoria() {
     const nome = document.getElementById('novo-nome-cat').value;
