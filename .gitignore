@@ -1,2 +1,3 @@
 # Ocultar o arquivo de conexão com as chaves
 javascript/database.js
+supabase\functions\mercado-pago-webhook\index.ts
