@@ -293,88 +293,7 @@ nav {
 }
 
 /* ========== CATEGORIAS ========== */
-.categories-section {
-    padding: var(--section-padding);
-    background: var(--bg-card);
-    text-align: center;
-}
 
-.categories-section h2 {
-    color: var(--text-dark);
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 40px;
-}
-
-.categories-grid {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.category-card {
-    position: relative;
-    width: 220px;
-    aspect-ratio: 1 / 1;
-    border-radius: var(--radius-xl);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 25px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform var(--transition), box-shadow var(--transition);
-    z-index: 1;
-}
-
-.category-card::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70%;
-    background: var(--gradient-overlay);
-    z-index: -1;
-}
-
-.category-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-card-hover);
-}
-
-.category-info a {
-    color: var(--text);
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-transform: capitalize;
-    margin: 0;
-    text-decoration: none;
-}
-
-.card-proteina {
-    background-image: url('../Imagens/Proteinas.png');
-}
-
-.card-creatina {
-    background-image: url('../Imagens/Creatina.png');
-}
-
-.card-bcaa {
-    background-image: url('../Imagens/BCAA.png');
-}
-
-.card-vitaminas {
-    background-image: url('../Imagens/Vitaminas.png');
-}
-
-.card-pre-treino {
-    background-image: url('../Imagens/pre-treino.png');
-}
 
 /* ========== PRODUTOS ========== */
 .products-section {
@@ -1309,5 +1228,267 @@ nav {
         width: 80%;
         padding: 12px 20px;
         font-size: 0.9rem;
+    }
+}
+
+
+.marquee-container {
+    background-color: #000000;
+    overflow: hidden;
+    width: 100%;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    padding: 15px 0;
+    display: flex;
+    position: relative;
+}
+
+.marquee-content {
+    display: flex;
+    white-space: nowrap;
+    /* A mágica do loop infinito sem buracos está aqui */
+    animation: marquee-animation 30s linear infinite;
+    width: max-content;
+}
+
+.marquee-content span {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding-right: 50px; /* Espaço entre o fim de uma frase e o início da outra */
+}
+
+.marquee-content .highlight {
+    color: #00FF88;
+}
+
+/* Removido o seletor de :hover para não parar o letreiro */
+
+@keyframes marquee-animation {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Move exatamente metade do conteúdo duplicado para o loop ser perfeito */
+        transform: translateX(-50%);
+    }
+}
+
+.diferenciais-container {
+    display: flex;
+    justify-content: space-between; /* Distribui os itens igualmente */
+    align-items: center;
+    gap: 20px;
+    padding: 30px 5%; /* Espaçamento nas laterais para não encostar na borda da tela */
+    background-color: #ffffff; /* Fundo totalmente branco */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.diferencial-item {
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 15px 25px; /* Aumentado para dar mais "corpo" */
+    border-radius: 50px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Sombra um pouco mais visível */
+    flex: 1; /* Faz todos os itens terem o mesmo tamanho e ocuparem o espaço disponível */
+    min-width: 200px; /* Impede que fiquem espremidos demais */
+    border: 1px solid #eee; /* Uma borda fina para destacar no fundo branco */
+    transition: all 0.3s ease;
+}
+
+
+.diferencial-icon {
+    background-color: #00FF88;
+    width: 60px;  /* Ícone maior */
+    height: 60px; /* Ícone maior */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+    flex-shrink: 0; /* Impede o círculo de amassar */
+}
+
+.diferencial-icon i {
+    color: #000;
+    font-size: 1.5rem; /* Ícone interno maior */
+}
+
+.diferencial-text strong {
+    display: block;
+    font-size: 1.1rem; /* Texto maior */
+    color: #000;
+    text-transform: uppercase;
+}
+
+.diferencial-text p {
+    font-size: 0.9rem; /* Subtexto maior */
+    color: #666;
+    margin: 0;
+}
+
+/* Responsividade para Celular */
+@media (max-width: 1024px) {
+    .diferenciais-container {
+        flex-wrap: nowrap; /* Impede terminantemente a quebra de linha */
+        justify-content: space-between;
+        gap: 3px; /* Espaço mínimo entre os itens */
+        padding: 25px 25px;
+    }
+    
+    .diferencial-item {
+        flex: 1;
+        flex-direction: column;
+        text-align: center;
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        min-width: 0; /* Permite que o item encolha para caber */
+    }
+
+    .diferencial-icon {
+        margin-right: 0;
+        margin-bottom: 8px;
+        width: 70px; /* Círculo reduzido para caber lado a lado */
+        height: 70px;
+    }
+
+    .diferencial-icon i {
+        font-size: 1.1rem; /* Ícone menor */
+    }
+
+    .diferencial-text strong {
+        font-size: 0.65rem; /* Fonte pequena para evitar quebra de palavras */
+        white-space: normal;
+        line-height: 1.1;
+        display: block;
+    }
+
+    /* Esconde a descrição no mobile para ganhar espaço vertical e manter a linha limpa */
+    .diferencial-text p {
+        font-size: 0.65rem; /* Fonte pequena para evitar quebra de palavras */
+        white-space: normal;
+        line-height: 1.1;
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .diferenciais-container {
+        padding: 10px 2px;
+    }
+
+    .diferencial-icon {
+        width: 45px;
+        height: 45px;
+    }
+
+    .diferencial-text strong {
+        font-size: 0.6rem;
+        letter-spacing: 0; /* Remove espaçamento entre letras para ganhar espaço */
+    }
+}
+
+.insta-vitrine-full {
+    width: 100%;
+    background-color: #fff;
+    line-height: 0; /* Remove espaços brancos entre as linhas de fotos */
+}
+
+.insta-grid-double {
+    display: grid;
+    /* Desktop: 6 colunas iguais */
+    grid-template-columns: repeat(6, 1fr); 
+    width: 100%;
+}
+
+.insta-item-full {
+    position: relative;
+    aspect-ratio: 1 / 1; /* Garante que seja sempre um quadrado perfeito */
+    overflow: hidden;
+    display: block;
+}
+
+.insta-item-full img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.insta-overlay-full {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 255, 136, 0.3); /* Overlay verde neon transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.insta-item-full:hover img { transform: scale(1.1); }
+.insta-item-full:hover .insta-overlay-full { opacity: 1; }
+
+/* --- Ajuste de Responsividade --- */
+
+@media (max-width: 1024px) {
+    .insta-grid-double {
+        /* Tablet: 4 colunas (3 linhas) */
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .insta-grid-double {
+        /* Celular: 3 colunas (4 linhas) - Fica igual ao feed do Insta real */
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.insta-titulo-topo {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #ffffff;
+}
+
+.insta-titulo-topo i {
+    font-size: 2.5rem;
+    color: #E1306C; /* Cor do Instagram para dar destaque */
+    margin-bottom: 10px;
+}
+
+.insta-titulo-topo h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.insta-titulo-topo p {
+    font-size: 1rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Ajuste Mobile para o Título */
+@media (max-width: 600px) {
+    .insta-titulo-topo {
+        padding: 30px 15px;
+    }
+    .insta-titulo-topo h1 {
+        font-size: 1.4rem;
+    }
+    .insta-titulo-topo p {
+        font-size: 0.85rem;
     }
 }
