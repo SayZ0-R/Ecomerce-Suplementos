@@ -150,25 +150,47 @@ if (form) {
 
 
 async function iniciarPagamentoMercadoPago(pedido) {
-    // Aqui você faz o fetch para o seu backend ou função que gera a preferência
-    // O segredo está em passar o 'pedido.id' como 'external_reference'
-    
     console.log("Iniciando MP para o ID:", pedido.id);
 
-    // Exemplo de objeto de preferência que você enviará para a API do Mercado Pago
-    const preferencia = {
-        items: pedido.itens.map(i => ({
-            title: i.nome,
-            unit_price: parseFloat(i.preco),
-            quantity: parseInt(i.quantidade)
-        })),
-        external_reference: pedido.id.toString(), // <--- O VÍNCULO ESTÁ AQUI
-        notification_url: "SUA_URL_DA_EDGE_FUNCTION_AQUI" // A URL que o terminal te deu
-    };
+    try {
+        // 1. Chama a sua Edge Function "vendedor"
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/vendedor`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Aqui usamos a chave anônima que já está no seu database.js
+                'Authorization': `Bearer ${SUPABASE_KEY}` 
+            },
+            body: JSON.stringify({
+                items: pedido.itens,
+                orderId: pedido.id,
+                email: pedido.cliente_email
+            })
+        });
 
-    // Lógica para abrir o checkout do Mercado Pago (via link ou SDK)
-    // Se for Checkout Pro, você receberá um 'init_point' e fará:
-    // window.location.href = response.init_point;
+        const data = await response.json();
+
+        if (data.id) {
+            // 2. Inicializa o SDK do Mercado Pago
+            // Use a sua Public Key de TESTE aqui
+            const mp = new MercadoPago('APP_USR-e053326e-4fdf-454d-8920-39cb31eb47c0', {
+                locale: 'pt-BR'
+            });
+
+            // 3. Abre o Checkout Pro
+            mp.checkout({
+                preference: {
+                    id: data.id
+                },
+                autoOpen: true
+            });
+        } else {
+            throw new Error("ID da preferência não retornado.");
+        }
+    } catch (err) {
+        console.error("Erro ao iniciar pagamento:", err);
+        alert("Erro ao conectar com o Mercado Pago. Tente novamente.");
+    }
 }
 
 

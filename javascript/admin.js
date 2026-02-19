@@ -568,11 +568,11 @@ async function renderizarGraficoVendas() {
     const { data: pedidos, error } = await _supabase
         .from('pedidos')
         .select('total, created_at')
-        .eq('status_pagamento', 'Aprovado'); // Apenas o que foi pago
+        .eq('status_pagamento', 'Aprovado'); 
 
     if (error) return console.error("Erro ao carregar gráfico:", error);
 
-    // Criar um objeto para somar totais por mês/ano
+   
     const vendasPorMes = {};
 
     pedidos.forEach(p => {
@@ -587,7 +587,7 @@ async function renderizarGraficoVendas() {
 
     const ctx = document.getElementById('graficoVendas').getContext('2d');
     new Chart(ctx, {
-        type: 'bar', // Pode ser 'line' para gráfico de linha
+        type: 'bar', 
         data: {
             labels: meses,
             datasets: [{
