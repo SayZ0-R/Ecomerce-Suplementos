@@ -1,4 +1,4 @@
 '# Ocultar o arquivo de conexão com as chaves
-javascript/database.js
+#javascript/database.js
 supabase\functions\mercado-pago-webhook\index.ts
 supabase\functions\criar-preferencia\vendedor.ts'
