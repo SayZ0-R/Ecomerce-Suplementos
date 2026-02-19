@@ -11,9 +11,7 @@
     padding: 0; 
     box-sizing: border-box; 
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto; 
+    
 }
 
 body {
@@ -226,4 +224,56 @@ body::after {
 
 @keyframes slideOut {
     to { transform: translateX(120%); opacity: 0; }
+}
+
+/* 1. Garante que a página possa crescer verticalmente */
+html, body {
+    height: auto !important;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Evita scroll lateral */
+    overflow-y: auto;   /* Garante o scroll vertical */
+}
+
+/* 2. Ajuste do fundo para não sumir ao rolar */
+.bg-overlay {
+    position: fixed; /* Fixa o fundo para ele não "acabar" no meio da página */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* 3. O Wrapper deve permitir que o conteúdo empurre o tamanho da tela */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* No mínimo a tela toda */
+    height: auto;      /* Mas permite aumentar se o form for grande */
+    padding: 40px 20px; /* Espaço em cima e embaixo para não encostar nas bordas ao rolar */
+    box-sizing: border-box;
+}
+
+/* 4. O Container do formulário */
+.auth-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    margin: auto; /* Garante centralização perfeita com o min-height */
+    /* Mantenha suas outras propriedades de cor, borda e sombra aqui */
+}
+
+/* 5. Ajuste para telas pequenas (Mobile) */
+@media (max-width: 480px) {
+    .auth-wrapper {
+        padding: 20px 15px; /* Diminui o respiro lateral em celulares */
+        align-items: flex-start; /* No mobile, começa do topo para facilitar o início da leitura */
+    }
+    
+    .auth-container {
+        padding: 20px; /* Ajuste interno se necessário */
+    }
 }
