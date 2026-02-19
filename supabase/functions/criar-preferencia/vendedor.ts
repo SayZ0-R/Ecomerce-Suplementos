@@ -37,8 +37,8 @@ serve(async (req) => {
         // O external_reference é o que liga o pagamento ao seu ID de pedido no Supabase
         external_reference: orderId.toString(),
         // Coloque aqui a URL da sua OUTRA função (o webhook) que já criamos
-        notification_url: "https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/caixa",
-        back_urls: {
+        notification_url: "https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook",
+        back_urls: { 
           success: "https://ecormece-suplo.netlify.app/index.html",
           failure: "https://ecormece-suplo.netlify.app/checkout.html",
           pending: "https://ecormece-suplo.netlify.app/perfil.html"
