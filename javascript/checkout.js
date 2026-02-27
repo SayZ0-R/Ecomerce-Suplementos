@@ -86,112 +86,124 @@ document.addEventListener('DOMContentLoaded', async () => {
     atualizarTotalCheckout();
 
     // Lógica do botão Finalizar (Submit)
- const form = document.getElementById('form-checkout');
-if (form) {
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    const form = document.getElementById('form-checkout');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        const btn = form.querySelector('button[type="submit"]');
-        btn.disabled = true;
-        btn.innerText = "Processando...";
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerText = "Processando...";
 
-        // --- AQUI ESTAVA O ERRO: PRECISAMOS DEFINIR AS VARIÁVEIS ABAIXO ---
-        const itensCarrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-        
-        // Calculamos a soma total de unidades (Ex: 2 Wheys + 1 Creatina = 3)
-        const totalItensQtd = itensCarrinho.reduce((acc, item) => acc + (parseInt(item.quantidade) || 0), 0);
-        
-        const pedido = {
-            cliente_nome: document.getElementById('nome-completo').value,
-            cliente_email: document.getElementById('email-checkout').value,
-            whatsapp: document.getElementById('whatsapp').value,
-            endereco: `${document.getElementById('logradouro').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`,
-            
-            // Enviando para as colunas que o banco e o painel esperam
-            itens: itensCarrinho,               // Detalhes dos produtos
-            total_itens_quantidade: totalItensQtd,   // Valor numérico total (Ex: 3)
-            
-            total: parseFloat(localStorage.getItem('nutrirVida_total_dinamico')),
-            metodo_pagamento: document.querySelector('input[name="metodo-pagamento"]:checked').value,
-            status_pagamento: 'Aguardando',
-            status_pedido: 'Pendente'
-        };
+            // --- AQUI ESTAVA O ERRO: PRECISAMOS DEFINIR AS VARIÁVEIS ABAIXO ---
+            const itensCarrinho = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+
+            // Calculamos a soma total de unidades (Ex: 2 Wheys + 1 Creatina = 3)
+            const totalItensQtd = itensCarrinho.reduce((acc, item) => acc + (parseInt(item.quantidade) || 0), 0);
+
+            const metodo = document.querySelector('input[name="metodo-pagamento"]:checked').value;
+
+            const itensParaMP = itensCarrinho.map(item => ({
+                ...item,
+                preco: metodo === 'cartao' && item.preco_cartao
+                    ? item.preco_cartao
+                    : item.preco
+            }));
+
+            const pedido = {
+                cliente_nome: document.getElementById('nome-completo').value,
+                cliente_email: document.getElementById('email-checkout').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                endereco: `${document.getElementById('logradouro').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`,
+
+                // Enviando para as colunas que o banco e o painel esperam
+                itens: itensCarrinho,               // Detalhes dos produtos
+                total_itens_quantidade: totalItensQtd,   // Valor numérico total (Ex: 3)
+
+                total: parseFloat(localStorage.getItem('nutrirVida_total_dinamico')),
+                metodo_pagamento: metodo,
+                status_pagamento: 'Aguardando',
+                status_pedido: 'Pendente'
+            };
+
+            try {
+                // 1. Inserimos o pedido e pedimos para o Supabase retornar os dados inseridos (.select())
+                const { data, error } = await _supabase
+                    .from('pedidos')
+                    .insert([pedido])
+                    .select(); // IMPORTANTE: Isso retorna o ID gerado
+
+                if (error) throw error;
+
+                const pedidoCriado = data[0]; // Aqui está o seu pedido com o ID do banco
+
+                // 2. AGORA CHAMAMOS O MERCADO PAGO (Exemplo com Checkout Pro)
+                // Vamos enviar o ID do banco para o external_reference
+                alert("Pedido registrado! Redirecionando para o pagamento...");
+
+                // Aqui você deve chamar sua lógica de checkout do Mercado Pago
+                // Vou simular a criação da preferência:
+                const freteAtual = parseFloat(localStorage.getItem('nutrirVida_frete')) || 0;
+                await iniciarPagamentoMercadoPago({ ...pedidoCriado, itens: itensParaMP }, freteAtual);
+
+                // Limpeza e redirecionamento
+                localStorage.removeItem('nutrirVida_cart');
+                // window.location.href = 'index.html'; // Removido para não fechar antes do pagamento
+
+            } catch (err) {
+                alert("Erro ao salvar pedido: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "Finalizar Pedido";
+            }
+        });
+    }
+
+
+    async function iniciarPagamentoMercadoPago(pedido, frete) {
+        console.log("Iniciando MP para o ID:", pedido.id);
 
         try {
-            // 1. Inserimos o pedido e pedimos para o Supabase retornar os dados inseridos (.select())
-            const { data, error } = await _supabase
-                .from('pedidos')
-                .insert([pedido])
-                .select(); // IMPORTANTE: Isso retorna o ID gerado
-
-            if (error) throw error;
-
-            const pedidoCriado = data[0]; // Aqui está o seu pedido com o ID do banco
-
-            // 2. AGORA CHAMAMOS O MERCADO PAGO (Exemplo com Checkout Pro)
-            // Vamos enviar o ID do banco para o external_reference
-            alert("Pedido registrado! Redirecionando para o pagamento...");
-            
-            // Aqui você deve chamar sua lógica de checkout do Mercado Pago
-            // Vou simular a criação da preferência:
-            await iniciarPagamentoMercadoPago(pedidoCriado);
-
-            // Limpeza e redirecionamento
-            localStorage.removeItem('nutrirVida_cart');
-            // window.location.href = 'index.html'; // Removido para não fechar antes do pagamento
-            
-        } catch (err) {
-            alert("Erro ao salvar pedido: " + err.message);
-            btn.disabled = false;
-            btn.innerText = "Finalizar Pedido";
-        }
-    });
-}
-
-
-async function iniciarPagamentoMercadoPago(pedido) {
-    console.log("Iniciando MP para o ID:", pedido.id);
-
-    try {
-        // 1. Chama a sua Edge Function "vendedor"
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/vendedor`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // Aqui usamos a chave anônima que já está no seu database.js
-                'Authorization': `Bearer ${SUPABASE_KEY}` 
-            },
-            body: JSON.stringify({
-                items: pedido.itens,
-                orderId: pedido.id,
-                email: pedido.cliente_email
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.id) {
-            // 2. Inicializa o SDK do Mercado Pago
-            // Use a sua Public Key de TESTE aqui
-            const mp = new MercadoPago('APP_USR-e053326e-4fdf-454d-8920-39cb31eb47c0', {
-                locale: 'pt-BR'
-            });
-
-            // 3. Abre o Checkout Pro
-            mp.checkout({
-                preference: {
-                    id: data.id
+            // 1. Chama a sua Edge Function "vendedor"
+            const response = await fetch(`${SUPABASE_URL}/functions/v1/vendedor`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Aqui usamos a chave anônima que já está no seu database.js
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
                 },
-                autoOpen: true
+                body: JSON.stringify({
+                    items: pedido.itens,
+                    orderId: pedido.id,
+                    email: pedido.cliente_email,
+                    frete: frete,
+                    metodo: pedido.metodo_pagamento
+                })
             });
-        } else {
-            throw new Error("ID da preferência não retornado.");
+
+            const data = await response.json();
+
+            if (data.id) {
+                // 2. Inicializa o SDK do Mercado Pago
+                // Use a sua Public Key de TESTE aqui
+                const mp = new MercadoPago('APP_USR-e053326e-4fdf-454d-8920-39cb31eb47c0', {
+                    locale: 'pt-BR'
+                });
+
+                // 3. Abre o Checkout Pro
+                mp.checkout({
+                    preference: {
+                        id: data.id
+                    },
+                    autoOpen: true
+                });
+            } else {
+                throw new Error("ID da preferência não retornado.");
+            }
+        } catch (err) {
+            console.error("Erro ao iniciar pagamento:", err);
+            alert("Erro ao conectar com o Mercado Pago. Tente novamente.");
         }
-    } catch (err) {
-        console.error("Erro ao iniciar pagamento:", err);
-        alert("Erro ao conectar com o Mercado Pago. Tente novamente.");
     }
-}
 
 
     // --- DENTRO DO DOMContentLoaded ---
