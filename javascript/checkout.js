@@ -116,19 +116,22 @@ async function renderPaymentBrick(totalInicial) {
 
         paymentBrickController = await bricksBuilder.create('payment', 'paymentBrick_container', {
             initialization: {
-                amount: totalInicial,
+                // ✅ Garante número puro — sem "R$", sem string
+                amount: Number(totalInicial),
                 payer: {
                     email: document.getElementById('email-checkout')?.value || ''
-                }
+                },
+                // ✅ Força o seletor de parcelas a aparecer imediatamente,
+                // sem precisar dos 6 primeiros dígitos do cartão.
+                // O MP usa esse valor como padrão até detectar o BIN.
+                installments: 1,
             },
             customization: {
                 paymentMethods: {
-                    creditCard: 'all',
-                    debitCard:  'none',
-                    ticket:     'none',
-                    bankTransfer: 'none',
-                    atm:        'none',
-                    maxInstallments: MAX_PARCELAS,
+                    // ✅ Só declara o que QUER — MP rejeita "none" com erro 422
+                    // Campos ausentes = bloqueados automaticamente pelo SDK
+                    creditCard:      'all',
+                    maxInstallments: MAX_PARCELAS,   // máximo 4x, nunca passa disso
                 },
                 visual: {
                     style: {

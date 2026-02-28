@@ -133,9 +133,16 @@ serve(async (req) => {
             pending: "https://ecormece-suplo.netlify.app/perfil.html"
           },
           auto_return: "approved",
-          // Bloqueia cartão de crédito — só Pix/boleto nesta preferência
+          // ✅ Exclui cartão e débito — deixa Pix (bank_transfer) disponível
+          // Pix pertence à categoria bank_transfer no MP — NUNCA exclua essa categoria
           payment_methods: {
-            excluded_payment_types: [{ id: 'credit_card' }]
+            excluded_payment_types: [
+              { id: 'credit_card' },
+              { id: 'debit_card' },
+              { id: 'ticket' }       // exclui boleto — só Pix
+            ],
+            installments: 1,
+            default_payment_method_id: 'pix'   // destaca Pix como padrão
           }
         })
       })
