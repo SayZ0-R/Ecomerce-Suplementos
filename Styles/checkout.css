@@ -1,101 +1,568 @@
-.checkout-container {
-    max-width: 1100px;
-    margin: 120px auto 50px;
-    padding: 0 20px;
+/* =============================================
+   CHECKOUT — NutrirVida
+   Fonte: Syne (títulos) + DM Sans (corpo)
+   ============================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f4f6f3;
+    color: #1a1a1a;
+}
+
+/* ---- PROGRESS BAR ---- */
+.progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 0 auto 40px;
+    max-width: 420px;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #aaa;
+    background: #fff;
+    transition: all 0.3s;
+}
+
+.step-label {
+    font-size: 0.72rem;
+    color: #aaa;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+}
+
+.progress-step.done .step-num {
+    background: #2ecc71;
+    border-color: #2ecc71;
+    color: #fff;
+}
+
+.progress-step.active .step-num {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #fff;
+}
+
+.progress-step.active .step-label,
+.progress-step.done .step-label {
+    color: #333;
+    font-weight: 600;
+}
+
+.progress-line {
+    width: 60px;
+    height: 2px;
+    background: #ddd;
+    margin-bottom: 22px;
+    flex-shrink: 0;
+}
+
+.progress-line.done {
+    background: #2ecc71;
+}
+
+/* ---- CONTAINER ---- */
+.checkout-container {
+    max-width: 1140px;
+    margin: 110px auto 60px;
+    padding: 0 24px;
+}
+
+.checkout-container>h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 32px;
+    color: #1a1a1a;
+}
+
+/* ---- GRID ---- */
 .checkout-grid {
     display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 30px;
+    grid-template-columns: 1fr 360px;
+    gap: 28px;
+    align-items: start;
 }
 
-.checkout-section {
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.checkout-section h3 {
-    margin-bottom: 20px;
-    color: #333;
-    border-bottom: 2px solid #2ecc71; /* Verde da NutrirVida */
-    display: inline-block;
-    padding-bottom: 5px;
-}
-
-.input-group, .input-row {
+.checkout-left {
     display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.input-row input:first-child { width: 30%; } /* Campo de número menor */
+/* ---- CARDS ---- */
+.checkout-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ebebeb;
+    animation: slideUp 0.4s ease both;
+}
 
-input[type="text"], input[type="email"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+.checkout-card:nth-child(2) {
+    animation-delay: 0.08s;
+}
+
+.checkout-card:nth-child(3) {
+    animation-delay: 0.16s;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.card-icon {
+    width: 38px;
+    height: 38px;
+    background: #f0fff4;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2ecc71;
     font-size: 1rem;
 }
 
-.payment-options {
+.card-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* ---- FIELDS ---- */
+.fields-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.field-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-wrap.full {
+    width: 100%;
+}
+
+.field-wrap.half {
+    flex: 1;
+    min-width: 120px;
+}
+
+.field-wrap label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #666;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.field-wrap input,
+.select-parcelas-input {
+    padding: 12px 14px;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    background: #fafafa;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+    width: 100%;
+}
+
+.field-wrap input:focus,
+.select-parcelas-input:focus {
+    border-color: #2ecc71;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.12);
+}
+
+.field-wrap input[readonly] {
+    background: #f5f5f5;
+    color: #888;
+    cursor: default;
+}
+
+/* ---- MÉTODO DE PAGAMENTO ---- */
+.method-selector {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
 }
 
-.payment-card {
-    border: 2px solid #eee;
-    padding: 15px;
-    border-radius: 8px;
+.method-option {
+    border: 2px solid #e8e8e8;
+    border-radius: 10px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.2s;
+    overflow: hidden;
+}
+
+.method-option:has(input:checked) {
+    border-color: #2ecc71;
+    background: #f7fffa;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.10);
+}
+
+.method-option input {
+    display: none;
+}
+
+.method-content {
     display: flex;
     align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+}
+
+.method-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.pix-icon {
+    background: #e8fff3;
+    color: #00b760;
+}
+
+.card-icon-wrap {
+    background: #eef2ff;
+    color: #5b5fc7;
+}
+
+.method-text {
+    flex: 1;
+}
+
+.method-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.method-text span {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.method-badge {
+    background: #2ecc71;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ---- PAINÉIS DE PAGAMENTO ---- */
+.payment-panel {
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.payment-panel.active {
+    height: auto;
+    overflow: visible;
+    opacity: 1;
+    pointer-events: all;
+    margin-top: 20px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pix-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #f0fff4;
+    border: 1px solid #b7f0cc;
+    border-radius: 10px;
+    padding: 16px;
+    color: #1a7c45;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.pix-info i {
+    font-size: 1.1rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* ---- CAMPOS MP (Checkout Transparente) ---- */
+.mp-field {
+    padding: 12px 14px;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    background: #fafafa;
+    min-height: 46px;
+    transition: border-color 0.2s;
+}
+
+.mp-field.mp-focus {
+    border-color: #2ecc71;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.12);
+}
+
+/* ---- RESUMO (COLUNA DIREITA) ---- */
+.summary-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ebebeb;
+    animation: slideUp 0.4s ease 0.1s both;
+}
+
+.sticky-summary {
+    position: sticky;
+    top: 100px;
+}
+
+.summary-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Itens do resumo */
+.summary-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 10px;
 }
 
-.payment-card:has(input:checked) {
-    border-color: #2ecc71;
-    background-color: #f0fff4;
+.summary-item-name {
+    font-size: 0.88rem;
+    color: #444;
+    line-height: 1.4;
+    flex: 1;
 }
 
+.summary-item-qty {
+    font-size: 0.78rem;
+    color: #999;
+}
+
+.summary-item-price {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+.summary-divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 12px 0;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.summary-line span:last-child {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.total-line {
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+.total-line span:first-child {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+#total-final-checkout {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+/* ---- BOTÃO FINALIZAR ---- */
 .btn-finalizar-pedido {
     width: 100%;
-    background-color: #2ecc71;
-    color: white;
-    padding: 18px;
+    background: #2ecc71;
+    color: #fff;
     border: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: bold;
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
     margin-top: 20px;
-    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.04em;
 }
 
-.btn-finalizar-pedido:hover { background-color: #27ae60; }
-
-.total-highlight {
-    font-size: 1.5rem;
-    color: #333;
-    font-weight: 800;
+.btn-finalizar-pedido:hover {
+    background: #27ae60;
+    transform: translateY(-1px);
 }
 
-.hidden { display: none; }
-
-@media (max-width: 768px) {
-    .checkout-grid { grid-template-columns: 1fr; }
+.btn-finalizar-pedido:disabled {
+    background: #a0d9b8;
+    cursor: not-allowed;
+    transform: none;
 }
 
-.checkout-container h1 {
-    color: #333333;
+/* ---- BADGES DE SEGURANÇA ---- */
+.security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 14px;
 }
 
-.checkout-section.payment-box span {
-    color: #333333;
+.security-badges span {
+    font-size: 0.75rem;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.security-badges i {
+    color: #2ecc71;
+}
+
+/* ---- RESPONSIVO ---- */
+@media (max-width: 820px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-right {
+        order: -1;
+    }
+
+    .sticky-summary {
+        position: static;
+    }
+
+    .progress-line {
+        width: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkout-container {
+        margin-top: 90px;
+    }
+
+    .checkout-card {
+        padding: 20px;
+    }
+
+    .summary-card {
+        padding: 20px;
+    }
+
+    .fields-grid {
+        flex-direction: column;
+    }
+
+    .field-wrap.half {
+        width: 100%;
+    }
 }

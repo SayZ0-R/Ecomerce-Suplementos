@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +7,13 @@
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="Styles/checkout.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
-<>
+<body>
     <nav>
         <a class="logo" href="index.html">
             <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
         </a>
-
         <ul class="nav-list">
             <li><a href="index.html" class="active">Início</a></li>
             <li><a href="Loja.html">Loja</a></li>
@@ -22,30 +21,23 @@
             <li><a href="Loja.html">Pacotes</a></li>
             <li><a href="contato.html">Contato</a></li>
         </ul>
-
         <div class="nav-right">
             <div class="nav-icons">
                 <a href="Carrinho.html" style="position: relative; display: inline-flex;" aria-label="Ver carrinho">
                     <i class="fas fa-shopping-cart"></i>
                     <span id="cart-count" class="cart-badge"></span>
                 </a>
-
                 <div class="profile-container">
                     <a href="#" aria-label="Minha conta" class="profile-icon">
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
-                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
-                                Perfil</a></li>
-
-
+                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
-                                Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                     </ul>
                 </div>
             </div>
-
             <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
@@ -55,72 +47,167 @@
     </nav>
 
     <main class="checkout-container">
-        <h1 class="section-title">Finalizar seu Pedido</h1>
 
-        <form id="form-checkout" class="checkout-grid">
-            <section class="checkout-section">
-                <h3><i class="fas fa-user"></i> Informações Pessoais</h3>
-                <div class="input-group">
-                    <input type="text" id="nome-completo" placeholder="Nome Completo" readonly>
-                    <input type="email" id="email-checkout" placeholder="E-mail" readonly>
-                </div>
-                <div class="input-group" style="margin-top: 10px;">
-                    <input type="text" id="whatsapp" placeholder="WhatsApp (DDD + Número)" required>
-                </div>
+        <!-- BARRA DE PROGRESSO -->
+        <div class="progress-bar">
+            <div class="progress-step done"><span class="step-num">1</span><span class="step-label">Carrinho</span></div>
+            <div class="progress-line done"></div>
+            <div class="progress-step active"><span class="step-num">2</span><span class="step-label">Pagamento</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span class="step-num">3</span><span class="step-label">Confirmação</span></div>
+        </div>
 
-                <h3><i class="fas fa-map-marker-alt"></i> Entrega</h3>
-                <div class="input-group">
-                    <input type="text" id="cep-checkout" placeholder="CEP" maxlength="9" required>
-                    <input type="text" id="logradouro" placeholder="Endereço (Rua, Av...)" required>
-                </div>
-                <div class="input-row">
-                    <input type="text" id="numero" placeholder="Nº" required>
-                    <input type="text" id="bairro" placeholder="Bairro" required>
-                </div>
-            </section>
+        <div class="checkout-grid">
 
-            <section class="checkout-section payment-box">
-                <h3><i class="fas fa-credit-card"></i> Pagamento</h3>
-                <div class="payment-options">
-                    <label class="payment-card">
-                        <input type="radio" name="metodo-pagamento" value="pix" checked>
-                        <span><i class="fab fa-pix"></i> Pix (Aprovação Instantânea)</span>
-                    </label>
-                    <label class="payment-card">
-                        <input type="radio" name="metodo-pagamento" value="cartao">
-                        <span><i class="fas fa-credit-card"></i> Cartão de Crédito</span>
-                    </label>
-                    <div id="parcelamento-container" style="display: none; margin-top: 10px; padding-left: 30px;">
-                        <label style="display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px;">Parcelar
-                            em:</label>
-                        <select id="select-parcelas"
-                            style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                        </select>
+            <!-- COLUNA ESQUERDA -->
+            <div class="checkout-left">
+
+                <!-- DADOS PESSOAIS -->
+                <section class="checkout-card">
+                    <div class="card-header">
+                        <div class="card-icon"><i class="fas fa-user"></i></div>
+                        <h3>Informações Pessoais</h3>
                     </div>
-                </div>
-
-                <div id="dados-cartao" class="hidden">
-                    <input type="text" placeholder="Número do Cartão">
-                    <div class="input-row">
-                        <input type="text" placeholder="MM/AA">
-                        <input type="text" placeholder="CVV">
+                    <div class="fields-grid">
+                        <div class="field-wrap full">
+                            <label>Nome Completo</label>
+                            <input type="text" id="nome-completo" placeholder="Carregando..." readonly>
+                        </div>
+                        <div class="field-wrap full">
+                            <label>E-mail</label>
+                            <input type="email" id="email-checkout" placeholder="Carregando..." readonly>
+                        </div>
+                        <div class="field-wrap full">
+                            <label>WhatsApp</label>
+                            <input type="text" id="whatsapp" placeholder="(00) 00000-0000" required>
+                        </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="checkout-summary">
+                <!-- ENTREGA -->
+                <section class="checkout-card">
+                    <div class="card-header">
+                        <div class="card-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <h3>Endereço de Entrega</h3>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-wrap half">
+                            <label>CEP</label>
+                            <input type="text" id="cep-checkout" placeholder="00000-000" maxlength="9" required>
+                        </div>
+                        <div class="field-wrap half">
+                            <label>Número</label>
+                            <input type="text" id="numero" placeholder="Nº" required>
+                        </div>
+                        <div class="field-wrap full">
+                            <label>Endereço</label>
+                            <input type="text" id="logradouro" placeholder="Rua, Avenida..." required>
+                        </div>
+                        <div class="field-wrap full">
+                            <label>Bairro</label>
+                            <input type="text" id="bairro" placeholder="Seu bairro" required>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SELETOR DE MÉTODO -->
+                <section class="checkout-card">
+                    <div class="card-header">
+                        <div class="card-icon"><i class="fas fa-credit-card"></i></div>
+                        <h3>Forma de Pagamento</h3>
+                    </div>
+
+                    <div class="method-selector">
+                        <label class="method-option" id="label-cartao">
+                            <input type="radio" name="metodo-pagamento" value="cartao" checked>
+                            <div class="method-content">
+                                <div class="method-icon card-icon-wrap"><i class="fas fa-credit-card"></i></div>
+                                <div class="method-text">
+                                    <strong>Cartão de Crédito</strong>
+                                    <span>Parcelamento em até 4x</span>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="method-option" id="label-pix">
+                            <input type="radio" name="metodo-pagamento" value="pix">
+                            <div class="method-content">
+                                <div class="method-icon pix-icon"><i class="fab fa-pix"></i></div>
+                                <div class="method-text">
+                                    <strong>Pix</strong>
+                                    <span>Aprovação instantânea</span>
+                                </div>
+                                <div class="method-badge">Melhor preço</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- PAINEL PIX -->
+                    <div id="painel-pix" class="payment-panel">
+                        <div class="pix-info">
+                            <i class="fas fa-bolt"></i>
+                            <p>Após confirmar, um <strong>QR Code Pix</strong> será gerado. O pagamento é aprovado em segundos.</p>
+                        </div>
+                        <button type="button" id="btn-confirmar-pix" class="btn-finalizar-pedido" style="margin-top:16px;">
+                            <span>CONFIRMAR E GERAR PIX</span>
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                    </div>
+
+                    <!-- PAINEL CARTÃO — Payment Brick do MP -->
+                    <div id="painel-cartao" class="payment-panel active">
+                        <!--
+                            O MP Bricks injeta o formulário completo aqui.
+                            Inclui: número do cartão, validade, CVV, nome, parcelas.
+                            Não adicione campos manuais dentro deste container.
+                        -->
+                        <div id="paymentBrick_container"></div>
+                    </div>
+
+                </section>
+            </div>
+
+            <!-- COLUNA DIREITA — RESUMO -->
+            <div class="checkout-right">
+                <div class="summary-card sticky-summary">
+                    <h3 class="summary-title">Resumo do Pedido</h3>
+
+                    <div id="resumo-itens" class="summary-items">
+                        <!-- Preenchido pelo JS -->
+                    </div>
+
+                    <div class="summary-divider"></div>
+
                     <div class="summary-line">
-                        <span>Total a pagar (com frete):</span>
-                        <span id="total-final-checkout" class="total-highlight">R$ 0,00</span>
+                        <span>Subtotal</span>
+                        <span id="resumo-subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Frete</span>
+                        <span id="resumo-frete">—</span>
+                    </div>
+
+                    <!-- Linha de desconto Pix — controlada pelo JS -->
+                    <div id="linha-desconto-pix" class="summary-line" style="display:none; color:#2ecc71; font-weight:600;">
+                        <span>🏷 Desconto Pix</span>
+                        <span id="valor-desconto-pix"></span>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-line total-line">
+                        <span>Total</span>
+                        <span id="total-final-checkout">R$ 0,00</span>
+                    </div>
+
+                    <div class="security-badges">
+                        <span><i class="fas fa-lock"></i> Pagamento seguro</span>
+                        <span><i class="fas fa-shield-alt"></i> Dados protegidos</span>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" class="btn-finalizar-pedido">
-                    CONCLUIR PEDIDO <i class="fas fa-check"></i>
-                </button>
-            </section>
-        </form>
+        </div>
     </main>
-
 
     <footer class="main-footer">
         <div class="footer-container">
@@ -128,34 +215,26 @@
                 <h3>NUTRIR<span>VIDA</span></h3>
                 <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
             </div>
-
             <div class="footer-column">
                 <h3>Links rápidos</h3>
                 <ul>
                     <li><a href="index.html">Início</a></li>
                     <li><a href="Loja.html">Loja</a></li>
                     <li><a href="contato.html">Contato</a></li>
-
                 </ul>
             </div>
-
             <div class="footer-column">
                 <h3>Informações legais</h3>
                 <ul>
                     <li><a href="#">Termos de uso</a></li>
-                    <li><a href="#">Termos e condições</a></li>
                     <li><a href="#">Política de privacidade</a></li>
-
                 </ul>
             </div>
-
             <div class="footer-column">
                 <h3>Siga-nos</h3>
                 <div class="social-icons">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/nutrirvidasuplementos?igsh=cWplanlxZWFkNTV6&utm_source=qr"
-                        aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-
+                    <a href="https://www.instagram.com/nutrirvidasuplementos?igsh=cWplanlxZWFkNTV6&utm_source=qr" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
                 <h3>Formas de pagamento</h3>
                 <div class="payment-icons">
@@ -164,20 +243,15 @@
                 </div>
             </div>
         </div>
-
         <div class="footer-bottom">
             <p>&copy; 2025 NutrirVida. Todos os direitos reservados.</p>
         </div>
     </footer>
-    
-    
-    
+
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script src="javascript/checkout.js"></script>
     <script src="javascript/script.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="javascript/database.js"></script>
-    
-    </body>
+</body>
+</html>
