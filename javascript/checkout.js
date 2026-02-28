@@ -101,63 +101,67 @@ async function renderPaymentBrick(totalInicial) {
     const container = document.getElementById('paymentBrick_container');
     if (!container) return;
 
+    // Limpa tentativas falhas anteriores antes de criar uma nova
+    container.innerHTML = '';
+
     // Limpa instância anterior se existir
     if (paymentBrickController) {
         try { await paymentBrickController.unmount(); } catch(e) {}
         paymentBrickController = null;
     }
-    container.innerHTML = '';
 
-    const mp           = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
-    const bricksBuilder = mp.bricks();
+    try {
+        const mp           = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
+        const bricksBuilder = mp.bricks();
 
-    paymentBrickController = await bricksBuilder.create('payment', 'paymentBrick_container', {
-        initialization: {
-            amount: totalInicial,
-            // Pré-preenche o e-mail do cliente logado
-            payer: {
-                email: document.getElementById('email-checkout')?.value || ''
-            }
-        },
-        customization: {
-            paymentMethods: {
-                // Só cartão de crédito neste painel — Pix tem fluxo próprio
-                creditCard: 'all',
-                debitCard:  'none',
-                ticket:     'none',
-                bankTransfer: 'none',
-                atm:        'none',
-                maxInstallments: MAX_PARCELAS,  // Força máximo 4x
+        paymentBrickController = await bricksBuilder.create('payment', 'paymentBrick_container', {
+            initialization: {
+                amount: totalInicial,
+                payer: {
+                    email: document.getElementById('email-checkout')?.value || ''
+                }
             },
-            visual: {
-                style: {
-                    theme: 'default',
-                    customVariables: {
-                        baseColor:    '#2ecc71',
-                        baseColorSecondary: '#27ae60',
-                        fontFamily:   'DM Sans, sans-serif',
-                        borderRadius: '8px',
-                    }
+            customization: {
+                paymentMethods: {
+                    creditCard: 'all',
+                    debitCard:  'none',
+                    ticket:     'none',
+                    bankTransfer: 'none',
+                    atm:        'none',
+                    maxInstallments: MAX_PARCELAS,
                 },
-                hideFormTitle: true,
-                hidePaymentButton: false,
-            }
-        },
-        callbacks: {
-            onReady: () => {
-                console.log('Payment Brick pronto');
+                visual: {
+                    style: {
+                        theme: 'default',
+                        customVariables: {
+                            baseColor:    '#2ecc71',
+                            baseColorSecondary: '#27ae60',
+                            fontFamily:   'DM Sans, sans-serif',
+                            borderRadius: '8px',
+                        }
+                    },
+                    hideFormTitle: true,
+                    hidePaymentButton: false,
+                }
             },
-            onError: (error) => {
-                console.error('Erro no Payment Brick:', error);
-            },
-            onSubmit: async ({ selectedPaymentMethod, formData }) => {
-                // Valida campos de endereço antes de processar
-                if (!validarCamposEndereco()) return;
-
-                await processarPedidoCartao(formData);
+            callbacks: {
+                onReady: () => {
+                    console.log('Payment Brick pronto');
+                },
+                onError: (error) => {
+                    console.error('Erro no Payment Brick:', error);
+                },
+                onSubmit: async ({ selectedPaymentMethod, formData }) => {
+                    if (!validarCamposEndereco()) return;
+                    await processarPedidoCartao(formData);
+                }
             }
-        }
-    });
+        });
+    } catch (err) {
+        console.error('Erro ao renderizar Payment Brick:', err);
+        paymentBrickController = null;
+        throw err;
+    }
 }
 
 // =============================================
@@ -352,28 +356,18 @@ function alternarMetodo(metodo) {
         painelPix?.classList.add('active');
         painelCartao?.classList.remove('active');
         
-        // Exibe o total com desconto do Pix na tela
         atualizarTotalCheckout(); 
-        
         console.log('Método: Pix | Total com desconto:', totalPix);
-        
-        // Se o usuário mudar para Pix, podemos esconder o container do Brick para não confundir
-        const containerMP = document.getElementById('paymentBrick_container');
-        if (containerMP) containerMP.style.display = 'none';
 
     } else {
+        // Garante que o painel cartão está ativo ANTES de render/update (SDK precisa do container visível)
         painelCartao?.classList.add('active');
         painelPix?.classList.remove('active');
         
-        // Exibe o total de cartão (sem o desconto do pix) na tela
         atualizarTotalCheckout();
-
-        const containerMP = document.getElementById('paymentBrick_container');
-        if (containerMP) containerMP.style.display = 'block';
-
         console.log('Método: Cartão | Total:', totalCartao);
 
-        // LÓGICA DO BRICK (CARTÃO)
+        // LÓGICA DO BRICK (CARTÃO) — painel já está .active
         if (paymentBrickController) {
             // Se já existe, apenas atualizamos o valor para o preço de cartão
             paymentBrickController.update({ 

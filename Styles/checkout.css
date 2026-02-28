@@ -360,6 +360,11 @@ body {
     flex-shrink: 0;
 }
 
+/* ---- CONTAINER DO PAYMENT BRICK ---- */
+#paymentBrick_container {
+    min-height: 400px;
+}
+
 /* ---- CAMPOS MP (Checkout Transparente) ---- */
 .mp-field {
     padding: 12px 14px;
@@ -565,4 +570,22 @@ body {
     .field-wrap.half {
         width: 100%;
     }
+}
+
+
+/* Force o container a ter espaço real no layout */
+#paymentBrick_container {
+    min-height: 600px !important; 
+    width: 100%;
+    display: block !important;
+    background: #ffffff; /* Ajuda a visualizar se o espaço está lá */
+}
+
+/* Garanta que o painel pai não esteja cortando o conteúdo */
+.payment-panel.active {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
