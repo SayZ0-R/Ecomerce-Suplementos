@@ -56,18 +56,8 @@ serve(async (req) => {
         },
         auto_return: "approved",
         payment_methods: metodo === 'pix'
-          ? {
-            excluded_payment_types: [
-              { id: 'credit_card' },
-              { id: 'debit_card' },
-              { id: 'ticket' }
-            ]
-          }
-          : {
-            excluded_payment_types: [
-              { id: 'bank_transfer' }
-            ]
-          }
+          ? { excluded_payment_types: [{ id: 'credit_card' }] }
+          : {}
       })
     })
 
