@@ -31,7 +31,15 @@ function renderizarFiltrosCategorias() {
     const principais = categoriasExistentes.slice(0, 6);
     const outras = categoriasExistentes.slice(6);
 
+    // Verifica se tem produtos em promoção para mostrar o filtro
+    const temPromocao = produtosBanco.some(p => p.promocao);
+
     let html = `<label><input type="radio" name="categoria" value="todos" checked onchange="filtrar()"> Todas</label>`;
+
+    if (temPromocao) {
+        html += `<label><input type="radio" name="categoria" value="__promocao__" onchange="filtrar()">
+            🔥 Promoções</label>`;
+    }
 
     principais.forEach(cat => {
         html += `<label><input type="radio" name="categoria" value="${cat}" onchange="filtrar()"> ${cat}</label>`;
@@ -66,7 +74,8 @@ function filtrar() {
 
     const filtrados = produtosBanco.filter(p => {
         const bateNome = p.nome.toLowerCase().includes(busca);
-        const bateCategoria = categoriaSelecionada === 'todos' || p.categoria === categoriaSelecionada;
+        const bateCategoria = categoriaSelecionada === 'todos'
+            || (categoriaSelecionada === '__promocao__' ? p.promocao === true : p.categoria === categoriaSelecionada);
         const batePreco = p.preco <= precoMax;
         return bateNome && bateCategoria && batePreco;
     });
@@ -207,7 +216,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-
-
-

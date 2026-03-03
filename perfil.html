@@ -347,8 +347,10 @@
                 if (s.includes('finalizado') || s.includes('concluído')) statusClass = 'status-finalizado';
                 if (s.includes('cancelado')) statusClass = 'status-cancelado';
 
-                // Só aparece o botão se estiver Pendente
-                const podeCancelar = statusAtual === 'Pendente';
+                // Cliente pode cancelar até antes de ser Enviado
+                const podeCancelar = statusAtual !== 'Enviado' && 
+                                     statusAtual !== 'Concluído' && 
+                                     statusAtual !== 'Cancelado';
 
                 const nomesItens = pedido.itens ? pedido.itens.map(i => `${i.quantidade}x ${i.nome}`).join(', ') : 'Itens não identificados';
 
@@ -379,23 +381,27 @@
         }
 
         async function cancelarPedidoCliente(idPedido) {
-            const confirmar = confirm("Deseja realmente cancelar este pedido? Esta ação é definitiva.");
+            const confirmar = confirm("Deseja realmente cancelar este pedido?\nEsta ação é definitiva e o reembolso será processado automaticamente.");
             if (!confirmar) return;
 
             try {
-                const { error } = await _supabase
-                    .from('pedidos')
-                    .update({
-                        status_pedido: 'Cancelado',   // Trava a operação
-                        status_pagamento: 'Cancelado' // Trava o financeiro (evita reembolso forçado no sistema)
-                    })
-                    .eq('id', idPedido)
-                    .eq('status_pedido', 'Pendente'); // Segurança: se você já começou a separar, ele não cancela mais
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/reembolso`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':  'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({ pedidoId: idPedido, solicitante: 'cliente' })
+                });
 
-                if (error) throw error;
+                const result = await response.json();
 
-                alert("Pedido cancelado com sucesso!");
-                carregarDadosPerfil(); // Atualiza a lista para o cliente ver o novo status
+                if (result.sucesso) {
+                    alert(result.mensagem);
+                    carregarDadosPerfil();
+                } else {
+                    alert('Não foi possível cancelar: ' + result.erro);
+                }
             } catch (err) {
                 alert("Erro ao cancelar: " + err.message);
             }
@@ -436,7 +442,29 @@
             e.target.value = formatarTelefone(e.target.value);
         });
 
-        document.addEventListener('DOMContentLoaded', carregarDadosPerfil);
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarDadosPerfil();
+            iniciarRealtimePerfil();
+        });
+
+        // Realtime — atualiza pedidos do cliente sem recarregar a página
+        function iniciarRealtimePerfil() {
+            _supabase.auth.getUser().then(({ data: { user } }) => {
+                if (!user) return;
+
+                _supabase
+                    .channel('pedidos-perfil')
+                    .on('postgres_changes',
+                        { event: 'UPDATE', schema: 'public', table: 'pedidos',
+                          filter: `cliente_email=eq.${user.email}` },
+                        payload => {
+                            console.log('[Realtime] Pedido atualizado:', payload.new.id, '| status:', payload.new.status_pedido);
+                            buscarPedidosDoUsuario(user.email);
+                        }
+                    )
+                    .subscribe();
+            });
+        }
 
         window.onpageshow = function (event) {
             if (event.persisted) window.location.reload();

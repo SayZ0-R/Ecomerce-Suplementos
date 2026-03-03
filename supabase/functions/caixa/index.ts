@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,55 +6,62 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // AJUSTE 1: Tratar o pré-flight do CORS
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  )
-
   try {
-    const body = await req.json()
-    console.log("Notificação recebida do MP:", body)
+    const url    = new URL(req.url)
+    const limite = url.searchParams.get('limit') ?? '20'
+    const offset = url.searchParams.get('offset') ?? '0'
 
-    if (body.type === 'payment' || body.action?.includes('payment')) {
-      const paymentId = body.data?.id || body.resource?.split('/').pop()
+    console.log('[caixa] limite:', limite, '| offset:', offset)
 
-      const mpResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-        headers: { Authorization: `Bearer ${Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN')}` }
-      })
-      
-      const paymentData = await mpResponse.json()
-
-      if (paymentData.status === 'approved') {
-        const orderId = paymentData.external_reference 
-        
-        console.log(`Pagamento aprovado para o Pedido: ${orderId}`)
-
-        const { error } = await supabase
-          .from('pedidos')
-          .update({ status_pagamento: 'Aprovado' })
-          .eq('id', orderId)
-
-        if (error) throw error
+    // Busca pagamentos aprovados na API do MP
+    const mpRes = await fetch(
+      `https://api.mercadopago.com/v1/payments/search?status=approved&limit=${limite}&offset=${offset}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN')}`
+        }
       }
-    }
+    )
 
-    // AJUSTE 2: Incluir os corsHeaders na resposta de sucesso
-    return new Response(JSON.stringify({ ok: true }), { 
-        status: 200, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    const mpData = await mpRes.json()
+    console.log('[caixa] total encontrado:', mpData.paging?.total)
+
+    // Formata para resposta limpa
+    const pagamentos = (mpData.results ?? []).map((p: any) => ({
+      id:                 p.id,
+      status:             p.status,
+      status_detail:      p.status_detail,
+      payment_method_id:  p.payment_method_id,
+      transaction_amount: p.transaction_amount,
+      net_received_amount: p.fee_details?.find((f: any) => f.type === 'mercadopago_fee')
+                            ? p.transaction_amount - (p.fee_details.reduce((acc: number, f: any) => acc + f.amount, 0))
+                            : p.transaction_amount,
+      external_reference: p.external_reference,
+      payer_email:        p.payer?.email,
+      date_approved:      p.date_approved,
+      installments:       p.installments,
+    }))
+
+    return new Response(JSON.stringify({
+      total:      mpData.paging?.total ?? 0,
+      limit:      Number(limite),
+      offset:     Number(offset),
+      pagamentos: pagamentos,
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
     })
 
-  } catch (err) {
-    console.error("Erro no Webhook:", err.message)
-    // AJUSTE 3: Incluir os corsHeaders na resposta de erro
-    return new Response(JSON.stringify({ error: err.message }), { 
-        status: 400, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+  } catch (err: any) {
+    console.error('[caixa] ERRO:', err.message)
+    return new Response(JSON.stringify({ error: err.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
     })
   }
 })

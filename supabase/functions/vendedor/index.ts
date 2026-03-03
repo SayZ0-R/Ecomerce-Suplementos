@@ -6,6 +6,7 @@ const corsHeaders = {
 }
 
 const MAX_PARCELAS = 4;
+const MP_TOKEN     = () => Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN') ?? ''
 
 serve(async (req) => {
 
@@ -15,94 +16,91 @@ serve(async (req) => {
 
   try {
     const bodyText = await req.text()
-    console.log("BODY RECEBIDO:", bodyText)
-
     const payload = JSON.parse(bodyText)
     const { tipo, orderId, email, frete, items } = payload
 
-    console.log("TIPO:", tipo, "| ORDER:", orderId, "| FRETE:", frete, "| ITEMS:", items?.length)
+    // LOG DE DEBUG — mostra os primeiros 30 chars do token para confirmar qual está sendo usado
+    const tokenAtual = MP_TOKEN()
+    console.log('[DEBUG] MP_TOKEN primeiros 40 chars:', tokenAtual.substring(0, 40))
+    console.log('[DEBUG] MP_TOKEN tamanho:', tokenAtual.length)
+    console.log('[vendedor] tipo:', tipo, '| orderId:', orderId)
 
-    // =============================================
-    // ROTA A — CARTÃO (Checkout Transparente Bricks)
-    // Endpoint: POST /v1/payments
-    // =============================================
     if (tipo === 'cartao') {
-      const {
-        token,
-        installments,
-        paymentMethodId,
-        issuerId,
-        transactionAmount
-      } = payload
 
-      // Garante máximo 4 parcelas mesmo que o frontend tente burlar
+      const token              = payload.token
+      const payment_method_id  = payload.payment_method_id
+      const issuer_id          = payload.issuer_id
+      const installments       = payload.installments
+      const transaction_amount = payload.transaction_amount
+
+      console.log('[cartao] token:', token)
+      console.log('[cartao] payment_method_id:', payment_method_id)
+      console.log('[cartao] transaction_amount:', transaction_amount)
+
+      if (!token)              throw new Error('Campo ausente: token')
+      if (!payment_method_id)  throw new Error('Campo ausente: payment_method_id')
+      if (!transaction_amount) throw new Error('Campo ausente: transaction_amount')
+
       const parcelasValidadas = Math.min(Number(installments) || 1, MAX_PARCELAS)
 
-      console.log("CARTÃO | Token:", token, "| Parcelas:", parcelasValidadas, "| Método:", paymentMethodId)
-
-      const response = await fetch("https://api.mercadopago.com/v1/payments", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN')}`,
-          "Content-Type":  "application/json",
-          // Idempotência — evita cobranças duplicadas em caso de retry
-          "X-Idempotency-Key": `order-${orderId}-${Date.now()}`
+      const mpBody = {
+        token:              token,
+        issuer_id:          issuer_id,
+        payment_method_id:  payment_method_id,
+        transaction_amount: Number(transaction_amount),
+        installments:       parcelasValidadas,
+        description:        `Pedido NutrirVida #${orderId}`,
+        external_reference: String(orderId),
+        payer: { email: email },
+        additional_info: {
+          items: (items ?? []).map((i: any) => ({
+            id:          String(i.id),
+            title:       String(i.nome),
+            description: String(i.nome),
+            unit_price:  Number(i.preco),
+            quantity:    Number(i.quantidade),
+          }))
         },
-        body: JSON.stringify({
-          token:              token,
-          issuer_id:          issuerId,
-          payment_method_id:  paymentMethodId,
-          transaction_amount: Number(transactionAmount),
-          installments:       parcelasValidadas,
-          description:        `Pedido NutrirVida #${orderId}`,
-          external_reference: String(orderId),
-          payer: {
-            email: email
-          },
-          // Dados adicionais dos itens para análise antifraude do MP
-          additional_info: {
-            items: items.map((i: any) => ({
-              id:          String(i.id),
-              title:       i.nome,
-              description: i.nome,
-              unit_price:  Number(i.preco),
-              quantity:    Number(i.quantidade),
-              currency_id: 'BRL'
-            }))
-          },
-          notification_url: "https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook"
-        })
+        notification_url: 'https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook'
+      }
+
+      const mpRes  = await fetch('https://api.mercadopago.com/v1/payments', {
+        method: 'POST',
+        headers: {
+          'Authorization':     `Bearer ${MP_TOKEN()}`,
+          'Content-Type':      'application/json',
+          'X-Idempotency-Key': `nutrivida-${orderId}-${Date.now()}`
+        },
+        body: JSON.stringify(mpBody)
       })
 
-      const data = await response.json()
-      console.log("RESPOSTA MP (cartão):", JSON.stringify(data))
+      const mpData = await mpRes.json()
+      console.log('[cartao] resposta MP:', JSON.stringify(mpData))
 
       return new Response(JSON.stringify({
-        status:        data.status,
-        status_detail: data.status_detail,
-        id:            data.id
+        status:        mpData.status,
+        status_detail: mpData.status_detail,
+        id:            mpData.id,
+        message:       mpData.message,
+        error:         mpData.error,
+        cause:         mpData.cause,
       }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
 
-    // =============================================
-    // ROTA B — PIX (Checkout Pro — gera QR Code)
-    // Endpoint: POST /checkout/preferences
-    // =============================================
     if (tipo === 'pix') {
-      // Monta itens para a preferência
-      const itensMercadoPago = items.map((i: any) => ({
+
+      const itensMercadoPago = (items ?? []).map((i: any) => ({
         id:          String(i.id),
-        title:       i.nome,
-        description: i.nome,
+        title:       String(i.nome),
+        description: String(i.nome),
         unit_price:  Number(i.preco),
         quantity:    Number(i.quantidade),
         currency_id: 'BRL'
       }))
 
-      // Injeta frete como item separado se existir
       if (frete && Number(frete) > 0) {
         itensMercadoPago.push({
           id:          'frete',
@@ -114,55 +112,51 @@ serve(async (req) => {
         })
       }
 
-      console.log("PIX | Itens:", JSON.stringify(itensMercadoPago))
-
-      const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN')}`,
-          "Content-Type":  "application/json"
+      const prefBody = {
+        items: itensMercadoPago,
+        payer: { email: email },
+        external_reference: String(orderId),
+        notification_url: 'https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook',
+        back_urls: {
+          success: 'https://ecormece-suplo.netlify.app/index.html',
+          failure: 'https://ecormece-suplo.netlify.app/checkout.html',
+          pending: 'https://ecormece-suplo.netlify.app/perfil.html'
         },
-        body: JSON.stringify({
-          items: itensMercadoPago,
-          payer: { email: email },
-          external_reference: String(orderId),
-          notification_url: "https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook",
-          back_urls: {
-            success: "https://ecormece-suplo.netlify.app/index.html",
-            failure: "https://ecormece-suplo.netlify.app/checkout.html",
-            pending: "https://ecormece-suplo.netlify.app/perfil.html"
-          },
-          auto_return: "approved",
-          // ✅ Exclui cartão e débito — deixa Pix (bank_transfer) disponível
-          // Pix pertence à categoria bank_transfer no MP — NUNCA exclua essa categoria
-          payment_methods: {
-            excluded_payment_types: [
-              { id: 'credit_card' },
-              { id: 'debit_card' },
-              { id: 'ticket' }       // exclui boleto — só Pix
-            ],
-            installments: 1,
-            default_payment_method_id: 'pix'   // destaca Pix como padrão
-          }
-        })
+        auto_return: 'approved',
+        payment_methods: {
+          excluded_payment_types: [
+            { id: 'credit_card' },
+            { id: 'debit_card'  },
+            { id: 'ticket'      }
+          ],
+          installments: 1
+        }
+      }
+
+      const mpRes  = await fetch('https://api.mercadopago.com/checkout/preferences', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${MP_TOKEN()}`,
+          'Content-Type':  'application/json'
+        },
+        body: JSON.stringify(prefBody)
       })
 
-      const data = await response.json()
-      console.log("RESPOSTA MP (pix):", JSON.stringify(data))
+      const mpData = await mpRes.json()
+      console.log('[pix] resposta MP:', JSON.stringify(mpData))
 
-      return new Response(JSON.stringify({ id: data.id }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ id: mpData.id }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
 
-    // Tipo não reconhecido
-    throw new Error(`Tipo de pagamento inválido: "${tipo}". Use "cartao" ou "pix".`)
+    throw new Error(`tipo inválido: "${tipo}". Use "cartao" ou "pix".`)
 
-  } catch (error) {
-    console.error("ERRO NA FUNÇÃO:", error.message)
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+  } catch (err: any) {
+    console.error('[vendedor] ERRO:', err.message)
+    return new Response(JSON.stringify({ error: err.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     })
   }

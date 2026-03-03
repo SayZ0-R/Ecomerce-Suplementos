@@ -223,6 +223,35 @@ async function carregarProdutosDoBanco() {
 }
 
 // --- 5. GESTÃO DE PEDIDOS (VERSÃO ATUALIZADA COM TRAVA DE CANCELAMENTO) ---
+
+async function emitirReembolsoAdmin(pedidoId) {
+    const confirmar = confirm(`Confirma o reembolso do pedido #${pedidoId}?\n\nIsso irá cancelar o pedido e emitir o reembolso no Mercado Pago.`);
+    if (!confirmar) return;
+
+    try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/reembolso`, {
+            method: 'POST',
+            headers: {
+                'Content-Type':  'application/json',
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({ pedidoId, solicitante: 'admin' })
+        });
+
+        const result = await response.json();
+
+        if (result.sucesso) {
+            alert(result.mensagem);
+            carregarPedidosAdmin();
+            carregarEstatisticas();
+        } else {
+            alert('Erro: ' + result.erro);
+        }
+    } catch (err) {
+        alert('Erro ao processar reembolso: ' + err.message);
+    }
+}
+
 async function carregarPedidosAdmin() {
     const lista = document.getElementById('lista-pedidos-admin');
     if (!lista) return;
@@ -242,7 +271,16 @@ async function carregarPedidosAdmin() {
 
 
         // --- NOVA LÓGICA DE TRAVA ---
-        const isCancelado = p.status_pedido === 'Cancelado';
+        const isCancelado   = p.status_pedido === 'Cancelado';
+        const isConcluido   = p.status_pedido === 'Concluído';
+        const temPaymentId  = !!p.payment_id;
+
+        // Reembolso aparece só quando: Concluído + tem payment_id + dentro de 7 dias
+        const dataReferencia     = p.updated_at || p.created_at;
+        const diasDesdeConclusao = isConcluido && dataReferencia
+            ? (new Date() - new Date(dataReferencia)) / (1000 * 60 * 60 * 24)
+            : 0;
+        const podeReembolsar = isConcluido && temPaymentId && diasDesdeConclusao <= 7;
 
         return `
         <tr>
@@ -254,6 +292,12 @@ async function carregarPedidosAdmin() {
                     <i class="fas fa-file-alt"></i>
                 </button>
                 
+                ${podeReembolsar ? `
+                <button onclick="emitirReembolsoAdmin(${p.id})" 
+                        style="background:#e74c3c; color:white; border:none; padding:6px 10px; border-radius:5px; cursor:pointer; font-size:12px;"
+                        title="Emitir reembolso (produto devolvido)">
+                    <i class="fas fa-undo"></i> Reembolso
+                </button>` : ''}
                 
             </div>
         </td>
@@ -433,27 +477,25 @@ window.alert = function (mensagem) {
 };
 
 
-// Escuta novos pedidos em tempo real e atualiza a tela automaticamente
-const canalPedidos = _supabase 
+// Realtime — escuta INSERT e UPDATE na tabela pedidos
+const canalPedidos = _supabase
     .channel('pedidos-em-tempo-real')
-    .on('postgres_changes', 
-        { 
-            event: 'INSERT', 
-            schema: 'public', 
-            table: 'pedidos' 
-        }, 
+    .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'pedidos' },
         payload => {
-            console.log('Novo pedido detectado!', payload.new);
-            
-            // 1. CHAMA AS FUNÇÕES QUE ATUALIZAM A TELA
-            carregarPedidosAdmin(); // Isso faz a lista atualizar sem F5
-            carregarEstatisticas(); // Isso atualiza o faturamento no topo
-            
-            // 2. AVISA VOCÊ (Opcional)
-            if (typeof tocarSomNotificacao === "function") {
-                tocarSomNotificacao();
-            }
+            console.log('[Realtime] Novo pedido:', payload.new.id);
+            carregarPedidosAdmin();
+            carregarEstatisticas();
+            if (typeof tocarSomNotificacao === "function") tocarSomNotificacao();
             alert(`Novo pedido de ${payload.new.cliente_nome} recebido agora!`);
+        }
+    )
+    .on('postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'pedidos' },
+        payload => {
+            console.log('[Realtime] Pedido atualizado:', payload.new.id, '| status:', payload.new.status_pedido);
+            carregarPedidosAdmin();
+            carregarEstatisticas();
         }
     )
     .subscribe();
@@ -567,41 +609,137 @@ function abrirModalDetalhes(jsonString) {
 async function renderizarGraficoVendas() {
     const { data: pedidos, error } = await _supabase
         .from('pedidos')
-        .select('total, created_at')
-        .eq('status_pagamento', 'Aprovado'); 
+        .select('total, created_at, status_pagamento')
+        .eq('status_pagamento', 'Aprovado');
 
     if (error) return console.error("Erro ao carregar gráfico:", error);
 
-   
-    const vendasPorMes = {};
+    const periodo = window._graficoPeriodo || 6;
 
+    // Gera os últimos N meses como eixo X (mesmo sem vendas)
+    const hoje = new Date();
+    const labels = [];
+    const chavesEixo = [];
+    for (let i = periodo - 1; i >= 0; i--) {
+        const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+        const chave = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        const label = d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+        chavesEixo.push(chave);
+        labels.push(label.charAt(0).toUpperCase() + label.slice(1));
+    }
+
+    // Agrupa vendas por mês
+    const mapaVendas = {};
+    const mapaQtd   = {};
     pedidos.forEach(p => {
-        const data = new Date(p.created_at);
-        const mesAno = data.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
-        
-        vendasPorMes[mesAno] = (vendasPorMes[mesAno] || 0) + parseFloat(p.total);
+        const d = new Date(p.created_at);
+        const chave = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        mapaVendas[chave] = (mapaVendas[chave] || 0) + parseFloat(p.total);
+        mapaQtd[chave]    = (mapaQtd[chave]    || 0) + 1;
     });
 
-    const meses = Object.keys(vendasPorMes);
-    const valores = Object.values(vendasPorMes);
+    const valores = chavesEixo.map(c => mapaVendas[c] || 0);
+    const qtds    = chavesEixo.map(c => mapaQtd[c]    || 0);
 
     const ctx = document.getElementById('graficoVendas').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar', 
+    if (window._graficoVendasInstance) window._graficoVendasInstance.destroy();
+
+    // Gradiente de preenchimento
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(0,255,136,0.18)');
+    gradient.addColorStop(1, 'rgba(0,255,136,0.0)');
+
+    window._graficoVendasInstance = new Chart(ctx, {
+        type: 'line',
         data: {
-            labels: meses,
-            datasets: [{
-                label: 'Total Vendido (R$)',
-                data: valores,
-                backgroundColor: '#27ae60',
-                borderColor: '#219150',
-                borderWidth: 1
-            }]
+            labels,
+            datasets: [
+                {
+                    label: 'Receita (R$)',
+                    data: valores,
+                    fill: true,
+                    backgroundColor: gradient,
+                    borderColor: '#00FF88',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: '#00FF88',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    tension: 0.4,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Pedidos',
+                    data: qtds,
+                    fill: false,
+                    borderColor: 'rgba(100,149,237,0.8)',
+                    borderWidth: 2,
+                    borderDash: [5, 4],
+                    pointBackgroundColor: 'rgba(100,149,237,0.9)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    tension: 0.4,
+                    yAxisID: 'y2'
+                }
+            ]
         },
         options: {
             responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        boxWidth: 12, boxHeight: 12,
+                        borderRadius: 4, useBorderRadius: true,
+                        color: '#555', font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#111',
+                    titleColor: '#ccc',
+                    bodyColor: '#fff',
+                    padding: 14,
+                    displayColors: true,
+                    callbacks: {
+                        label: ctx => ctx.datasetIndex === 0
+                            ? `Receita: R$ ${ctx.parsed.y.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+                            : `Pedidos: ${ctx.parsed.y}`
+                    }
+                }
+            },
             scales: {
-                y: { beginAtZero: true }
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#999', font: { size: 11 } },
+                    border: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    position: 'left',
+                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    ticks: {
+                        color: '#999', font: { size: 11 },
+                        callback: v => `R$ ${v.toLocaleString('pt-BR')}`
+                    },
+                    border: { display: false }
+                },
+                y2: {
+                    beginAtZero: true,
+                    position: 'right',
+                    grid: { display: false },
+                    ticks: {
+                        color: 'rgba(100,149,237,0.8)',
+                        font: { size: 11 },
+                        callback: v => Number.isInteger(v) ? v : ''
+                    },
+                    border: { display: false }
+                }
             }
         }
     });

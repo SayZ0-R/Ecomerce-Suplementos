@@ -3,10 +3,9 @@
 // Mercado Pago Payment Brick (Checkout Transparente)
 // =============================================
 
-const MP_PUBLIC_KEY = 'APP_USR-e053326e-4fdf-454d-8920-39cb31eb47c0';
+const MP_PUBLIC_KEY = 'TEST-0cff84ff-8330-4dbe-bb80-07793085c3f2';
 const MAX_PARCELAS  = 4;
 
-// Controlador do Brick — guardado para poder chamar .update() ao trocar método
 let paymentBrickController = null;
 
 // =============================================
@@ -36,9 +35,8 @@ function calcularTotais() {
 }
 
 function atualizarTotalCheckout() {
-    const { carrinho, frete, metodo, subtotalPix, subtotalCartao, totalPix, totalCartao, totalAtivo, economia } = calcularTotais();
+    const { carrinho, frete, metodo, subtotalPix, subtotalCartao, totalAtivo, economia } = calcularTotais();
 
-    // --- Resumo de itens ---
     const resumoItens = document.getElementById('resumo-itens');
     if (resumoItens) {
         resumoItens.innerHTML = carrinho.map(item => {
@@ -55,21 +53,18 @@ function atualizarTotalCheckout() {
         }).join('');
     }
 
-    // --- Subtotal ---
     const elSubtotal = document.getElementById('resumo-subtotal');
     if (elSubtotal) {
         const sub = metodo === 'pix' ? subtotalPix : subtotalCartao;
         elSubtotal.innerText = `R$ ${sub.toFixed(2).replace('.', ',')}`;
     }
 
-    // --- Frete ---
     const elFrete = document.getElementById('resumo-frete');
     if (elFrete) {
-        elFrete.innerText     = frete === 0 ? 'Grátis' : `R$ ${frete.toFixed(2).replace('.', ',')}`;
-        elFrete.style.color   = frete === 0 ? '#2ecc71' : '';
+        elFrete.innerText   = frete === 0 ? 'Grátis' : `R$ ${frete.toFixed(2).replace('.', ',')}`;
+        elFrete.style.color = frete === 0 ? '#2ecc71' : '';
     }
 
-    // --- Desconto Pix ---
     const linhaDesconto = document.getElementById('linha-desconto-pix');
     const valorDesconto = document.getElementById('valor-desconto-pix');
     if (linhaDesconto && valorDesconto) {
@@ -81,101 +76,100 @@ function atualizarTotalCheckout() {
         }
     }
 
-    // --- Total ---
     const elTotal = document.getElementById('total-final-checkout');
     if (elTotal) {
         elTotal.innerText   = `R$ ${totalAtivo.toFixed(2).replace('.', ',')}`;
         elTotal.style.color = metodo === 'pix' ? '#2ecc71' : '#1a1a1a';
     }
 
-    // Salva para uso no submit
     localStorage.setItem('nutrirVida_total_dinamico', totalAtivo.toFixed(2));
-
     return totalAtivo;
 }
 
 // =============================================
 // 2. PAYMENT BRICK (CARTÃO)
 // =============================================
+async function destruirBrick() {
+    if (paymentBrickController) {
+        try { paymentBrickController.destroy(); } catch(e) {}
+        paymentBrickController = null;
+    }
+    const c = document.getElementById('paymentBrick_container');
+    if (c) c.innerHTML = '';
+}
+
 async function renderPaymentBrick(totalInicial) {
     const container = document.getElementById('paymentBrick_container');
     if (!container) return;
 
-    // Limpa tentativas falhas anteriores antes de criar uma nova
-    container.innerHTML = '';
+    await destruirBrick();
 
-    // Limpa instância anterior se existir
-    if (paymentBrickController) {
-        try { await paymentBrickController.unmount(); } catch(e) {}
-        paymentBrickController = null;
+    const amount = Number(totalInicial);
+    if (!amount || amount <= 0) {
+        console.error('[Brick] amount inválido:', totalInicial);
+        return;
     }
 
     try {
-        const mp           = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
+        const mp            = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
         const bricksBuilder = mp.bricks();
 
         paymentBrickController = await bricksBuilder.create('payment', 'paymentBrick_container', {
             initialization: {
-                // ✅ Garante número puro — sem "R$", sem string
-                amount: Number(totalInicial),
+                amount: amount,
                 payer: {
                     email: document.getElementById('email-checkout')?.value || ''
-                },
-                // ✅ Força o seletor de parcelas a aparecer imediatamente,
-                // sem precisar dos 6 primeiros dígitos do cartão.
-                // O MP usa esse valor como padrão até detectar o BIN.
-                installments: 1,
+                }
             },
             customization: {
                 paymentMethods: {
-                    // ✅ Só declara o que QUER — MP rejeita "none" com erro 422
-                    // Campos ausentes = bloqueados automaticamente pelo SDK
                     creditCard:      'all',
-                    maxInstallments: MAX_PARCELAS,   // máximo 4x, nunca passa disso
+                    maxInstallments: MAX_PARCELAS,
                 },
                 visual: {
                     style: {
                         theme: 'default',
                         customVariables: {
-                            baseColor:    '#2ecc71',
+                            baseColor:          '#2ecc71',
                             baseColorSecondary: '#27ae60',
-                            fontFamily:   'DM Sans, sans-serif',
-                            borderRadius: '8px',
+                            fontFamily:         'DM Sans, sans-serif',
+                            borderRadius:       '8px',
                         }
                     },
-                    hideFormTitle: true,
+                    hideFormTitle:     true,
                     hidePaymentButton: false,
                 }
             },
             callbacks: {
                 onReady: () => {
-                    console.log('Payment Brick pronto');
+                    console.log('[Brick] Pronto | amount:', amount);
                 },
                 onError: (error) => {
-                    console.error('Erro no Payment Brick:', error);
+                    console.error('[Brick] Erro:', JSON.stringify(error));
                 },
-                onSubmit: async ({ selectedPaymentMethod, formData }) => {
+                onSubmit: async ({ formData }) => {
+                    console.log('[Brick] onSubmit raw:', JSON.stringify(formData));
                     if (!validarCamposEndereco()) return;
                     await processarPedidoCartao(formData);
                 }
             }
         });
+
     } catch (err) {
-        console.error('Erro ao renderizar Payment Brick:', err);
+        console.error('[Brick] Falha ao criar:', err);
         paymentBrickController = null;
-        throw err;
     }
 }
 
 // =============================================
-// 3. VALIDAÇÃO DE CAMPOS
+// 3. VALIDAÇÃO DE CAMPOS DE ENDEREÇO
 // =============================================
 function validarCamposEndereco() {
     const campos = ['nome-completo', 'whatsapp', 'logradouro', 'numero', 'bairro'];
     for (const id of campos) {
         const el = document.getElementById(id);
         if (!el || !el.value.trim()) {
-            alert(`Por favor, preencha o campo: ${el?.placeholder || id}`);
+            alert(`Por favor, preencha o campo: ${el?.labels?.[0]?.innerText || id}`);
             el?.focus();
             return false;
         }
@@ -184,88 +178,105 @@ function validarCamposEndereco() {
 }
 
 // =============================================
-// 4. PROCESSAR PEDIDO CARTÃO
+// 4. PROCESSAR PEDIDO — CARTÃO
 // =============================================
 async function processarPedidoCartao(formData) {
-    const carrinho      = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
-    const freteAtual    = parseFloat(localStorage.getItem('nutrirVida_frete')) || 0;
-    const totalDinamico = parseFloat(localStorage.getItem('nutrirVida_total_dinamico'));
-    const metodo        = 'cartao';
+
+    // Brick pode retornar direto ou aninhado em formData.formData
+    const dados = formData?.formData ?? formData;
+
+    const token              = dados.token;
+    const payment_method_id  = dados.payment_method_id;
+    const issuer_id          = dados.issuer_id;
+    const installments       = dados.installments;
+    const transaction_amount = dados.transaction_amount;
+
+    console.log('[Cartão] token:', token);
+    console.log('[Cartão] payment_method_id:', payment_method_id);
+    console.log('[Cartão] issuer_id:', issuer_id);
+    console.log('[Cartão] installments:', installments);
+    console.log('[Cartão] transaction_amount:', transaction_amount);
+
+    // Fallback para localStorage se Brick não enviou o valor
+    const totalFinal = Number(transaction_amount) || parseFloat(localStorage.getItem('nutrirVida_total_dinamico'));
+
+    if (!token) { alert('Erro: token do cartão ausente. Tente novamente.'); return; }
+    if (!payment_method_id) { alert('Erro: método de pagamento não identificado.'); return; }
+    if (!totalFinal || totalFinal <= 0) { alert('Erro: valor do pedido inválido.'); return; }
+
+    const carrinho   = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
+    const freteAtual = parseFloat(localStorage.getItem('nutrirVida_frete')) || 0;
 
     const totalItensQtd = carrinho.reduce((acc, item) => acc + (parseInt(item.quantidade) || 0), 0);
 
-    // Itens com preco_cartao para o banco
     const itensParaMP = carrinho.map(item => ({
         ...item,
         preco: item.preco_cartao ? item.preco_cartao : item.preco
     }));
 
     const pedidoData = {
-        cliente_nome:          document.getElementById('nome-completo').value,
-        cliente_email:         document.getElementById('email-checkout').value,
-        whatsapp:              document.getElementById('whatsapp').value,
-        endereco:              `${document.getElementById('logradouro').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`,
-        itens:                 carrinho,
+        cliente_nome:           document.getElementById('nome-completo').value,
+        cliente_email:          document.getElementById('email-checkout').value,
+        whatsapp:               document.getElementById('whatsapp').value,
+        endereco:               `${document.getElementById('logradouro').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`,
+        itens:                  carrinho,
         total_itens_quantidade: totalItensQtd,
-        total:                 totalDinamico,
-        metodo_pagamento:      metodo,
-        status_pagamento:      'Aguardando',
-        status_pedido:         'Pendente'
+        total:                  totalFinal,
+        metodo_pagamento:       'cartao',
+        status_pagamento:       'Aguardando',
+        status_pedido:          'Pendente'
     };
 
     try {
-        // 1. Salva pedido no Supabase
-        const { data, error } = await _supabase
-            .from('pedidos')
-            .insert([pedidoData])
-            .select();
-
-        if (error) throw error;
+        const { data, error } = await _supabase.from('pedidos').insert([pedidoData]).select();
+        if (error) throw new Error('Supabase: ' + error.message);
 
         const pedidoCriado = data[0];
+        console.log('[Cartão] Pedido Supabase ID:', pedidoCriado.id);
 
-        // 2. Envia para Edge Function com token do Brick
+        const payload = {
+            tipo:               'cartao',
+            orderId:            pedidoCriado.id,
+            email:              pedidoData.cliente_email,
+            frete:              freteAtual,
+            items:              itensParaMP,
+            token:              token,
+            installments:       Math.min(Number(installments) || 1, MAX_PARCELAS),
+            payment_method_id:  payment_method_id,
+            issuer_id:          issuer_id,
+            transaction_amount: totalFinal,
+        };
+
+        console.log('[Cartão] Payload Edge Function:', JSON.stringify(payload));
+
         const response = await fetch(`${SUPABASE_URL}/functions/v1/vendedor`, {
             method: 'POST',
             headers: {
                 'Content-Type':  'application/json',
                 'Authorization': `Bearer ${SUPABASE_KEY}`
             },
-            body: JSON.stringify({
-                tipo:             'cartao',
-                orderId:          pedidoCriado.id,
-                email:            pedidoData.cliente_email,
-                frete:            freteAtual,
-                items:            itensParaMP,
-                // Dados do Brick — token tokenizado, nunca dados brutos
-                token:            formData.token,
-                installments:     Math.min(Number(formData.installments), MAX_PARCELAS),
-                paymentMethodId:  formData.payment_method_id,
-                issuerId:         formData.issuer_id,
-                transactionAmount: totalDinamico,
-            })
+            body: JSON.stringify(payload)
         });
 
         const result = await response.json();
-        console.log('Resposta cartão:', result);
+        console.log('[Cartão] Resposta:', JSON.stringify(result));
 
         if (result.status === 'approved' || result.status === 'in_process') {
             localStorage.removeItem('nutrirVida_cart');
             alert('Pedido confirmado! Você receberá um e-mail de confirmação.');
             window.location.href = 'perfil.html';
         } else {
-            const msg = result.status_detail || result.error || 'Pagamento não aprovado. Verifique os dados do cartão.';
-            throw new Error(msg);
+            throw new Error(result.status_detail || result.message || result.error || 'Pagamento não aprovado.');
         }
 
     } catch (err) {
-        console.error('Erro ao processar cartão:', err);
+        console.error('[Cartão] Erro:', err.message);
         alert('Erro ao processar pagamento: ' + err.message);
     }
 }
 
 // =============================================
-// 5. PROCESSAR PEDIDO PIX
+// 5. PROCESSAR PEDIDO — PIX
 // =============================================
 async function processarPedidoPix() {
     if (!validarCamposEndereco()) return;
@@ -276,39 +287,30 @@ async function processarPedidoPix() {
     const carrinho      = JSON.parse(localStorage.getItem('nutrirVida_cart')) || [];
     const freteAtual    = parseFloat(localStorage.getItem('nutrirVida_frete')) || 0;
     const totalDinamico = parseFloat(localStorage.getItem('nutrirVida_total_dinamico'));
-    const metodo        = 'pix';
 
     const totalItensQtd = carrinho.reduce((acc, item) => acc + (parseInt(item.quantidade) || 0), 0);
-
-    // Pix usa preco normal (sem acréscimo de cartão)
-    const itensParaMP = carrinho.map(item => ({ ...item, preco: item.preco }));
+    const itensParaMP   = carrinho.map(item => ({ ...item, preco: item.preco }));
 
     const pedidoData = {
-        cliente_nome:          document.getElementById('nome-completo').value,
-        cliente_email:         document.getElementById('email-checkout').value,
-        whatsapp:              document.getElementById('whatsapp').value,
-        endereco:              `${document.getElementById('logradouro').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`,
-        itens:                 carrinho,
+        cliente_nome:           document.getElementById('nome-completo').value,
+        cliente_email:          document.getElementById('email-checkout').value,
+        whatsapp:               document.getElementById('whatsapp').value,
+        endereco:               `${document.getElementById('logradouro').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`,
+        itens:                  carrinho,
         total_itens_quantidade: totalItensQtd,
-        total:                 totalDinamico,
-        metodo_pagamento:      metodo,
-        status_pagamento:      'Aguardando',
-        status_pedido:         'Pendente'
+        total:                  totalDinamico,
+        metodo_pagamento:       'pix',
+        status_pagamento:       'Aguardando',
+        status_pedido:          'Pendente'
     };
 
     try {
-        // 1. Salva pedido no Supabase
-        const { data, error } = await _supabase
-            .from('pedidos')
-            .insert([pedidoData])
-            .select();
-
-        if (error) throw error;
+        const { data, error } = await _supabase.from('pedidos').insert([pedidoData]).select();
+        if (error) throw new Error('Supabase: ' + error.message);
 
         const pedidoCriado = data[0];
-        alert('Pedido registrado! Redirecionando para o Pix...');
+        console.log('[Pix] Pedido Supabase ID:', pedidoCriado.id);
 
-        // 2. Chama Edge Function para criar preferência Pix
         const response = await fetch(`${SUPABASE_URL}/functions/v1/vendedor`, {
             method: 'POST',
             headers: {
@@ -321,65 +323,47 @@ async function processarPedidoPix() {
                 orderId: pedidoCriado.id,
                 email:   pedidoData.cliente_email,
                 frete:   freteAtual,
-                metodo:  metodo
             })
         });
 
         const data2 = await response.json();
-        console.log('Resposta Pix:', data2);
+        console.log('[Pix] Resposta:', JSON.stringify(data2));
 
         if (data2.id) {
-            // Abre o Checkout Pro só para exibir o QR Code Pix
             const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
             mp.checkout({ preference: { id: data2.id }, autoOpen: true });
             localStorage.removeItem('nutrirVida_cart');
         } else {
-            throw new Error('Erro ao gerar preferência Pix: ' + JSON.stringify(data2));
+            throw new Error('Falha ao gerar preferência Pix: ' + JSON.stringify(data2));
         }
 
     } catch (err) {
-        console.error('Erro Pix:', err);
+        console.error('[Pix] Erro:', err.message);
         alert('Erro ao gerar Pix: ' + err.message);
         if (btn) { btn.disabled = false; btn.querySelector('span').innerText = 'CONFIRMAR E GERAR PIX'; }
     }
 }
 
 // =============================================
-// 6. ALTERNA MÉTODO (PIX ↔ CARTÃO)
+// 6. ALTERNA MÉTODO
 // =============================================
 function alternarMetodo(metodo) {
     const painelPix    = document.getElementById('painel-pix');
     const painelCartao = document.getElementById('painel-cartao');
-
-    // 1. Primeiro atualizamos os totais para saber o valor exato de cada método
-    // O seu calcularTotais() já diferencia preco_cartao de preco (pix)
-    const { totalPix, totalCartao } = calcularTotais(); 
+    const { totalPix, totalCartao } = calcularTotais();
 
     if (metodo === 'pix') {
         painelPix?.classList.add('active');
         painelCartao?.classList.remove('active');
-        
-        atualizarTotalCheckout(); 
-        console.log('Método: Pix | Total com desconto:', totalPix);
-
+        destruirBrick();
+        atualizarTotalCheckout();
+        console.log('[Método] Pix | total:', totalPix);
     } else {
-        // Garante que o painel cartão está ativo ANTES de render/update (SDK precisa do container visível)
         painelCartao?.classList.add('active');
         painelPix?.classList.remove('active');
-        
         atualizarTotalCheckout();
-        console.log('Método: Cartão | Total:', totalCartao);
-
-        // LÓGICA DO BRICK (CARTÃO) — painel já está .active
-        if (paymentBrickController) {
-            // Se já existe, apenas atualizamos o valor para o preço de cartão
-            paymentBrickController.update({ 
-                amount: totalCartao 
-            });
-        } else {
-            // Se não existe e o container está visível, renderiza
-            renderPaymentBrick(totalCartao);
-        }
+        console.log('[Método] Cartão | total:', totalCartao);
+        renderPaymentBrick(totalCartao);
     }
 }
 
@@ -388,44 +372,25 @@ function alternarMetodo(metodo) {
 // =============================================
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // Trava de login
     const nivel = await checarNivelAcesso();
-    if (!nivel) {
-        window.location.replace('login.html');
-        return;
-    }
+    if (!nivel) { window.location.replace('login.html'); return; }
 
-    // Preenche dados do usuário logado
-    async function preencherDadosUsuario() {
-        const { data: { user } } = await _supabase.auth.getUser();
-        if (user) {
-            document.getElementById('nome-completo').value = user.user_metadata.full_name || '';
-            document.getElementById('email-checkout').value = user.email || '';
-            if (user.user_metadata.telefone) {
-                document.getElementById('whatsapp').value = user.user_metadata.telefone;
-            }
+    const { data: { user } } = await _supabase.auth.getUser();
+    if (user) {
+        document.getElementById('nome-completo').value  = user.user_metadata?.full_name || '';
+        document.getElementById('email-checkout').value = user.email || '';
+        if (user.user_metadata?.telefone) {
+            document.getElementById('whatsapp').value = user.user_metadata.telefone;
         }
     }
 
-    await preencherDadosUsuario();
-
-    // Cálculo inicial (cartão é o padrão)
     const totalInicial = atualizarTotalCheckout();
-
-    // Renderiza o Payment Brick com valor de cartão
     await renderPaymentBrick(totalInicial);
 
-    // Eventos dos rádios de método
     document.querySelectorAll('input[name="metodo-pagamento"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            console.log('Método alterado para:', radio.value);
-            alternarMetodo(radio.value);
-        });
+        radio.addEventListener('change', () => alternarMetodo(radio.value));
     });
 
-    // Botão Pix
     const btnPix = document.getElementById('btn-confirmar-pix');
-    if (btnPix) {
-        btnPix.addEventListener('click', processarPedidoPix);
-    }
+    if (btnPix) btnPix.addEventListener('click', processarPedidoPix);
 });
