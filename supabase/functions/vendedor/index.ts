@@ -118,9 +118,9 @@ serve(async (req) => {
         external_reference: String(orderId),
         notification_url: 'https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook',
         back_urls: {
-          success: 'https://ecormece-suplo.netlify.app/index.html',
-          failure: 'https://ecormece-suplo.netlify.app/checkout.html',
-          pending: 'https://ecormece-suplo.netlify.app/perfil.html'
+          success: 'sucess.html',
+          failure: 'fail.html',
+          pending: 'sucess.html'
         },
         auto_return: 'approved',
         payment_methods: {

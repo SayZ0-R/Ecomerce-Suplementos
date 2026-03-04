@@ -67,6 +67,7 @@ if (btnCheckout) {
     // --- 3. NOVAS CONEXÕES (VINCULANDO O BANNER E OUTROS) ---
     // Chamamos a função do banner aqui para que o JS busque os dados do Supabase
     carregarBannerPromocional();
+    iniciarCarrossel();
 
     // Mantemos as outras inicializações do seu sistema
     atualizarBadgeCarrinho();
@@ -442,36 +443,175 @@ async function acessarPerfil() {
     }
 }
 
+// --- BANNER PROMOCIONAL (com produtos no carrinho) ---
+window._produtosBannerPromo = [];
+window._valorComboBanner = null;
+
 async function carregarBannerPromocional() {
-    const bannerImg = document.getElementById('banner-img-alvo');
+    const bannerImg    = document.getElementById('banner-img-alvo');
     const bannerTitulo = document.getElementById('banner-titulo-alvo');
-    const bannerDesc = document.getElementById('banner-desc-alvo');
+    const bannerDesc   = document.getElementById('banner-desc-alvo');
 
     if (!bannerImg || !bannerTitulo || !bannerDesc) return;
 
     try {
-        
-        const { data, error } = await _supabase
-            .from('configuracoes_site')
-            .select('*')
-            .eq('chave', 'banner_principal')
-            .single();
+        // Carrega dados do banner
+        const { data: banner } = await _supabase
+            .from('configuracoes_site').select('*').eq('chave', 'banner_principal').maybeSingle();
 
-        if (error || !data) return;
+        if (banner) {
+            if (banner.imagem_url) {
+                bannerImg.style.backgroundImage =
+                    `linear-gradient(to right, rgba(0,0,0,0.88), rgba(0,0,0,0.15)), url('${banner.imagem_url}?t=${Date.now()}')`;
+            }
+            bannerTitulo.innerText = banner.titulo || '';
+            bannerDesc.innerText   = banner.descricao || '';
+        }
 
-       
-        const timestamp = Date.now();
-        const urlComCacheBuster = `${data.imagem_url}?t=${timestamp}`;
+        // Carrega IDs dos produtos + valor combo vinculados
+        const { data: config } = await _supabase
+            .from('configuracoes_site').select('valor_json').eq('chave', 'banner_promo_produtos').maybeSingle();
 
-        bannerImg.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.1)), url('${urlComCacheBuster}')`;
-        bannerTitulo.innerText = data.titulo;
+        const ids        = config?.valor_json?.produto_ids || [];
+        const valorCombo = config?.valor_json?.valor_combo || null;
 
-        const precoFormatado = parseFloat(data.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        bannerDesc.innerHTML = `${data.descricao} <br><strong>Por apenas ${precoFormatado}</strong>`;
+        window._valorComboBanner = valorCombo;
+
+        // Exibe o preço combo no banner se definido
+        if (valorCombo) {
+            const precoFormatado = parseFloat(valorCombo).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            bannerDesc.innerHTML = `${banner?.descricao || ''} <br><strong style="color:#00FF88">Combo por apenas ${precoFormatado}</strong>`;
+        }
+
+        if (ids.length === 0) return;
+
+        const { data: produtos } = await _supabase
+            .from('produtos').select('*').in('id', ids);
+
+        window._produtosBannerPromo = produtos || [];
 
     } catch (err) {
-        console.error("Erro na vinculação do banner:", err);
+        console.error('Erro banner promocional:', err);
     }
+}
+
+function irParaCarrinhoComProdutos(e) {
+    e.preventDefault();
+    const produtos    = window._produtosBannerPromo;
+    const valorCombo  = window._valorComboBanner;
+
+    if (!produtos || produtos.length === 0) {
+        window.location.href = 'Loja.html';
+        return;
+    }
+
+    // Limpa carrinho atual para colocar apenas o combo
+    localStorage.removeItem('nutrirVida_cart');
+
+    if (valorCombo && produtos.length > 0) {
+        // Divide o valor do combo proporcionalmente entre os produtos
+        const totalOriginal = produtos.reduce((acc, p) => acc + parseFloat(p.preco), 0);
+
+        produtos.forEach(p => {
+            const proporcao   = parseFloat(p.preco) / totalOriginal;
+            const precoCombo  = parseFloat((valorCombo * proporcao).toFixed(2));
+
+            adicionarAoCarrinho({
+                id:           p.id,
+                nome:         p.nome,
+                preco:        precoCombo,        // Preço especial do combo
+                preco_cartao: precoCombo,
+                imagem:       p.imagem_url,
+                quantidade:   1
+            });
+        });
+    } else {
+        // Sem valor combo definido, usa preço normal
+        produtos.forEach(p => {
+            adicionarAoCarrinho({
+                id:           p.id,
+                nome:         p.nome,
+                preco:        p.preco,
+                preco_cartao: p.preco_cartao,
+                imagem:       p.imagem_url,
+                quantidade:   1
+            });
+        });
+    }
+
+    window.location.href = 'Carrinho.html';
+}
+
+// --- CARROSSEL DE BANNERS PRINCIPAL ---
+let _carrosselAtual = 0;
+let _carrosselSlides = [];
+let _carrosselTimer = null;
+
+async function iniciarCarrossel() {
+    const track = document.getElementById('carousel-track');
+    const dots  = document.getElementById('carousel-dots');
+    if (!track) return;
+
+    try {
+        const { data } = await _supabase
+            .from('configuracoes_site').select('valor_json').eq('chave', 'slides_banner').maybeSingle();
+
+        _carrosselSlides = data?.valor_json?.filter(s => s.imagem_url) || [];
+    } catch (e) {}
+
+    // Se não tiver slides cadastrados, mantém o placeholder padrão
+    if (_carrosselSlides.length === 0) return;
+
+    // Renderiza slides
+    track.innerHTML = _carrosselSlides.map((s, i) => `
+        <div class="carousel-slide" style="background-image: linear-gradient(to right, rgba(0,0,0,0.75), rgba(0,0,0,0.1)), url('${s.imagem_url}'); background-size:cover; background-position:center;">
+            <div class="hero-content">
+                <h1>${s.titulo || ''}</h1>
+                <p>${s.subtitulo || ''}</p>
+                <a href="Loja.html" class="btn-comprar">Comprar agora →</a>
+            </div>
+        </div>
+    `).join('');
+
+    // Dots
+    if (dots) {
+        dots.innerHTML = _carrosselSlides.map((_, i) =>
+            `<div class="carousel-dot ${i===0?'ativo':''}" onclick="irParaSlide(${i})"></div>`
+        ).join('');
+    }
+
+    iniciarAutoPlay();
+}
+
+function moverCarrossel(direcao) {
+    const total = _carrosselSlides.length;
+    if (total === 0) return;
+    _carrosselAtual = (_carrosselAtual + direcao + total) % total;
+    aplicarSlide();
+    reiniciarAutoPlay();
+}
+
+function irParaSlide(index) {
+    _carrosselAtual = index;
+    aplicarSlide();
+    reiniciarAutoPlay();
+}
+
+function aplicarSlide() {
+    const track = document.getElementById('carousel-track');
+    if (track) track.style.transform = `translateX(-${_carrosselAtual * 100}%)`;
+
+    document.querySelectorAll('.carousel-dot').forEach((d, i) =>
+        d.classList.toggle('ativo', i === _carrosselAtual));
+}
+
+function iniciarAutoPlay() {
+    _carrosselTimer = setInterval(() => moverCarrossel(1), 5000);
+}
+
+function reiniciarAutoPlay() {
+    clearInterval(_carrosselTimer);
+    iniciarAutoPlay();
 }
 
 

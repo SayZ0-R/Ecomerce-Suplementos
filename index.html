@@ -24,7 +24,6 @@
             <li><a href="index.html" class="active">Início</a></li>
             <li><a href="Loja.html">Loja</a></li>
             <li><a href="Loja.html">Categorias</a></li>
-            <li><a href="Loja.html">Sobre</a></li>
             <li><a href="contato.html">Contato</a></li>
         </ul>
 
@@ -76,13 +75,122 @@
     </div>
 
 
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>Não é apenas um suplemento, é compromisso com sua evolução.</h1>
-            <p>Descubra nossa linha de suplementos esportivos premium para alcançar seus objetivos.</p>
-            <a href="Loja.html" class="btn-comprar">Comprar agora →</a>
+    <!-- CARROSSEL DE BANNERS PRINCIPAL -->
+    <section class="hero-carousel" id="hero-carousel">
+        <div class="carousel-track" id="carousel-track">
+            <!-- Slides renderizados via JS -->
+            <div class="carousel-slide carousel-placeholder">
+                <div class="hero-content">
+
+                    <a href="Loja.html" class="btn-comprar">Comprar agora →</a>
+                </div>
+            </div>
         </div>
+
+        <!-- Controles -->
+        <button class="carousel-btn prev" onclick="moverCarrossel(-1)">&#8249;</button>
+        <button class="carousel-btn next" onclick="moverCarrossel(1)">&#8250;</button>
+
+        <!-- Indicadores -->
+        <div class="carousel-dots" id="carousel-dots"></div>
     </section>
+
+    <style>
+        .hero-carousel {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            height: 520px;
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 8%;
+        }
+
+        .carousel-placeholder {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a2a1a 100%);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(6px);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 255, 136, 0.3);
+        }
+
+        .carousel-btn.prev {
+            left: 20px;
+        }
+
+        .carousel-btn.next {
+            right: 20px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .carousel-dot.ativo {
+            background: #00FF88;
+            width: 22px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-carousel {
+                height: 380px;
+            }
+
+            .carousel-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 
     <section class="diferenciais-container">
         <div class="diferencial-item">
@@ -128,65 +236,65 @@
         </div>
     </section>
 
-<section class="insta-vitrine-full">
-<div class="insta-titulo-topo">
-        <i class="fab fa-instagram"></i>
-        <h1>Siga nosso Instagram</h1>
-        
-    </div>
-
-    <div class="insta-grid-double">
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 5.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 6.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto .WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 1.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/BCAA.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 3.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 7.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/Creatina.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 4.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 8.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 11.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
-        <a href="#" class="insta-item-full">
-            <img src="Imagens/Insta/foto 2.WebP" loading="lazy" alt="Instagram NutrirVida">
-            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
-        </a>
+    <section class="insta-vitrine-full">
+        <div class="insta-titulo-topo">
+            <i class="fab fa-instagram"></i>
+            <h1>Siga nosso Instagram</h1>
 
         </div>
-</section>
+
+        <div class="insta-grid-double">
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 5.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 6.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto .WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 1.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/BCAA.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 3.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 7.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/Creatina.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 4.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 8.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 11.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+            <a href="#" class="insta-item-full">
+                <img src="Imagens/Insta/foto 2.WebP" loading="lazy" alt="Instagram NutrirVida">
+                <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+            </a>
+
+        </div>
+    </section>
 
 
 
@@ -214,7 +322,7 @@
                 <span class="promo-badge" id="banner-badge-alvo">OFERTA ESPECIAL</span>
                 <h2 class="promo-title" id="banner-titulo-alvo">Carregando...</h2>
                 <p class="promo-subtitle" id="banner-desc-alvo">Buscando as melhores ofertas para você.</p>
-                <a href="Loja.html" class="promo-button">
+                <a href="#" class="promo-button" id="btn-descobrir-oferta" onclick="irParaCarrinhoComProdutos(event)">
                     Descobrir a oferta <i class="fas fa-arrow-right"></i>
                 </a>
             </div>

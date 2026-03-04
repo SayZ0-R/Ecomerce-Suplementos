@@ -107,8 +107,11 @@
                 <a href="#" class="menu-item" onclick="mostrarSecao('pedidos')">
                     <i class="fas fa-shopping-cart"></i> Pedidos Recebidos
                 </a>
+                <a href="#" class="menu-item" onclick="mostrarSecao('banner-principal')">
+                    <i class="fas fa-images"></i> Banner Principal
+                </a>
                 <a href="#" class="menu-item" onclick="mostrarSecao('banners')">
-                    <i class="fas fa-ad"></i> Banner Promocional
+                    <i class="fas fa-tag"></i> Banner Promocional
                 </a>
                 <a href="#" class="menu-item" onclick="mostrarSecao('frete')">
                     <i class="fas fa-truck"></i> Frete e Bairros
@@ -134,21 +137,37 @@
 
             <section id="sec-dashboard" class="admin-section active">
 
-                <!-- CARDS DE ESTATÍSTICAS -->
                 <div class="stats-grid">
+
+                    <!-- Vendas do mês com seletor -->
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-wallet"></i></div>
                         <div class="stat-info">
-                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                <p style="margin:0">Vendas de</p>
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
+                                <p style="margin:0; font-size:0.85rem; color:#888;">Vendas de</p>
                                 <select id="select-mes-stats" onchange="atualizarStatsMes()"
-                                    style="border:1px solid #eee; border-radius:6px; padding:2px 6px; font-size:0.8rem; font-family:inherit; cursor:pointer; background:#f9f9f9;">
+                                    style="border:1px solid #e8e8e8; border-radius:6px; padding:3px 8px;
+                                           font-size:0.78rem; font-family:inherit; cursor:pointer;
+                                           background:#f9f9f9; color:#333; outline:none;">
                                 </select>
                             </div>
-                            <h2 id="stats-vendas">R$ 0,00</h2>
-                            <small id="stats-qtd-pedidos" style="color:#888; font-size:0.75rem;"></small>
+                            <h2 id="stats-vendas" style="margin:0;">R$ 0,00</h2>
+                            <small id="stats-qtd-pedidos" style="color:#aaa; font-size:0.75rem;"></small>
                         </div>
                     </div>
+
+                    <!-- Pedidos aprovados total -->
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:#f39c12; background:#fff8e6;">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <p>Pedidos Aprovados</p>
+                            <h2 id="stats-total-geral">0</h2>
+                        </div>
+                    </div>
+
+                    <!-- Pedidos pendentes -->
                     <div class="stat-card">
                         <div class="stat-icon green"><i class="fas fa-truck-loading"></i></div>
                         <div class="stat-info">
@@ -156,23 +175,19 @@
                             <h2 id="stats-pendentes">0</h2>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="color:#f39c12; background:#fff8e6;"><i class="fas fa-receipt"></i></div>
-                        <div class="stat-info">
-                            <p>Total Geral (Aprovado)</p>
-                            <h2 id="stats-total-geral">R$ 0,00</h2>
-                        </div>
-                    </div>
+
                 </div>
 
-                <!-- GRÁFICO PROFISSIONAL -->
-                <div style="margin-top:24px; background:white; padding:24px 28px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.06);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+                <!-- Gráfico profissional -->
+                <div style="margin-top:24px; background:white; padding:24px 28px; border-radius:16px;
+                            box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;
+                                margin-bottom:20px; flex-wrap:wrap; gap:12px;">
                         <div>
-                            <h3 style="margin:0; font-size:1.1rem;">Desempenho de Vendas</h3>
-                            <small style="color:#aaa;">Receita aprovada por período</small>
+                            <h3 style="margin:0; font-size:1.05rem; font-weight:700;">Desempenho de Vendas</h3>
+                            <small style="color:#aaa; font-size:0.8rem;">Receita aprovada por período</small>
                         </div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:8px;">
                             <button onclick="setGraficoPeriodo(3)"  id="btn-periodo-3"  class="btn-periodo">3 meses</button>
                             <button onclick="setGraficoPeriodo(6)"  id="btn-periodo-6"  class="btn-periodo ativo">6 meses</button>
                             <button onclick="setGraficoPeriodo(12)" id="btn-periodo-12" class="btn-periodo">12 meses</button>
@@ -184,19 +199,13 @@
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                 <style>
                     .btn-periodo {
-                        padding: 6px 14px;
-                        border-radius: 8px;
-                        border: 1.5px solid #e0e0e0;
-                        background: #fff;
-                        font-size: 0.8rem;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: 0.2s;
-                        font-family: inherit;
-                        color: #555;
+                        padding: 6px 14px; border-radius: 8px;
+                        border: 1.5px solid #e0e0e0; background: #fff;
+                        font-size: 0.8rem; font-weight: 600; cursor: pointer;
+                        transition: 0.2s; font-family: inherit; color: #555;
                     }
-                    .btn-periodo:hover { border-color: #00FF88; color: #000; }
-                    .btn-periodo.ativo { background: #111; color: #00FF88; border-color: #111; }
+                    .btn-periodo:hover  { border-color: #00FF88; color: #000; }
+                    .btn-periodo.ativo  { background: #111; color: #00FF88; border-color: #111; }
                 </style>
             </section>
 
@@ -254,34 +263,92 @@
                 </div>
             </div>
 
+            <!-- BANNER PRINCIPAL (carrossel 4 slides) -->
+            <section id="sec-banner-principal" class="admin-section">
+                <h2 style="margin-bottom:6px;">Banner Principal</h2>
+                <p style="color:#888; font-size:0.9rem; margin-bottom:24px;">Gerencie os 4 slides do carrossel na página inicial.</p>
+
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:20px;" id="lista-slides-admin">
+                    <!-- Renderizado via JS -->
+                </div>
+
+                <button class="btn-salvar" style="margin-top:24px;" onclick="salvarSlides()">
+                    <i class="fas fa-save"></i> Salvar Slides
+                </button>
+            </section>
+
+            <!-- BANNER PROMOCIONAL (com seletor de produtos) -->
             <section id="sec-banners" class="admin-section">
-                <h2>Gerenciar Banner Inicial</h2>
-                <div class="card-config">
-                    <form id="form-banner" onsubmit="atualizarBanner(event)">
+                <h2 style="margin-bottom:6px;">Banner Promocional</h2>
+                <p style="color:#888; font-size:0.9rem; margin-bottom:24px;">
+                    Selecione os produtos que aparecerão no banner promocional da página inicial.
+                    Ao clicar em "Descobrir oferta", o cliente vai para o carrinho com esses produtos.
+                </p>
+
+                <div class="card-config" style="margin-bottom:20px;">
+                    <form id="form-banner" onsubmit="atualizarBannerPromocional(event)">
+
                         <div class="form-group">
-                            <label>Imagem do Banner</label>
+                            <label>Imagem de Fundo do Banner</label>
                             <label for="banner-upload" class="upload-area">
-                                <i class="fas fa-cloud-upload-alt"></i> Selecionar Imagem do Banner
+                                <i class="fas fa-cloud-upload-alt"></i> Selecionar Imagem
                                 <input type="file" id="banner-upload" accept="image/*"
                                     onchange="if(this.files[0]) document.getElementById('banner-file-name').innerText = this.files[0].name">
                                 <span id="banner-file-name" class="file-name-display">Nenhuma imagem selecionada</span>
                             </label>
                         </div>
+
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Título da Promoção</label>
-                                <input type="text" id="banner-titulo" placeholder="Ex: Combo Whey + Creatina">
+                                <label>Título do Banner</label>
+                                <input type="text" id="banner-titulo" placeholder="Ex: Combo Verão 🔥">
                             </div>
                             <div class="form-group">
-                                <label>Preço Combo (R$)</label>
-                                <input type="number" id="banner-preco" step="0.01">
+                                <label>Descrição Curta</label>
+                                <input type="text" id="banner-desc" placeholder="Ex: Whey + Creatina com desconto especial">
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label>Descrição Curta</label>
-                            <textarea id="banner-desc" rows="2"></textarea>
+                            <label>💰 Valor do Combo (R$)</label>
+                            <p style="font-size:0.8rem; color:#999; margin-bottom:6px;">
+                                Este valor será aplicado no carrinho ao clicar "Descobrir oferta". Os produtos entram com preço proporcional.
+                            </p>
+                            <input type="number" id="banner-valor-combo" step="0.01" placeholder="Ex: 120.00"
+                                style="width:200px; padding:10px 14px; border:2px solid #eee; border-radius:10px;
+                                       font-size:1rem; font-weight:700; color:#222;">
                         </div>
-                        <button type="submit" class="btn-salvar">Atualizar Banner no Site</button>
+
+                        <div class="form-group">
+                            <label>Produtos incluídos nesta oferta</label>
+                            <p style="font-size:0.8rem; color:#999; margin-bottom:8px;">
+                                Selecione os produtos que serão adicionados ao carrinho ao clicar no banner.
+                            </p>
+                            <div id="lista-produtos-banner" style="
+                                display: grid;
+                                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                                gap: 10px;
+                                max-height: 320px;
+                                overflow-y: auto;
+                                border: 1px solid #eee;
+                                border-radius: 10px;
+                                padding: 12px;
+                                background: #fafafa;
+                            ">
+                                <p style="color:#aaa;">Carregando produtos...</p>
+                            </div>
+                        </div>
+
+                        <div id="preview-selecionados" style="
+                            background:#f0fff8; border:1px solid #c8f5e0; border-radius:10px;
+                            padding:12px 16px; margin-top:8px; display:none;">
+                            <strong style="font-size:0.85rem;">✅ Produtos selecionados:</strong>
+                            <div id="lista-preview-selecionados" style="font-size:0.82rem; margin-top:6px; color:#333;"></div>
+                        </div>
+
+                        <button type="submit" class="btn-salvar" style="margin-top:20px;">
+                            <i class="fas fa-save"></i> Salvar Banner Promocional
+                        </button>
                     </form>
                 </div>
             </section>

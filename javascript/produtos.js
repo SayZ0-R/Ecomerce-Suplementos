@@ -38,7 +38,7 @@ function renderizarFiltrosCategorias() {
 
     if (temPromocao) {
         html += `<label><input type="radio" name="categoria" value="__promocao__" onchange="filtrar()">
-            🔥 Promoções</label>`;
+             Promoções</label>`;
     }
 
     principais.forEach(cat => {

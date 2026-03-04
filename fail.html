@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento não concluído | NutrirVida</title>
+    <link rel="stylesheet" href="Styles/styless.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="Styles/styless.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        .status-card {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 48px rgba(0,0,0,0.09);
+            padding: 56px 52px;
+            max-width: 540px;
+            width: 100%;
+            text-align: center;
+            animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ícone pulsante vermelho */
+        .icon-ring {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #fff2f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes ringPulse {
+            0%, 100% { box-shadow: 0 0 0 0   rgba(231,76,60,.22); }
+            50%       { box-shadow: 0 0 0 20px rgba(231,76,60,.0); }
+        }
+
+        .icon-ring i { font-size: 2.8rem; color: #e74c3c; }
+
+        .status-card h1 { font-size: 1.8rem; color: #1a1a1a; margin-bottom: 10px; }
+        .subtitulo { color: #666; font-size: 0.97rem; line-height: 1.65; }
+
+        /* Caixa de motivo */
+        .motivo-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #fff8f7;
+            border: 1.5px solid #fde0dd;
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin: 22px 0 0;
+            text-align: left;
+        }
+
+        .motivo-box .ico {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: #fde0dd;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 1px;
+        }
+        .motivo-box .ico i { color: #e74c3c; font-size: 0.9rem; }
+
+        .motivo-box strong { display: block; font-size: 0.9rem; color: #c0392b; margin-bottom: 3px; }
+        .motivo-box span   { font-size: 0.85rem; color: #666; line-height: 1.45; }
+
+        .divider { border: none; border-top: 1.5px solid #f0f0f0; margin: 28px 0; }
+
+        /* Dicas */
+        .steps-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #bbb;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .dicas { display: flex; flex-direction: column; gap: 8px; }
+
+        .dica-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 11px 14px;
+            text-align: left;
+        }
+
+        .dica-item .dica-ico {
+            width: 30px; height: 30px;
+            background: #eef3ff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .dica-item .dica-ico i { color: #005eff; font-size: 0.82rem; }
+        .dica-item span { font-size: 0.85rem; color: #444; line-height: 1.4; }
+        .dica-item span strong { color: #1a1a1a; }
+
+        /* Botões */
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+
+        .btn-preto {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 15px 28px;
+            background: #000; color: #00FF88;
+            font-weight: 800; font-size: 1rem;
+            border-radius: 50px; text-decoration: none;
+            border: 2px solid #000;
+            letter-spacing: 0.5px;
+            transition: all 0.25s;
+        }
+        .btn-preto:hover {
+            background: #00FF88; color: #000; border-color: #00FF88;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,255,136,0.25);
+        }
+
+        .btn-ghost {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 14px 28px;
+            background: transparent; color: #555;
+            font-weight: 600; font-size: 0.95rem;
+            border-radius: 50px; border: 1.5px solid #ddd;
+            text-decoration: none; transition: all 0.25s;
+        }
+        .btn-ghost:hover { border-color: #000; color: #000; transform: translateY(-2px); }
+
+        @media (max-width: 600px) {
+            .status-card { padding: 36px 22px; }
+            .status-card h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="logo" href="index.html">
+        <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
+    </a>
+    <ul class="nav-list">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="Loja.html">Loja</a></li>
+        <li><a href="contato.html">Contato</a></li>
+    </ul>
+    <div class="nav-right">
+        <div class="nav-icons">
+            <a href="Carrinho.html" style="position:relative;display:inline-flex;" aria-label="Carrinho">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count" class="cart-badge"></span>
+            </a>
+            <div class="profile-container">
+                <a href="#" class="profile-icon" aria-label="Perfil"><i class="fas fa-user"></i></a>
+                <ul class="profile-dropdown">
+                    <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
+                    <li class="dropdown-divider"></li>
+                    <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobile-menu">
+            <div class="line1"></div><div class="line2"></div><div class="line3"></div>
+        </div>
+    </div>
+</nav>
+
+<div class="status-wrapper">
+    <div class="status-card">
+
+        <div class="icon-ring"><i class="fas fa-times"></i></div>
+
+        <h1>Pagamento não concluído</h1>
+        <p class="subtitulo">Não conseguimos processar seu pagamento. Seus produtos ainda estão salvos no carrinho.</p>
+
+        <div class="motivo-box">
+            <div class="ico"><i class="fas fa-exclamation"></i></div>
+            <div>
+                <strong id="motivo-titulo">O que aconteceu?</strong>
+                <span id="motivo-desc">Dados do cartão incorretos, limite insuficiente ou recusa do banco emissor.</span>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <p class="steps-label">O que você pode fazer</p>
+        <div class="dicas">
+            <div class="dica-item">
+                <div class="dica-ico"><i class="fas fa-credit-card"></i></div>
+                <span>Confira os dados do cartão: <strong>número, validade e CVV</strong></span>
+            </div>
+            <div class="dica-item">
+                <div class="dica-ico"><i class="fas fa-mobile-alt"></i></div>
+                <span>Tente pagar via <strong>Pix</strong> — aprovação na hora, sem complicação</span>
+            </div>
+            <div class="dica-item">
+                <div class="dica-ico"><i class="fas fa-wallet"></i></div>
+                <span>Verifique se há <strong>limite disponível</strong> no cartão</span>
+            </div>
+            <div class="dica-item">
+                <div class="dica-ico"><i class="fas fa-headset"></i></div>
+                <span>Se persistir, <strong>entre em contato com seu banco</strong></span>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <a href="checkout.html" class="btn-preto">
+                <i class="fas fa-redo"></i> Tentar novamente
+            </a>
+            <a href="Carrinho.html" class="btn-ghost">
+                <i class="fas fa-shopping-cart"></i> Voltar ao carrinho
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<footer class="main-footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>NUTRIR<span>VIDA</span></h3>
+            <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
+        </div>
+        <div class="footer-column">
+            <h3>Links rápidos</h3>
+            <ul><li><a href="index.html">Início</a></li><li><a href="Loja.html">Loja</a></li><li><a href="contato.html">Contato</a></li></ul>
+        </div>
+        <div class="footer-column">
+            <h3>Informações legais</h3>
+            <ul><li><a href="#">Termos de uso</a></li><li><a href="#">Política de privacidade</a></li></ul>
+        </div>
+        <div class="footer-column">
+            <h3>Siga-nos</h3>
+            <div class="social-icons">
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 NutrirVida. Todos os direitos reservados.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="javascript/database.js"></script>
+<script src="javascript/script.js"></script>
+<script>
+    // Personaliza mensagem conforme motivo na URL
+    // Ex: pagamento-falhou.html?motivo=rejected
+    const params = new URLSearchParams(window.location.search);
+    const motivo = params.get('motivo');
+
+    const mensagens = {
+        'rejected':     ['Cartão recusado pelo banco',    'Seu banco recusou a transação. Tente outro cartão ou pague via Pix.'],
+        'insufficient': ['Limite insuficiente',           'Seu cartão não possui limite suficiente para esta compra.'],
+        'invalid_data': ['Dados do cartão inválidos',     'Verifique o número, a validade e o CVV e tente novamente.'],
+        'expired_card': ['Cartão vencido',                'O cartão informado está com a validade expirada.'],
+        'cancelled':    ['Pagamento cancelado',           'Você cancelou o pagamento. Seus produtos continuam salvos no carrinho.'],
+        'pending':      ['Pagamento em análise',          'Seu pagamento está sendo analisado. Aguarde a confirmação por e-mail.'],
+    };
+
+    if (motivo && mensagens[motivo]) {
+        document.getElementById('motivo-titulo').textContent = mensagens[motivo][0];
+        document.getElementById('motivo-desc').textContent   = mensagens[motivo][1];
+    }
+
+    if (typeof atualizarBadgeCarrinho === 'function') atualizarBadgeCarrinho();
+</script>
+
+</body>
+</html>

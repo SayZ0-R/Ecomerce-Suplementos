@@ -32,25 +32,89 @@ document.addEventListener('DOMContentLoaded', validarAdmin);
 
 
 // --- 2. DASHBOARD (ESTATÍSTICAS REAIS) ---
+window._todosPedidos   = [];
+window._graficoPeriodo = 6;
+
 async function carregarEstatisticas() {
-    const { data: pedidos, error } = await _supabase.from('pedidos').select('total, status_pagamento, status_pedido');
+    const { data: pedidos, error } = await _supabase
+        .from('pedidos')
+        .select('total, status_pagamento, status_pedido, created_at');
 
     if (error) return;
 
-    // Soma apenas pedidos com status_pagamento 'Aprovado'
-    const totalVendido = pedidos
-        .filter(p => p.status_pagamento === 'Aprovado')
-        .reduce((acc, p) => acc + parseFloat(p.total), 0);
+    window._todosPedidos = pedidos;
 
-    // Conta pedidos que não estão 'Concluído'
+    const aprovados = pedidos.filter(p => p.status_pagamento === 'Aprovado');
+
+    // Card "Pedidos Aprovados" — contagem total do banco
+    const elTotalGeral = document.getElementById('stats-total-geral');
+    if (elTotalGeral) elTotalGeral.innerText = `${aprovados.length} pedido(s)`;
+
+    // Card "Pedidos Pendentes"
     const pendentes = pedidos.filter(p =>
         p.status_pedido !== 'Concluído' &&
         p.status_pedido !== 'Cancelado' &&
         p.status_pedido !== 'Enviado'
     ).length;
-
-    document.getElementById('stats-vendas').innerText = totalVendido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     document.getElementById('stats-pendentes').innerText = pendentes;
+
+    // Popula select de meses e atualiza card de vendas do mês
+    popularSelectMeses(aprovados);
+    atualizarStatsMes();
+}
+
+function popularSelectMeses(aprovados) {
+    const select = document.getElementById('select-mes-stats');
+    if (!select) return;
+
+    const mesesUnicos = {};
+    aprovados.forEach(p => {
+        const d    = new Date(p.created_at);
+        const chave = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        mesesUnicos[chave] = label.charAt(0).toUpperCase() + label.slice(1);
+    });
+
+    const chavesOrdenadas = Object.keys(mesesUnicos).sort().reverse();
+    const mesAtual = (() => {
+        const n = new Date();
+        return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`;
+    })();
+
+    select.innerHTML = chavesOrdenadas
+        .map(c => `<option value="${c}" ${c === mesAtual ? 'selected' : ''}>${mesesUnicos[c]}</option>`)
+        .join('');
+}
+
+function atualizarStatsMes() {
+    const select = document.getElementById('select-mes-stats');
+    if (!select || !window._todosPedidos.length) return;
+
+    const mesSelecionado = select.value;
+
+    const aprovadosDoMes = window._todosPedidos.filter(p => {
+        if (p.status_pagamento !== 'Aprovado') return false;
+        const d     = new Date(p.created_at);
+        const chave = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        return chave === mesSelecionado;
+    });
+
+    const totalMes = aprovadosDoMes.reduce((acc, p) => acc + parseFloat(p.total), 0);
+
+    document.getElementById('stats-vendas').innerText =
+        totalMes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    const elQtd = document.getElementById('stats-qtd-pedidos');
+    if (elQtd) elQtd.innerText = `${aprovadosDoMes.length} pedido(s) aprovado(s)`;
+}
+
+function setGraficoPeriodo(meses) {
+    window._graficoPeriodo = meses;
+    [3,6,12].forEach(m => {
+        const btn = document.getElementById(`btn-periodo-${m}`);
+        if (btn) btn.classList.toggle('ativo', m === meses);
+    });
+    renderizarGraficoVendas();
 }
 
 
@@ -439,6 +503,12 @@ function mostrarSecao(secaoId) {
     if (secaoId === 'frete') {
         carregarFretes();
     }
+    if (secaoId === 'banner-principal') {
+        carregarSlides();
+    }
+    if (secaoId === 'banners') {
+        carregarBannerPromoAdmin();
+    }
 
     // --- ADICIONE ISSO AQUI: ---
     // Se estiver no mobile, fecha o menu após clicar em um item
@@ -609,30 +679,28 @@ function abrirModalDetalhes(jsonString) {
 async function renderizarGraficoVendas() {
     const { data: pedidos, error } = await _supabase
         .from('pedidos')
-        .select('total, created_at, status_pagamento')
+        .select('total, created_at')
         .eq('status_pagamento', 'Aprovado');
 
-    if (error) return console.error("Erro ao carregar gráfico:", error);
+    if (error) return console.error("Erro gráfico:", error);
 
     const periodo = window._graficoPeriodo || 6;
 
-    // Gera os últimos N meses como eixo X (mesmo sem vendas)
+    // Gera eixo X com os últimos N meses (mesmo sem venda)
     const hoje = new Date();
-    const labels = [];
-    const chavesEixo = [];
+    const labels = [], chavesEixo = [];
     for (let i = periodo - 1; i >= 0; i--) {
-        const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+        const d     = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
         const chave = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
         const label = d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
         chavesEixo.push(chave);
         labels.push(label.charAt(0).toUpperCase() + label.slice(1));
     }
 
-    // Agrupa vendas por mês
-    const mapaVendas = {};
-    const mapaQtd   = {};
+    // Agrupa por mês
+    const mapaVendas = {}, mapaQtd = {};
     pedidos.forEach(p => {
-        const d = new Date(p.created_at);
+        const d     = new Date(p.created_at);
         const chave = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
         mapaVendas[chave] = (mapaVendas[chave] || 0) + parseFloat(p.total);
         mapaQtd[chave]    = (mapaQtd[chave]    || 0) + 1;
@@ -644,8 +712,7 @@ async function renderizarGraficoVendas() {
     const ctx = document.getElementById('graficoVendas').getContext('2d');
     if (window._graficoVendasInstance) window._graficoVendasInstance.destroy();
 
-    // Gradiente de preenchimento
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    const gradient = ctx.createLinearGradient(0, 0, 0, 280);
     gradient.addColorStop(0, 'rgba(0,255,136,0.18)');
     gradient.addColorStop(1, 'rgba(0,255,136,0.0)');
 
@@ -691,21 +758,13 @@ async function renderizarGraficoVendas() {
             interaction: { mode: 'index', intersect: false },
             plugins: {
                 legend: {
-                    display: true,
-                    position: 'top',
-                    align: 'end',
-                    labels: {
-                        boxWidth: 12, boxHeight: 12,
-                        borderRadius: 4, useBorderRadius: true,
-                        color: '#555', font: { size: 12 }
-                    }
+                    display: true, position: 'top', align: 'end',
+                    labels: { boxWidth: 12, boxHeight: 12, borderRadius: 4,
+                              useBorderRadius: true, color: '#555', font: { size: 12 } }
                 },
                 tooltip: {
-                    backgroundColor: '#111',
-                    titleColor: '#ccc',
-                    bodyColor: '#fff',
-                    padding: 14,
-                    displayColors: true,
+                    backgroundColor: '#111', titleColor: '#ccc',
+                    bodyColor: '#fff', padding: 14, displayColors: true,
                     callbacks: {
                         label: ctx => ctx.datasetIndex === 0
                             ? `Receita: R$ ${ctx.parsed.y.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
@@ -720,27 +779,291 @@ async function renderizarGraficoVendas() {
                     border: { display: false }
                 },
                 y: {
-                    beginAtZero: true,
-                    position: 'left',
+                    beginAtZero: true, position: 'left',
                     grid: { color: 'rgba(0,0,0,0.04)' },
-                    ticks: {
-                        color: '#999', font: { size: 11 },
-                        callback: v => `R$ ${v.toLocaleString('pt-BR')}`
-                    },
+                    ticks: { color: '#999', font: { size: 11 },
+                             callback: v => `R$ ${v.toLocaleString('pt-BR')}` },
                     border: { display: false }
                 },
                 y2: {
-                    beginAtZero: true,
-                    position: 'right',
+                    beginAtZero: true, position: 'right',
                     grid: { display: false },
-                    ticks: {
-                        color: 'rgba(100,149,237,0.8)',
-                        font: { size: 11 },
-                        callback: v => Number.isInteger(v) ? v : ''
-                    },
+                    ticks: { color: 'rgba(100,149,237,0.8)', font: { size: 11 },
+                             callback: v => Number.isInteger(v) ? v : '' },
                     border: { display: false }
                 }
             }
         }
     });
+}
+
+// =========================================================
+// --- BANNER PRINCIPAL (CARROSSEL 4 SLIDES) ---
+// =========================================================
+
+async function carregarSlides() {
+    const container = document.getElementById('lista-slides-admin');
+    if (!container) return;
+
+    const { data } = await _supabase
+        .from('configuracoes_site')
+        .select('valor_json')
+        .eq('chave', 'slides_banner')
+        .maybeSingle();
+
+    // Default: 4 slides vazios
+    const slides = (data?.valor_json?.length) ? data.valor_json : [
+        { titulo: '', subtitulo: '', imagem_url: '' },
+        { titulo: '', subtitulo: '', imagem_url: '' },
+        { titulo: '', subtitulo: '', imagem_url: '' },
+        { titulo: '', subtitulo: '', imagem_url: '' }
+    ];
+
+    container.innerHTML = slides.map((s, i) => `
+        <div style="background:#fff; border-radius:14px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                <div style="width:28px; height:28px; background:#111; color:#00FF88; border-radius:50%;
+                            display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem;">
+                    ${i+1}
+                </div>
+                <strong style="font-size:0.95rem;">Slide ${i+1}</strong>
+            </div>
+
+            ${s.imagem_url ? `
+                <img src="${s.imagem_url}" style="width:100%; height:110px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+            ` : `
+                <div style="width:100%; height:110px; background:#f5f5f5; border-radius:8px; margin-bottom:12px;
+                             display:flex; align-items:center; justify-content:center; color:#bbb; font-size:0.85rem;">
+                    Sem imagem
+                </div>
+            `}
+
+            <div class="form-group" style="margin-bottom:10px;">
+                <label style="font-size:0.78rem;">Título</label>
+                <input type="text" id="slide-titulo-${i}" value="${s.titulo || ''}"
+                    placeholder="Ex: Seu melhor desempenho começa aqui"
+                    style="width:100%; padding:8px 10px; border:1px solid #eee; border-radius:8px; font-size:0.85rem;">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label style="font-size:0.78rem;">Subtítulo</label>
+                <input type="text" id="slide-sub-${i}" value="${s.subtitulo || ''}"
+                    placeholder="Ex: Suplementos premium para você"
+                    style="width:100%; padding:8px 10px; border:1px solid #eee; border-radius:8px; font-size:0.85rem;">
+            </div>
+            <div class="form-group">
+                <label style="font-size:0.78rem;">Imagem do Slide</label>
+                <label for="slide-img-${i}" style="
+                    display:flex; align-items:center; gap:8px; padding:8px 12px;
+                    background:#f5f5f5; border-radius:8px; cursor:pointer; font-size:0.82rem; color:#555;
+                    border:1.5px dashed #ddd;">
+                    <i class="fas fa-upload"></i>
+                    <span id="slide-img-name-${i}">${s.imagem_url ? 'Alterar imagem' : 'Escolher imagem'}</span>
+                    <input type="file" id="slide-img-${i}" accept="image/*" style="display:none;"
+                        onchange="document.getElementById('slide-img-name-${i}').innerText = this.files[0]?.name || 'Arquivo selecionado'">
+                </label>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function salvarSlides() {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerText = 'Salvando...';
+
+    try {
+        // Busca slides existentes UMA VEZ fora do loop
+        const { data: existing } = await _supabase
+            .from('configuracoes_site')
+            .select('valor_json')
+            .eq('chave', 'slides_banner')
+            .maybeSingle();
+        const slidesExist = existing?.valor_json || [{},{},{},{}];
+
+        const slides = [];
+        for (let i = 0; i < 4; i++) {
+            const titulo    = document.getElementById(`slide-titulo-${i}`)?.value || '';
+            const subtitulo = document.getElementById(`slide-sub-${i}`)?.value || '';
+            const fileInput = document.getElementById(`slide-img-${i}`);
+            const arquivo   = fileInput?.files[0];
+            let imagem_url  = slidesExist[i]?.imagem_url || '';
+
+            if (arquivo) {
+                const nome = `slide_${i}_${Date.now()}`;
+                const { error: errImg } = await _supabase.storage
+                    .from('produtos').upload(`banners/${nome}`, arquivo, { upsert: true });
+                if (!errImg) {
+                    imagem_url = _supabase.storage.from('produtos')
+                        .getPublicUrl(`banners/${nome}`).data.publicUrl;
+                }
+            }
+
+            slides.push({ titulo, subtitulo, imagem_url });
+        }
+
+        const { error } = await _supabase.from('configuracoes_site').upsert([{
+            id: 10, chave: 'slides_banner', valor_json: slides
+        }]);
+
+        if (error) throw error;
+
+        alert('Slides salvos com sucesso!');
+        carregarSlides();
+    } catch (e) {
+        alert('Erro: ' + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Salvar Slides';
+    }
+}
+
+
+// =========================================================
+// --- BANNER PROMOCIONAL COM PRODUTOS ---
+// =========================================================
+
+async function carregarProdutosBannerAdmin() {
+    const container = document.getElementById('lista-produtos-banner');
+    if (!container) return;
+
+    const { data: produtos } = await _supabase
+        .from('produtos')
+        .select('id, nome, preco, imagem_url')
+        .order('nome');
+
+    if (!produtos || produtos.length === 0) {
+        container.innerHTML = '<p style="color:#aaa;">Nenhum produto cadastrado.</p>';
+        return;
+    }
+
+    // Busca seleção já salva — maybeSingle para não dar erro se não existir
+    const { data: config } = await _supabase
+        .from('configuracoes_site')
+        .select('valor_json')
+        .eq('chave', 'banner_promo_produtos')
+        .maybeSingle();
+
+    // Garante que os IDs são sempre números para comparação correta
+    const idsSalvos = (config?.valor_json?.produto_ids || []).map(Number);
+
+    container.innerHTML = produtos.map(p => {
+        const selecionado = idsSalvos.includes(Number(p.id));
+        return `
+        <label style="
+            display:flex; align-items:center; gap:10px; padding:10px 12px;
+            background:#fff; border-radius:10px; cursor:pointer;
+            border: 1.5px solid ${selecionado ? '#00cc6d' : '#eee'};
+            transition:0.2s;" id="label-prod-${p.id}">
+            <input type="checkbox" value="${p.id}"
+                ${selecionado ? 'checked' : ''}
+                onchange="toggleProdutoBanner(${p.id})"
+                style="width:16px; height:16px; accent-color:#00cc6d;">
+            <img src="${p.imagem_url}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;">
+            <div>
+                <div style="font-size:0.82rem; font-weight:600;">${p.nome}</div>
+                <div style="font-size:0.75rem; color:#888;">R$ ${parseFloat(p.preco).toFixed(2).replace('.', ',')}</div>
+            </div>
+        </label>
+    `}).join('');
+
+    atualizarPreviewBanner();
+}
+
+function toggleProdutoBanner(id) {
+    const label = document.getElementById(`label-prod-${id}`);
+    const cb    = label?.querySelector('input[type=checkbox]');
+    if (label) label.style.borderColor = cb?.checked ? '#00cc6d' : '#eee';
+    atualizarPreviewBanner();
+}
+
+function atualizarPreviewBanner() {
+    const checkboxes = document.querySelectorAll('#lista-produtos-banner input[type=checkbox]:checked');
+    const preview    = document.getElementById('preview-selecionados');
+    const lista      = document.getElementById('lista-preview-selecionados');
+    if (!preview || !lista) return;
+
+    if (checkboxes.length === 0) {
+        preview.style.display = 'none';
+        return;
+    }
+
+    preview.style.display = 'block';
+    const nomes = [...checkboxes].map(cb => {
+        const label = cb.closest('label');
+        return label?.querySelector('div > div:first-child')?.innerText || `Produto #${cb.value}`;
+    });
+    lista.innerHTML = nomes.map(n => `• ${n}`).join('<br>');
+}
+
+async function atualizarBannerPromocional(event) {
+    event.preventDefault();
+    const btn = event.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.innerText = 'Salvando...';
+
+    try {
+        const titulo      = document.getElementById('banner-titulo').value;
+        const desc        = document.getElementById('banner-desc').value;
+        const valorCombo  = parseFloat(document.getElementById('banner-valor-combo').value) || null;
+        const arquivo     = document.getElementById('banner-upload').files[0];
+
+        // IDs selecionados
+        const checkboxes  = document.querySelectorAll('#lista-produtos-banner input[type=checkbox]:checked');
+        const produto_ids = [...checkboxes].map(cb => parseInt(cb.value));
+
+        // Mantém imagem atual se não enviou nova
+        const { data: bannerAtual } = await _supabase
+            .from('configuracoes_site').select('imagem_url').eq('chave', 'banner_principal').maybeSingle();
+
+        let imagem_url = bannerAtual?.imagem_url || null;
+        if (arquivo) {
+            const nome = `banner_promo_${Date.now()}`;
+            const { error: errImg } = await _supabase.storage
+                .from('produtos').upload(`banners/${nome}`, arquivo, { upsert: true });
+            if (!errImg) {
+                imagem_url = _supabase.storage.from('produtos')
+                    .getPublicUrl(`banners/${nome}`).data.publicUrl;
+            }
+        }
+
+        // Salva dados do banner
+        const dadosBanner = { id: 1, chave: 'banner_principal', titulo, descricao: desc };
+        if (imagem_url) dadosBanner.imagem_url = imagem_url;
+        await _supabase.from('configuracoes_site').upsert([dadosBanner]);
+
+        // Salva IDs dos produtos + valor do combo
+        const { error } = await _supabase.from('configuracoes_site').upsert([{
+            id: 11, chave: 'banner_promo_produtos', valor_json: { produto_ids, valor_combo: valorCombo }
+        }]);
+
+        if (error) throw error;
+
+        alert(`Banner salvo! ${produto_ids.length} produto(s) vinculado(s)${valorCombo ? ` — Combo: R$ ${valorCombo.toFixed(2)}` : ''}.`);
+    } catch (e) {
+        alert('Erro: ' + e.message);
+    } finally {
+        btn.disabled = false; btn.innerText = 'Salvar Banner Promocional';
+    }
+}
+
+async function carregarBannerPromoAdmin() {
+    const { data } = await _supabase
+        .from('configuracoes_site')
+        .select('*')
+        .eq('chave', 'banner_principal')
+        .maybeSingle();
+
+    if (data) {
+        if (document.getElementById('banner-titulo')) document.getElementById('banner-titulo').value = data.titulo || '';
+        if (document.getElementById('banner-desc'))   document.getElementById('banner-desc').value   = data.descricao || '';
+    }
+
+    // Carrega valor combo salvo
+    const { data: config } = await _supabase
+        .from('configuracoes_site').select('valor_json').eq('chave', 'banner_promo_produtos').maybeSingle();
+    const valorCombo = config?.valor_json?.valor_combo;
+    if (valorCombo && document.getElementById('banner-valor-combo')) {
+        document.getElementById('banner-valor-combo').value = valorCombo;
+    }
+
+    carregarProdutosBannerAdmin();
 }
