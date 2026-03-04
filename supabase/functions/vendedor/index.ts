@@ -17,7 +17,7 @@ serve(async (req) => {
   try {
     const bodyText = await req.text()
     const payload = JSON.parse(bodyText)
-    const { tipo, orderId, email, frete, items } = payload
+    const { tipo, orderId, email, frete, items, base_url } = payload
 
     // LOG DE DEBUG — mostra os primeiros 30 chars do token para confirmar qual está sendo usado
     const tokenAtual = MP_TOKEN()
@@ -112,15 +112,18 @@ serve(async (req) => {
         })
       }
 
+      // Usa a URL do site enviada pelo frontend — funciona em qualquer domínio
+      const siteUrl = (base_url || 'https://ecormece-suplo.netlify.app').replace(/\/$/, '')
+
       const prefBody = {
         items: itensMercadoPago,
         payer: { email: email },
         external_reference: String(orderId),
         notification_url: 'https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook',
         back_urls: {
-          success: 'sucess.html',
-          failure: 'fail.html',
-          pending: 'sucess.html'
+          success: `${siteUrl}/pagamento-sucesso.html?pedido=${orderId}`,
+          failure: `${siteUrl}/pagamento-falhou.html?motivo=rejected`,
+          pending: `${siteUrl}/pagamento-sucesso.html?pedido=${orderId}`,
         },
         auto_return: 'approved',
         payment_methods: {

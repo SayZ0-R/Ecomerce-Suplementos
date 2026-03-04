@@ -261,12 +261,14 @@ async function processarPedidoCartao(formData) {
         const result = await response.json();
         console.log('[Cartão] Resposta:', JSON.stringify(result));
 
-        if (result.status === 'approved' || result.status === 'in_process') {
+        if (result.status === 'approved') {
             localStorage.removeItem('nutrirVida_cart');
-            alert('Pedido confirmado! Você receberá um e-mail de confirmação.');
-            window.location.href = 'perfil.html';
+            window.location.href = `pagamento-sucesso.html?pedido=${pedidoCriado.id}`;
+        } else if (result.status === 'in_process' || result.status === 'pending') {
+            window.location.href = `pagamento-sucesso.html?pedido=${pedidoCriado.id}`;
         } else {
-            throw new Error(result.status_detail || result.message || result.error || 'Pagamento não aprovado.');
+            const motivo = result.status_detail || 'rejected';
+            window.location.href = `pagamento-falhou.html?motivo=${motivo}`;
         }
 
     } catch (err) {
@@ -318,11 +320,12 @@ async function processarPedidoPix() {
                 'Authorization': `Bearer ${SUPABASE_KEY}`
             },
             body: JSON.stringify({
-                tipo:    'pix',
-                items:   itensParaMP,
-                orderId: pedidoCriado.id,
-                email:   pedidoData.cliente_email,
-                frete:   freteAtual,
+                tipo:     'pix',
+                items:    itensParaMP,
+                orderId:  pedidoCriado.id,
+                email:    pedidoData.cliente_email,
+                frete:    freteAtual,
+                base_url: window.location.origin + window.location.pathname.replace(/\/[^/]*$/, ''),
             })
         });
 
