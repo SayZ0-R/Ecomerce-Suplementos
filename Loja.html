@@ -81,11 +81,23 @@
                     </div>
 
                     <div class="grupo-filtro">
-                        <h4>Preço Máximo</h4>
-                        <input type="range" id="filtro-preco" min="0" max="1000" value="1000">
-                        <div class="labels-preco">
-                            <span>R$0</span>
-                            <span id="valor-preco">R$1000</span>
+                        <h4>Faixa de Preço</h4>
+                        <div class="preco-inputs">
+                            <div class="preco-input-box">
+                                <label>Mínimo</label>
+                                <div class="preco-field">
+                                    <span>R$</span>
+                                    <input type="number" id="filtro-preco-min" min="0" value="0" placeholder="0" oninput="filtrar()">
+                                </div>
+                            </div>
+                            <div class="preco-separador">—</div>
+                            <div class="preco-input-box">
+                                <label>Máximo</label>
+                                <div class="preco-field">
+                                    <span>R$</span>
+                                    <input type="number" id="filtro-preco-max" min="0" value="" placeholder="Todos" oninput="filtrar()">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -122,9 +134,9 @@
             <div class="footer-column">
                 <h3>Informações legais</h3>
                 <ul>
-                    <li><a href="#">Termos de uso</a></li>
-                    <li><a href="#">Termos e condições</a></li>
-                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a href="Documentos/termos-de-uso-nutrirvida.pdf">Termos de uso</a></li>
+                    <li><a href="Documentos/termos-de-uso-nutrirvida.pdf">Termos e condições</a></li>
+                    <li><a href="Documentos/termos-de-uso-nutrirvida.pdf">Política de privacidade</a></li>
 
                 </ul>
             </div>

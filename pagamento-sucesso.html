@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,17 +27,24 @@
         .status-card {
             background: #fff;
             border-radius: 24px;
-            box-shadow: 0 8px 48px rgba(0,0,0,0.09);
+            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.09);
             padding: 56px 52px;
             max-width: 540px;
             width: 100%;
             text-align: center;
-            animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) both;
+            animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(28px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(28px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Ícone pulsante verde */
@@ -53,14 +61,33 @@
         }
 
         @keyframes ringPulse {
-            0%, 100% { box-shadow: 0 0 0 0   rgba(0,255,136,.28); }
-            50%       { box-shadow: 0 0 0 20px rgba(0,255,136,.0); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, .28);
+            }
+
+            50% {
+                box-shadow: 0 0 0 20px rgba(0, 255, 136, .0);
+            }
         }
 
-        .icon-ring i { font-size: 2.8rem; color: #00c853; }
+        .icon-ring i {
+            font-size: 2.8rem;
+            color: #00c853;
+        }
 
-        .status-card h1 { font-size: 1.8rem; color: #1a1a1a; margin-bottom: 10px; }
-        .subtitulo { color: #666; font-size: 0.97rem; line-height: 1.65; }
+        .status-card h1 {
+            font-size: 1.8rem;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            color: #666;
+            font-size: 0.97rem;
+            line-height: 1.65;
+        }
 
         /* Tag número do pedido */
         .pedido-tag {
@@ -77,7 +104,11 @@
             font-weight: 700;
         }
 
-        .divider { border: none; border-top: 1.5px solid #f0f0f0; margin: 28px 0; }
+        .divider {
+            border: none;
+            border-top: 1.5px solid #f0f0f0;
+            margin: 28px 0;
+        }
 
         /* Steps */
         .steps-label {
@@ -90,7 +121,11 @@
             text-align: left;
         }
 
-        .steps { display: flex; flex-direction: column; gap: 10px; }
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
         .step-item {
             display: flex;
@@ -103,175 +138,234 @@
         }
 
         .step-num {
-            min-width: 26px; height: 26px;
-            background: #00FF88; color: #000;
-            font-size: 0.75rem; font-weight: 800;
+            min-width: 26px;
+            height: 26px;
+            background: #00FF88;
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 800;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; margin-top: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
         }
 
-        .step-info strong { display: block; font-size: 0.88rem; color: #1a1a1a; margin-bottom: 2px; }
-        .step-info span   { font-size: 0.82rem; color: #777; line-height: 1.4; }
+        .step-info strong {
+            display: block;
+            font-size: 0.88rem;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .step-info span {
+            font-size: 0.82rem;
+            color: #777;
+            line-height: 1.4;
+        }
 
         /* Botões */
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 28px;
+        }
 
         .btn-verde {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             padding: 15px 28px;
-            background: #00FF88; color: #000;
-            font-weight: 800; font-size: 1rem;
-            border-radius: 50px; text-decoration: none;
+            background: #00FF88;
+            color: #000;
+            font-weight: 800;
+            font-size: 1rem;
+            border-radius: 50px;
+            text-decoration: none;
             border: 2px solid transparent;
             letter-spacing: 0.5px;
             transition: all 0.25s;
         }
+
         .btn-verde:hover {
-            background: #000; color: #00FF88; border-color: #00FF88;
+            background: #000;
+            color: #00FF88;
+            border-color: #00FF88;
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,255,136,0.3);
+            box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
         }
 
         .btn-ghost {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             padding: 14px 28px;
-            background: transparent; color: #555;
-            font-weight: 600; font-size: 0.95rem;
-            border-radius: 50px; border: 1.5px solid #ddd;
-            text-decoration: none; transition: all 0.25s;
+            background: transparent;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            border: 1.5px solid #ddd;
+            text-decoration: none;
+            transition: all 0.25s;
         }
-        .btn-ghost:hover { border-color: #000; color: #000; transform: translateY(-2px); }
+
+        .btn-ghost:hover {
+            border-color: #000;
+            color: #000;
+            transform: translateY(-2px);
+        }
 
         @media (max-width: 600px) {
-            .status-card { padding: 36px 22px; }
-            .status-card h1 { font-size: 1.5rem; }
+            .status-card {
+                padding: 36px 22px;
+            }
+
+            .status-card h1 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<nav>
-    <a class="logo" href="index.html">
-        <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
-    </a>
-    <ul class="nav-list">
-        <li><a href="index.html">Início</a></li>
-        <li><a href="Loja.html">Loja</a></li>
-        <li><a href="contato.html">Contato</a></li>
-    </ul>
-    <div class="nav-right">
-        <div class="nav-icons">
-            <a href="Carrinho.html" style="position:relative;display:inline-flex;" aria-label="Carrinho">
-                <i class="fas fa-shopping-cart"></i>
-                <span id="cart-count" class="cart-badge"></span>
-            </a>
-            <div class="profile-container">
-                <a href="#" class="profile-icon" aria-label="Perfil"><i class="fas fa-user"></i></a>
-                <ul class="profile-dropdown">
-                    <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
-                    <li class="dropdown-divider"></li>
-                    <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+    <nav>
+        <a class="logo" href="index.html">
+            <img src="Imagens/logomarca.png" alt="NutrirVida" class="logo-img">
+        </a>
+        <ul class="nav-list">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="Loja.html">Loja</a></li>
+            <li><a href="contato.html">Contato</a></li>
+        </ul>
+        <div class="nav-right">
+            <div class="nav-icons">
+                <a href="Carrinho.html" style="position:relative;display:inline-flex;" aria-label="Carrinho">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-badge"></span>
+                </a>
+                <div class="profile-container">
+                    <a href="#" class="profile-icon" aria-label="Perfil"><i class="fas fa-user"></i></a>
+                    <ul class="profile-dropdown">
+                        <li><a href="perfil.html"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
+                                Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mobile-menu" id="mobile-menu">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="status-wrapper">
+        <div class="status-card">
+
+            <div class="icon-ring"><i class="fas fa-check"></i></div>
+
+            <h1>Pagamento confirmado! 🎉</h1>
+            <p class="subtitulo">Seu pedido foi recebido e já está sendo preparado com cuidado pela nossa equipe.</p>
+
+            <div class="pedido-tag">
+                <i class="fas fa-receipt"></i>
+                Pedido <span id="num-pedido">&nbsp;—</span>
+            </div>
+
+            <hr class="divider">
+
+            <p class="steps-label">O que acontece agora</p>
+            <div class="steps">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-info">
+                        <strong>Pedido confirmado</strong>
+                        <span>Seu pagamento foi aprovado e o pedido registrado com sucesso.</span>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-info">
+                        <strong>Em separação</strong>
+                        <span>Nossa equipe está separando e embalando seus produtos.</span>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-info">
+                        <strong>Enviado para entrega</strong>
+                        <span>Acompanhe o status em tempo real na aba "Meus Pedidos".</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a href="perfil.html?aba=pedidos" class="btn-verde">
+                    <i class="fas fa-box-open"></i> Ver meus pedidos
+                </a>
+                <a href="Loja.html" class="btn-ghost">
+                    <i class="fas fa-store"></i> Continuar comprando
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>NUTRIR<span>VIDA</span></h3>
+                <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Links rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="Loja.html">Loja</a></li>
+                    <li><a href="contato.html">Contato</a></li>
                 </ul>
             </div>
-        </div>
-        <div class="mobile-menu" id="mobile-menu">
-            <div class="line1"></div><div class="line2"></div><div class="line3"></div>
-        </div>
-    </div>
-</nav>
-
-<div class="status-wrapper">
-    <div class="status-card">
-
-        <div class="icon-ring"><i class="fas fa-check"></i></div>
-
-        <h1>Pagamento confirmado! 🎉</h1>
-        <p class="subtitulo">Seu pedido foi recebido e já está sendo preparado com cuidado pela nossa equipe.</p>
-
-        <div class="pedido-tag">
-            <i class="fas fa-receipt"></i>
-            Pedido <span id="num-pedido">&nbsp;—</span>
-        </div>
-
-        <hr class="divider">
-
-        <p class="steps-label">O que acontece agora</p>
-        <div class="steps">
-            <div class="step-item">
-                <div class="step-num">1</div>
-                <div class="step-info">
-                    <strong>Pedido confirmado</strong>
-                    <span>Seu pagamento foi aprovado e o pedido registrado com sucesso.</span>
-                </div>
+            <div class="footer-column">
+                <h3>Informações legais</h3>
+                <ul>
+                    <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
+                </ul>
             </div>
-            <div class="step-item">
-                <div class="step-num">2</div>
-                <div class="step-info">
-                    <strong>Em separação</strong>
-                    <span>Nossa equipe está separando e embalando seus produtos.</span>
-                </div>
-            </div>
-            <div class="step-item">
-                <div class="step-num">3</div>
-                <div class="step-info">
-                    <strong>Enviado para entrega</strong>
-                    <span>Acompanhe o status em tempo real na aba "Meus Pedidos".</span>
+            <div class="footer-column">
+                <h3>Siga-nos</h3>
+                <div class="social-icons">
+                    <a href="Documentos/termos-de-uso-nutrirvida.pdf" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="Documentos/termos-de-uso-nutrirvida.pdf" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                 </div>
             </div>
         </div>
-
-        <div class="btn-group">
-            <a href="perfil.html?aba=pedidos" class="btn-verde">
-                <i class="fas fa-box-open"></i> Ver meus pedidos
-            </a>
-            <a href="Loja.html" class="btn-ghost">
-                <i class="fas fa-store"></i> Continuar comprando
-            </a>
+        <div class="footer-bottom">
+            <p>&copy; 2025 NutrirVida. Todos os direitos reservados.</p>
         </div>
+    </footer>
 
-    </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="javascript/database.js"></script>
+    <script src="javascript/script.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const pedidoId = params.get('pedido');
+        if (pedidoId) document.getElementById('num-pedido').textContent = ' #' + pedidoId;
 
-<footer class="main-footer">
-    <div class="footer-container">
-        <div class="footer-column">
-            <h3>NUTRIR<span>VIDA</span></h3>
-            <p>Seu parceiro de confiança para todos os seus suplementos esportivos.</p>
-        </div>
-        <div class="footer-column">
-            <h3>Links rápidos</h3>
-            <ul><li><a href="index.html">Início</a></li><li><a href="Loja.html">Loja</a></li><li><a href="contato.html">Contato</a></li></ul>
-        </div>
-        <div class="footer-column">
-            <h3>Informações legais</h3>
-            <ul><li><a href="#">Termos de uso</a></li><li><a href="#">Política de privacidade</a></li></ul>
-        </div>
-        <div class="footer-column">
-            <h3>Siga-nos</h3>
-            <div class="social-icons">
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            </div>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 NutrirVida. Todos os direitos reservados.</p>
-    </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="javascript/database.js"></script>
-<script src="javascript/script.js"></script>
-<script>
-    const params = new URLSearchParams(window.location.search);
-    const pedidoId = params.get('pedido');
-    if (pedidoId) document.getElementById('num-pedido').textContent = ' #' + pedidoId;
-
-    // Limpa carrinho após aprovação
-    localStorage.removeItem('nutrirVida_cart');
-    if (typeof atualizarBadgeCarrinho === 'function') atualizarBadgeCarrinho();
-</script>
+        // Limpa carrinho após aprovação
+        localStorage.removeItem('nutrirVida_cart');
+        if (typeof atualizarBadgeCarrinho === 'function') atualizarBadgeCarrinho();
+    </script>
 
 </body>
+
 </html>

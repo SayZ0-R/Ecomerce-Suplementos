@@ -193,9 +193,15 @@ function carregarCarrinho() {
         return `
             <div class="cart-item">
                 <div class="item-product">
-                    <img src="${item.imagem}" alt="${item.nome}">
+                    <a href="produto.html?id=${item.id}" style="display:block;flex-shrink:0;">
+                        <img src="${item.imagem}" alt="${item.nome}" style="cursor:pointer;">
+                    </a>
                     <div class="item-info">
-                        <h3>${item.nome}</h3>
+                        <h3>
+                            <a href="produto.html?id=${item.id}" style="color:inherit;text-decoration:none;" 
+                               onmouseover="this.style.textDecoration='underline'" 
+                               onmouseout="this.style.textDecoration='none'">${item.nome}</a>
+                        </h3>
                         <p style="font-size: 0.85rem; color: #666;">Categoria: <strong>${item.categoria || 'Geral'}</strong></p>
                     </div>
                 </div>
@@ -359,7 +365,7 @@ function adicionarAoCarrinho(produto) {
 
     localStorage.setItem('nutrirVida_cart', JSON.stringify(carrinhoAtual));
     atualizarBadgeCarrinho();
-    alert(`${produto.nome} adicionado ao carrinho!`);
+    alert(`__CARRINHO__Produto adicionado ao carrinho!`);
 }
 
 function atualizarBadgeCarrinho() {
@@ -620,18 +626,27 @@ function reiniciarAutoPlay() {
 
 // Sobrescrevendo o alert nativo do navegador
 window.alert = function (mensagem) {
-    // 1. Criar o elemento na hora (ele passa a existir aqui)
     const notification = document.createElement('div');
     notification.className = 'custom-alert';
+
+    // Detecta tipo pela mensagem
+    const isCarrinho = mensagem.startsWith('__CARRINHO__');
+    const isErro     = !isCarrinho && /erro|error|falha|inválido|vazio|preencha|não encontrado|por favor|selecione|atenção|obrigatório|recusado|cancelado|⚠/i.test(mensagem);
+    const textoFinal = isCarrinho ? mensagem.replace('__CARRINHO__', '') : mensagem;
+
+    const cor  = isErro ? '#e74c3c' : '#27ae60';
+    const icon = isErro ? 'fas fa-times-circle' : 'fas fa-check-circle';
+
     notification.innerHTML = `
-        <i class="fas fa-check-circle" style="color: #27ae60;"></i>
-        <span>${mensagem}</span>
+        <i class="${icon}" style="color:${cor};font-size:1.1rem;"></i>
+        <span>${textoFinal}</span>
     `;
 
-    // 2. Adicionar ao corpo do site
+    // Borda colorida no lado esquerdo para reforçar o tipo
+    notification.style.borderLeft = `4px solid ${cor}`;
+
     document.body.appendChild(notification);
 
-    // 3. Remover automaticamente após 3 segundos
     setTimeout(() => {
         notification.classList.add('hide');
         setTimeout(() => notification.remove(), 400);

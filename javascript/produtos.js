@@ -67,20 +67,37 @@ function renderizarFiltrosCategorias() {
 function filtrar() {
     const busca = document.getElementById('input-busca')?.value.toLowerCase() || "";
     const categoriaSelecionada = document.querySelector('input[name="categoria"]:checked')?.value || "todos";
-    const precoMax = parseFloat(document.getElementById('filtro-preco')?.value || 1000);
 
-    const labelPreco = document.getElementById('valor-preco');
-    if (labelPreco) labelPreco.innerText = `R$ ${precoMax.toFixed(0)}`;
+    const precoMinVal = document.getElementById('filtro-preco-min')?.value;
+    const precoMaxVal = document.getElementById('filtro-preco-max')?.value;
+    const precoMin = precoMinVal !== '' && precoMinVal !== null ? parseFloat(precoMinVal) : 0;
+    const precoMax = precoMaxVal !== '' && precoMaxVal !== null ? parseFloat(precoMaxVal) : Infinity;
 
     const filtrados = produtosBanco.filter(p => {
-        const bateNome = p.nome.toLowerCase().includes(busca);
+        const bateNome      = p.nome.toLowerCase().includes(busca);
         const bateCategoria = categoriaSelecionada === 'todos'
             || (categoriaSelecionada === '__promocao__' ? p.promocao === true : p.categoria === categoriaSelecionada);
-        const batePreco = p.preco <= precoMax;
+        const batePreco     = p.preco >= precoMin && p.preco <= precoMax;
         return bateNome && bateCategoria && batePreco;
     });
 
     renderizarVitrine(filtrados);
+}
+
+// Limpa todos os filtros e volta ao estado inicial
+function resetarFiltros() {
+    const inputBusca = document.getElementById('input-busca');
+    if (inputBusca) inputBusca.value = '';
+
+    const radioTodos = document.querySelector('input[name="categoria"][value="todos"]');
+    if (radioTodos) radioTodos.checked = true;
+
+    const inputMin = document.getElementById('filtro-preco-min');
+    const inputMax = document.getElementById('filtro-preco-max');
+    if (inputMin) inputMin.value = '0';
+    if (inputMax) inputMax.value = '';
+
+    filtrar();
 }
 
 // 4. Renderiza a vitrine de produtos (ATUALIZADA COM PREÇO NO CARTÃO)
@@ -179,25 +196,29 @@ function adicionarAoCarrinhoRapido(id) {
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     carregarLoja();
-    
     document.getElementById('input-busca')?.addEventListener('input', filtrar);
-    document.getElementById('filtro-preco')?.addEventListener('input', filtrar);
 });
 
 // Sobrescrevendo o alert nativo do navegador
 window.alert = function(mensagem) {
-    // 1. Criar o elemento na hora (ele passa a existir aqui)
     const notification = document.createElement('div');
     notification.className = 'custom-alert';
-    notification.innerHTML = `
-        <i class="fas fa-check-circle" style="color: #27ae60;"></i>
-        <span>${mensagem}</span>
-    `;
 
-    // 2. Adicionar ao corpo do site
+    const isCarrinho = mensagem.startsWith('__CARRINHO__');
+    const isErro     = !isCarrinho && /erro|error|falha|inválido|vazio|preencha|não encontrado|por favor|selecione|atenção|obrigatório|recusado|cancelado|⚠/i.test(mensagem);
+    const textoFinal = isCarrinho ? mensagem.replace('__CARRINHO__', '') : mensagem;
+
+    const cor  = isErro ? '#e74c3c' : '#27ae60';
+    const icon = isErro ? 'fas fa-times-circle' : 'fas fa-check-circle';
+
+    notification.innerHTML = `
+        <i class="${icon}" style="color:${cor};font-size:1.1rem;"></i>
+        <span>${textoFinal}</span>
+    `;
+    notification.style.borderLeft = `4px solid ${cor}`;
+
     document.body.appendChild(notification);
 
-    // 3. Remover automaticamente após 3 segundos
     setTimeout(() => {
         notification.classList.add('hide');
         setTimeout(() => notification.remove(), 400);
