@@ -86,6 +86,26 @@ if (btnCheckout) {
         carregarCarrinho();
     }
 
+    // --- BOTÃO PAINEL ADMIN (só aparece para admins) ---
+    (async () => {
+        const nivel = await checarNivelAcesso();
+        if (nivel === 'admin') {
+            const navList = document.querySelector('.nav-list');
+            if (navList && !document.getElementById('btn-nav-admin')) {
+                const li = document.createElement('li');
+                li.id = 'btn-nav-admin';
+                li.innerHTML = `<a href="admin.html" style="
+                    color: #00C853;
+                    font-weight: 700;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                "><i class="fas fa-shield-alt"></i> Painel</a>`;
+                navList.appendChild(li);
+            }
+        }
+    })();
+
     carregarDestaquesMaisVendidos()
     if (document.getElementById('cart-list')) {
         carregarCarrinho();

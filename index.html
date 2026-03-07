@@ -7,13 +7,77 @@
     <meta name="description"
         content="FitSuplementos - A sua loja premium de suplementos esportivos. Whey, Creatina e Pré-treino com o melhor preço e entrega rápida.">
     <meta name="keywords" content="suplementos, whey protein, creatina, academia, fit">
-
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="Styles/styless.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>NutrirVida | Inicio</title>
+
+    <!-- LOADING SCREEN -->
+    <style>
+        #page-loader {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #page-loader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loader-logo {
+            width: 200px;
+            margin-bottom: 32px;
+            animation: loaderPulse 1.6s ease-in-out infinite;
+        }
+        @keyframes loaderPulse {
+            0%, 100% { transform: scale(1);   opacity: 1; }
+            50%       { transform: scale(1.05); opacity: 0.85; }
+        }
+        .loader-bar-track {
+            width: 200px;
+            height: 4px;
+            background: #e8e8e8;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .loader-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00C853, #00FF88);
+            border-radius: 99px;
+            animation: loaderFill 1.8s ease-in-out forwards;
+        }
+        @keyframes loaderFill {
+            0%   { width: 0%; }
+            60%  { width: 75%; }
+            100% { width: 100%; }
+        }
+        .loader-texto {
+            margin-top: 14px;
+            font-size: 0.78rem;
+            color: #aaa;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-family: sans-serif;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- TELA DE LOADING -->
+    <div id="page-loader">
+        <img src="Imagens/logomarca.png" alt="NutrirVida" class="loader-logo">
+        <div class="loader-bar-track">
+            <div class="loader-bar-fill"></div>
+        </div>
+        <p class="loader-texto">Carregando...</p>
+    </div>
+
 
     <nav>
         <a class="logo" href="index.html">
@@ -414,6 +478,19 @@
     <script src="javascript/database.js"></script>
 
 
+
+    <script>
+        // Remove o loader quando a página estiver pronta
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                const loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.classList.add('hide');
+                    setTimeout(() => loader.remove(), 500);
+                }
+            }, 400); // pequeno delay para a barra completar visualmente
+        });
+    </script>
 </body>
 
 </html>
