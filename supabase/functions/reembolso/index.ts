@@ -69,7 +69,7 @@ serve(async (req) => {
     let mpStatus = 'sem_pagamento'
 
     if (pedido.payment_id) {
-      // Primeiro verifica o status atual do pagamento no MP
+      
       const mpCheck = await fetch(`https://api.mercadopago.com/v1/payments/${pedido.payment_id}`, {
         headers: { 'Authorization': `Bearer ${MP_TOKEN()}` }
       })
@@ -85,7 +85,7 @@ serve(async (req) => {
             'Content-Type':      'application/json',
             'X-Idempotency-Key': `refund-${pedidoId}-${Date.now()}`
           },
-          body: JSON.stringify({}) // body vazio = reembolso total
+          body: JSON.stringify({}) 
         })
 
         const mpData = await mpRes.json()
@@ -96,7 +96,7 @@ serve(async (req) => {
         mpStatus = 'reembolsado'
 
       } else if (mpPayment.status === 'pending' || mpPayment.status === 'in_process') {
-        // Pagamento pendente → cancela
+        
         const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${pedido.payment_id}`, {
           method: 'PUT',
           headers: {
