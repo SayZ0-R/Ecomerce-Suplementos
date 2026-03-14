@@ -86,27 +86,8 @@ if (btnCheckout) {
         carregarCarrinho();
     }
 
-    // --- BOTÃO PAINEL ADMIN (só aparece para admins) ---
-    (async () => {
-        const nivel = await checarNivelAcesso();
-        if (nivel === 'admin') {
-            const navList = document.querySelector('.nav-list');
-            if (navList && !document.getElementById('btn-nav-admin')) {
-                const li = document.createElement('li');
-                li.id = 'btn-nav-admin';
-                li.innerHTML = `<a href="admin.html" style="
-                    color: #00C853;
-                    font-weight: 700;
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                "><i class="fas fa-shield-alt"></i> Painel</a>`;
-                navList.appendChild(li);
-            }
-        }
-    })();
-
     carregarDestaquesMaisVendidos()
+    carregarGridInstagramHome()
     if (document.getElementById('cart-list')) {
         carregarCarrinho();
     }
@@ -748,4 +729,30 @@ function exibirFreteNoCarrinho(valor) {
         freteElemento.innerText = valor === 0 ? "Grátis" : `R$ ${valor.toFixed(2).replace('.', ',')}`;
     }
     atualizarTotalFinal(valor); // Soma o frete ao total dos produtos
+}
+
+// ─── GRID INSTAGRAM (carregamento dinâmico) ───────────────────────────────
+async function carregarGridInstagramHome() {
+    const container = document.getElementById('insta-grid-home');
+    if (!container) return;
+
+    const INSTA_URL = 'https://www.instagram.com/nutrirvidasuplementos';
+
+    const { data, error } = await _supabase
+        .from('instagram_grid')
+        .select('*')
+        .order('posicao', { ascending: true });
+
+    if (error || !data || data.length === 0) {
+        const secao = container.closest('section');
+        if (secao) secao.style.display = 'none';
+        return;
+    }
+
+    container.innerHTML = data.map(item => `
+        <a href="${item.link_url || INSTA_URL}" target="_blank" rel="noopener" class="insta-item-full">
+            <img src="${item.imagem_url}" loading="lazy" alt="Instagram NutrirVida">
+            <div class="insta-overlay-full"><i class="fab fa-instagram"></i></div>
+        </a>
+    `).join('');
 }

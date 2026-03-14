@@ -117,6 +117,9 @@
                 <a href="#" class="menu-item" onclick="mostrarSecao('frete')">
                     <i class="fas fa-truck"></i> Frete e Bairros
                 </a>
+                <a href="#" class="menu-item" onclick="mostrarSecao('instagram')">
+                    <i class="fab fa-instagram"></i> Grid Instagram
+                </a>
                 <div class="menu-divider"></div>
                 <a href="index.html" class="menu-item logout">
                     <i class="fas fa-sign-out-alt"></i> Sair da Loja
@@ -389,6 +392,22 @@
                         <tbody id="lista-fretes-admin">
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <section id="sec-instagram" class="admin-section">
+                <div class="section-actions">
+                    <h2>Grid Instagram</h2>
+                    <p style="color:#888;font-size:0.9rem;margin-top:4px;">Gerencie as 12 imagens exibidas na vitrine do Instagram na página inicial.</p>
+                </div>
+
+                <div id="insta-grid-admin" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 16px;
+                    margin-top: 20px;
+                ">
+                    <!-- Preenchido pelo JS -->
                 </div>
             </section>
 

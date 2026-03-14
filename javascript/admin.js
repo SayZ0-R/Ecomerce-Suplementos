@@ -509,6 +509,9 @@ function mostrarSecao(secaoId) {
     if (secaoId === 'banners') {
         carregarBannerPromoAdmin();
     }
+    if (secaoId === 'instagram') {
+        carregarGridInstagram();
+    }
 
     // --- ADICIONE ISSO AQUI: ---
     // Se estiver no mobile, fecha o menu após clicar em um item
@@ -1066,4 +1069,132 @@ async function carregarBannerPromoAdmin() {
     }
 
     carregarProdutosBannerAdmin();
+}
+// ═══════════════════════════════════════════════════
+// GRID INSTAGRAM
+// ═══════════════════════════════════════════════════
+
+async function carregarGridInstagram() {
+    const container = document.getElementById('insta-grid-admin');
+    if (!container) return;
+
+    container.innerHTML = '<p style="color:#888">Carregando...</p>';
+
+    // Busca registros salvos
+    const { data } = await _supabase
+        .from('instagram_grid')
+        .select('*')
+        .order('posicao', { ascending: true });
+
+    // Monta mapa posicao -> dados
+    const mapa = {};
+    (data || []).forEach(item => { mapa[item.posicao] = item; });
+
+    let html = '';
+    for (let i = 1; i <= 12; i++) {
+        const item = mapa[i] || {};
+        const imgSrc = item.imagem_url || '';
+        const linkUrl = item.link_url || 'https://www.instagram.com/nutrirvidasuplementos';
+
+        html += `
+        <div class="insta-card-admin" style="
+            background:#fff;
+            border-radius:12px;
+            box-shadow:0 2px 12px rgba(0,0,0,0.07);
+            overflow:hidden;
+            border:1.5px solid #f0f0f0;
+        ">
+            <div style="
+                position:relative;
+                width:100%;
+                padding-top:100%;
+                background:#f5f5f5;
+                overflow:hidden;
+            ">
+                <img id="insta-preview-${i}"
+                    src="${imgSrc || 'Imagens/placeholder.png'}"
+                    alt="Foto ${i}"
+                    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:pointer;"
+                    onclick="document.getElementById('insta-upload-${i}').click()"
+                    title="Clique para trocar a imagem"
+                >
+                <div style="
+                    position:absolute;top:8px;left:8px;
+                    background:rgba(0,0,0,0.55);
+                    color:#fff;font-size:0.72rem;font-weight:700;
+                    padding:3px 8px;border-radius:20px;
+                ">#${i}</div>
+                <div style="
+                    position:absolute;bottom:8px;right:8px;
+                    background:rgba(0,0,0,0.55);
+                    color:#fff;font-size:0.75rem;
+                    padding:4px 8px;border-radius:6px;cursor:pointer;
+                " onclick="document.getElementById('insta-upload-${i}').click()">
+                    <i class="fas fa-camera"></i> Trocar
+                </div>
+                <input type="file" id="insta-upload-${i}" accept="image/*" style="display:none"
+                    data-posicao="${i}"
+                    onchange="uploadFotoInsta(this, ${i})">
+            </div>
+            <div style="padding:10px;">
+                <label style="font-size:0.75rem;color:#888;font-weight:600;">Link ao clicar</label>
+                <input type="text" id="insta-link-${i}"
+                    value="${linkUrl}"
+                    placeholder="https://instagram.com/..."
+                    style="width:100%;padding:7px 8px;font-size:0.8rem;border:1.5px solid #e0e0e0;border-radius:7px;margin-top:4px;box-sizing:border-box;"
+                >
+                <button onclick="salvarLinkInsta(${i})"
+                    style="width:100%;margin-top:8px;padding:7px;background:#000;color:#fff;border:none;border-radius:7px;font-size:0.8rem;cursor:pointer;font-weight:600;">
+                    <i class="fas fa-save"></i> Salvar link
+                </button>
+            </div>
+        </div>`;
+    }
+
+    container.innerHTML = html;
+}
+
+async function uploadFotoInsta(input, posicao) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const ext  = file.name.split('.').pop();
+    const path = `instagram_grid/pos_${posicao}_${Date.now()}.${ext}`;
+
+    // Mostra preview imediato
+    const reader = new FileReader();
+    reader.onload = e => {
+        const prev = document.getElementById(`insta-preview-${posicao}`);
+        if (prev) prev.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload para Supabase Storage
+    const { error: upErr } = await _supabase.storage
+        .from('produtos')
+        .upload(path, file, { upsert: true });
+
+    if (upErr) { alert('Erro no upload: ' + upErr.message); return; }
+
+    const { data: urlData } = _supabase.storage.from('produtos').getPublicUrl(path);
+    const url = urlData.publicUrl;
+
+    // Salva/atualiza na tabela instagram_grid
+    const { error: dbErr } = await _supabase
+        .from('instagram_grid')
+        .upsert({ posicao, imagem_url: url }, { onConflict: 'posicao' });
+
+    if (dbErr) { alert('Erro ao salvar: ' + dbErr.message); return; }
+    alert(`✅ Foto ${posicao} atualizada com sucesso!`);
+}
+
+async function salvarLinkInsta(posicao) {
+    const link = document.getElementById(`insta-link-${posicao}`)?.value?.trim();
+    if (!link) { alert('⚠️ Digite um link válido.'); return; }
+
+    const { error } = await _supabase
+        .from('instagram_grid')
+        .upsert({ posicao, link_url: link }, { onConflict: 'posicao' });
+
+    if (error) { alert('Erro ao salvar link: ' + error.message); return; }
+    alert(`✅ Link da foto ${posicao} salvo!`);
 }
