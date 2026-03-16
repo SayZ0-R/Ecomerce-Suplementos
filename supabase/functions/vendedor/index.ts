@@ -92,63 +92,56 @@ serve(async (req) => {
 
     if (tipo === 'pix') {
 
-      const itensMercadoPago = (items ?? []).map((i: any) => ({
-        id:          String(i.id),
-        title:       String(i.nome),
-        description: String(i.nome),
-        unit_price:  Number(i.preco),
-        quantity:    Number(i.quantidade),
-        currency_id: 'BRL'
-      }))
+      // Calcula o total somando itens + frete
+      const totalItens = (items ?? []).reduce((acc: number, i: any) =>
+        acc + (Number(i.preco) * Number(i.quantidade)), 0)
+      const totalFrete  = frete && Number(frete) > 0 ? Number(frete) : 0
+      const totalAmount = Number((totalItens + totalFrete).toFixed(2))
 
-      if (frete && Number(frete) > 0) {
-        itensMercadoPago.push({
-          id:          'frete',
-          title:       'Frete',
-          description: 'Taxa de entrega',
-          unit_price:  Number(frete),
-          quantity:    1,
-          currency_id: 'BRL'
-        })
-      }
+      console.log('[pix] totalItens:', totalItens, '| frete:', totalFrete, '| total:', totalAmount)
 
-      // Usa a URL do site enviada pelo frontend — funciona em qualquer domínio
-      const siteUrl = (base_url || 'https://ecormece-suplo.netlify.app').replace(/\/$/, '')
-
-      const prefBody = {
-        items: itensMercadoPago,
-        payer: { email: email },
+      const pixBody = {
+        transaction_amount: totalAmount,
+        description:        `Pedido NutrirVida #${orderId}`,
+        payment_method_id:  'pix',
         external_reference: String(orderId),
-        notification_url: 'https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook',
-        back_urls: {
-          success: `${siteUrl}/pagamento-sucesso.html?pedido=${orderId}`,
-          failure: `${siteUrl}/pagamento-falhou.html?motivo=rejected`,
-          pending: `${siteUrl}/pagamento-sucesso.html?pedido=${orderId}`,
-        },
-        auto_return: 'approved',
-        payment_methods: {
-          excluded_payment_types: [
-            { id: 'credit_card' },
-            { id: 'debit_card'  },
-            { id: 'ticket'      }
-          ],
-          installments: 1
+        notification_url:   'https://kmmowmfrfshaazvfuheg.supabase.co/functions/v1/mercado-pago-webhook',
+        payer: { email: email },
+        additional_info: {
+          items: (items ?? []).map((i: any) => ({
+            id:          String(i.id),
+            title:       String(i.nome),
+            description: String(i.nome),
+            unit_price:  Number(i.preco),
+            quantity:    Number(i.quantidade),
+          }))
         }
       }
 
-      const mpRes  = await fetch('https://api.mercadopago.com/checkout/preferences', {
+      const mpRes  = await fetch('https://api.mercadopago.com/v1/payments', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${MP_TOKEN()}`,
-          'Content-Type':  'application/json'
+          'Authorization':     `Bearer ${MP_TOKEN()}`,
+          'Content-Type':      'application/json',
+          'X-Idempotency-Key': `nutrivida-pix-${orderId}-${Date.now()}`
         },
-        body: JSON.stringify(prefBody)
+        body: JSON.stringify(pixBody)
       })
 
       const mpData = await mpRes.json()
       console.log('[pix] resposta MP:', JSON.stringify(mpData))
 
-      return new Response(JSON.stringify({ id: mpData.id }), {
+      // Retorna QR code e copia cola para o frontend exibir
+      return new Response(JSON.stringify({
+        id:              mpData.id,
+        status:          mpData.status,
+        qr_code:         mpData.point_of_interaction?.transaction_data?.qr_code,
+        qr_code_base64:  mpData.point_of_interaction?.transaction_data?.qr_code_base64,
+        ticket_url:      mpData.point_of_interaction?.transaction_data?.ticket_url,
+        error:           mpData.error,
+        message:         mpData.message,
+        cause:           mpData.cause,
+      }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })

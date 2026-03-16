@@ -3,7 +3,7 @@
 // Mercado Pago Payment Brick (Checkout Transparente)
 // =============================================
 
-const MP_PUBLIC_KEY = 'TEST-0cff84ff-8330-4dbe-bb80-07793085c3f2';
+const MP_PUBLIC_KEY = 'APP_USR-11dff890-5e5f-4aec-bb45-f58318f7a8e1';
 const MAX_PARCELAS  = 4;
 
 let paymentBrickController = null;
@@ -332,12 +332,12 @@ async function processarPedidoPix() {
         const data2 = await response.json();
         console.log('[Pix] Resposta:', JSON.stringify(data2));
 
-        if (data2.id) {
-            const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
-            mp.checkout({ preference: { id: data2.id }, autoOpen: true });
+        if (data2.qr_code) {
             localStorage.removeItem('nutrirVida_cart');
+            exibirModalQrCode(data2.qr_code, data2.qr_code_base64, pedidoCriado.id);
         } else {
-            throw new Error('Falha ao gerar preferência Pix: ' + JSON.stringify(data2));
+            const motivo = data2.message || data2.error || JSON.stringify(data2);
+            throw new Error('Falha ao gerar Pix: ' + motivo);
         }
 
     } catch (err) {
@@ -397,3 +397,113 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnPix = document.getElementById('btn-confirmar-pix');
     if (btnPix) btnPix.addEventListener('click', processarPedidoPix);
 });
+
+// =============================================
+// MODAL QR CODE PIX
+// =============================================
+function exibirModalQrCode(qrCode, qrCodeBase64, pedidoId) {
+    // Remove modal anterior se existir
+    const anterior = document.getElementById('modal-pix-qr');
+    if (anterior) anterior.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-pix-qr';
+    modal.style.cssText = `
+        position:fixed;inset:0;background:rgba(0,0,0,0.6);
+        display:flex;align-items:center;justify-content:center;
+        z-index:99999;padding:20px;
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background:#fff;border-radius:24px;padding:40px 32px;
+            max-width:440px;width:100%;text-align:center;
+            box-shadow:0 20px 60px rgba(0,0,0,0.3);
+            animation:fadeUp 0.3s ease both;
+        ">
+            <div style="
+                width:56px;height:56px;background:#e9fdf2;border-radius:50%;
+                display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+            ">
+                <i class="fas fa-qrcode" style="color:#00C853;font-size:1.5rem;"></i>
+            </div>
+
+            <h2 style="font-size:1.3rem;color:#1a1a1a;margin-bottom:6px;">Pague com Pix</h2>
+            <p style="color:#666;font-size:0.9rem;margin-bottom:20px;">
+                Escaneie o QR Code ou copie o código abaixo.<br>
+                O pedido <strong>#${pedidoId}</strong> será confirmado em segundos.
+            </p>
+
+            ${qrCodeBase64
+                ? `<img src="data:image/png;base64,${qrCodeBase64}"
+                        alt="QR Code Pix"
+                        style="width:200px;height:200px;border:2px solid #f0f0f0;border-radius:12px;margin-bottom:16px;">`
+                : ''}
+
+            <div style="margin-bottom:16px;">
+                <p style="font-size:0.75rem;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+                    Pix Copia e Cola
+                </p>
+                <div style="
+                    background:#f5f5f5;border-radius:10px;padding:10px 14px;
+                    font-size:0.72rem;color:#444;word-break:break-all;
+                    max-height:80px;overflow:auto;text-align:left;
+                " id="pix-copia-cola">${qrCode}</div>
+            </div>
+
+            <button onclick="copiarPix()" style="
+                width:100%;padding:14px;background:#00C853;color:#fff;
+                border:none;border-radius:12px;font-weight:700;font-size:0.95rem;
+                cursor:pointer;margin-bottom:10px;display:flex;align-items:center;
+                justify-content:center;gap:8px;
+            " id="btn-copiar-pix">
+                <i class="fas fa-copy"></i> Copiar código Pix
+            </button>
+
+            <button onclick="fecharModalPix()" style="
+                width:100%;padding:12px;background:transparent;color:#888;
+                border:1.5px solid #e0e0e0;border-radius:12px;font-weight:600;
+                font-size:0.9rem;cursor:pointer;
+            ">
+                Fechar e ver meus pedidos
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Guarda o código para copiar
+    window._pixCopiaCola = qrCode;
+    window._pedidoPixId  = pedidoId;
+}
+
+function copiarPix() {
+    if (!window._pixCopiaCola) return;
+    navigator.clipboard.writeText(window._pixCopiaCola).then(() => {
+        const btn = document.getElementById('btn-copiar-pix');
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            btn.style.background = '#27ae60';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-copy"></i> Copiar código Pix';
+                btn.style.background = '#00C853';
+            }, 3000);
+        }
+    }).catch(() => {
+        // Fallback para navegadores mais antigos
+        const el = document.getElementById('pix-copia-cola');
+        if (el) {
+            const range = document.createRange();
+            range.selectNode(el);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+        }
+    });
+}
+
+function fecharModalPix() {
+    const modal = document.getElementById('modal-pix-qr');
+    if (modal) modal.remove();
+    window.location.href = `pagamento-sucesso.html?pedido=${window._pedidoPixId || ''}`;
+}
