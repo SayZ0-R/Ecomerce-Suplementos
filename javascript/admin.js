@@ -185,7 +185,21 @@ async function editarProduto(id) {
     // Ajustes visuais do modal
     document.getElementById('modal-titulo').innerText = "Editar Produto";
     document.getElementById('aviso-imagem').style.display = "block";
-    document.getElementById('prod-file-name').innerText = "Alterar Foto (Opcional)";
+    document.getElementById('prod-file-name').innerText = "Alterar Foto Principal (Opcional)";
+
+    // Carrega previews das imagens extras existentes
+    const extras = p.imagens_extras || [];
+    for (let i = 0; i < 4; i++) {
+        const preview = document.getElementById(`extra-preview-${i}`);
+        const label   = document.getElementById(`extra-label-${i}`);
+        if (extras[i]) {
+            if (preview) { preview.src = extras[i]; preview.style.display = 'block'; }
+            if (label)   label.innerText = 'Alterar foto';
+        } else {
+            if (preview) preview.style.display = 'none';
+            if (label)   if (label) label.innerText = 'Adicionar foto';
+        }
+    }
 
     abrirModalProduto();
 }
@@ -202,12 +216,30 @@ async function salvarProduto(event) {
     try {
         let urlFinal = null;
 
-        // Se houver um novo arquivo, faz o upload
+        // Upload foto principal
         if (arquivo) {
             const nomeArq = `${Date.now()}_${arquivo.name.replace(/\s/g, '_')}`;
             const { error: errImg } = await _supabase.storage.from('produtos').upload(`fotos/${nomeArq}`, arquivo);
             if (errImg) throw errImg;
             urlFinal = _supabase.storage.from('produtos').getPublicUrl(`fotos/${nomeArq}`).data.publicUrl;
+        }
+
+        // Upload fotos extras (até 4)
+        let urlsExtras = [];
+        if (idExistente) {
+            const { data: prodAtual } = await _supabase.from('produtos').select('imagens_extras').eq('id', idExistente).single();
+            urlsExtras = prodAtual?.imagens_extras || [];
+        }
+        for (let i = 0; i < 4; i++) {
+            const inputExtra = document.getElementById(`extra-upload-${i}`);
+            const arquivoExtra = inputExtra?.files[0];
+            if (arquivoExtra) {
+                const nomeExtra = `${Date.now()}_extra${i}_${arquivoExtra.name.replace(/\s/g, '_')}`;
+                const { error: errExtra } = await _supabase.storage.from('produtos').upload(`fotos/${nomeExtra}`, arquivoExtra);
+                if (!errExtra) {
+                    urlsExtras[i] = _supabase.storage.from('produtos').getPublicUrl(`fotos/${nomeExtra}`).data.publicUrl;
+                }
+            }
         }
 
         const dados = {
@@ -226,6 +258,7 @@ async function salvarProduto(event) {
         };
 
         if (urlFinal) dados.imagem_url = urlFinal;
+        if (urlsExtras.length > 0) dados.imagens_extras = urlsExtras;
 
         let erro;
         if (idExistente) {
@@ -444,6 +477,7 @@ async function atualizarBanner(event) {
 
         const dados = { id: 1, chave: 'banner_principal', titulo, preco: parseFloat(preco), descricao: desc };
         if (urlFinal) dados.imagem_url = urlFinal;
+        if (urlsExtras.length > 0) dados.imagens_extras = urlsExtras;
 
         await _supabase.from('configuracoes_site').upsert([dados]);
         alert("Banner atualizado!");
@@ -463,10 +497,63 @@ async function carregarDadosBanner() {
 // --- 7. UTILITÁRIOS ATUALIZADOS ---
 function abrirModalProduto() {
     document.getElementById('modal-produto').classList.add('active');
+
+    // Injeta campos de fotos extras se ainda não existirem
+    if (!document.getElementById('bloco-fotos-extras')) {
+        const refEl = document.getElementById('aviso-imagem');
+        if (!refEl) return;
+
+        const bloco = document.createElement('div');
+        bloco.id = 'bloco-fotos-extras';
+        bloco.style.cssText = 'margin-top:18px;';
+        bloco.innerHTML = `
+            <label style="font-weight:600;font-size:0.9rem;display:block;margin-bottom:10px;">
+                <i class="fas fa-images" style="color:#005eff;margin-right:6px;"></i>
+                Fotos Adicionais (até 4)
+            </label>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+                ${[0,1,2,3].map(i => `
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <img id="extra-preview-${i}" src="" alt=""
+                        style="display:none;width:100%;height:70px;object-fit:cover;border-radius:8px;border:1.5px solid #ddd;">
+                    <label for="extra-upload-${i}"
+                        style="width:100%;text-align:center;cursor:pointer;padding:8px 4px;border:1.5px dashed #bbb;
+                               border-radius:8px;font-size:0.72rem;color:#666;background:#f9f9f9;transition:0.2s;"
+                        onmouseover="this.style.borderColor='#005eff'" onmouseout="this.style.borderColor='#bbb'">
+                        <i class="fas fa-plus" style="display:block;font-size:1.1rem;color:#bbb;margin-bottom:3px;"></i>
+                        <span id="extra-label-${i}">Adicionar foto</span>
+                    </label>
+                    <input type="file" id="extra-upload-${i}" accept="image/*" style="display:none;"
+                        onchange="
+                            const f=this.files[0];
+                            if(f){
+                                const r=new FileReader();
+                                r.onload=e=>{
+                                    const img=document.getElementById('extra-preview-${i}');
+                                    img.src=e.target.result; img.style.display='block';
+                                    document.getElementById('extra-label-${i}').innerText='Alterar foto';
+                                };
+                                r.readAsDataURL(f);
+                            }
+                        ">
+                </div>`).join('')}
+            </div>
+        `;
+        refEl.parentNode.insertBefore(bloco, refEl.nextSibling);
+    }
 }
 
 function fecharModalProduto() {
     document.getElementById('modal-produto').classList.remove('active');
+    // Limpa previews das fotos extras
+    for (let i = 0; i < 4; i++) {
+        const preview = document.getElementById(`extra-preview-${i}`);
+        const label   = document.getElementById(`extra-label-${i}`);
+        const input   = document.getElementById(`extra-upload-${i}`);
+        if (preview) { preview.src = ''; preview.style.display = 'none'; }
+        if (label)   label.innerText = 'Adicionar foto';
+        if (input)   input.value = '';
+    }
     document.getElementById('form-produto').reset();
     document.getElementById('prod-id').value = ""; // Limpa o ID para não editar o errado depois
     document.getElementById('modal-titulo').innerText = "Configurar Produto";
