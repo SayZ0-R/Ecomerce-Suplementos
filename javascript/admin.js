@@ -901,9 +901,8 @@ async function carregarSlides() {
         .eq('chave', 'slides_banner')
         .maybeSingle();
 
-    // Default: 4 slides vazios
+    // Default: 3 slides vazios
     const slides = (data?.valor_json?.length) ? data.valor_json : [
-        { titulo: '', subtitulo: '', imagem_url: '' },
         { titulo: '', subtitulo: '', imagem_url: '' },
         { titulo: '', subtitulo: '', imagem_url: '' },
         { titulo: '', subtitulo: '', imagem_url: '' }
@@ -971,7 +970,7 @@ async function salvarSlides() {
         const slidesExist = existing?.valor_json || [{},{},{},{}];
 
         const slides = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 3; i++) {
             const titulo    = document.getElementById(`slide-titulo-${i}`)?.value || '';
             const subtitulo = document.getElementById(`slide-sub-${i}`)?.value || '';
             const fileInput = document.getElementById(`slide-img-${i}`);
