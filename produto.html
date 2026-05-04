@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,19 +23,32 @@
             z-index: 99999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
+
         #page-loader.hide {
             opacity: 0;
             visibility: hidden;
         }
+
         .loader-logo {
             width: 200px;
             margin-bottom: 32px;
             animation: loaderPulse 1.6s ease-in-out infinite;
         }
+
         @keyframes loaderPulse {
-            0%, 100% { transform: scale(1);    opacity: 1; }
-            50%       { transform: scale(1.05); opacity: 0.85; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.85;
+            }
         }
+
         .loader-bar-track {
             width: 200px;
             height: 4px;
@@ -42,6 +56,7 @@
             border-radius: 99px;
             overflow: hidden;
         }
+
         .loader-bar-fill {
             height: 100%;
             width: 0%;
@@ -49,11 +64,21 @@
             border-radius: 99px;
             animation: loaderFill 1.8s ease-in-out forwards;
         }
+
         @keyframes loaderFill {
-            0%   { width: 0%; }
-            60%  { width: 75%; }
-            100% { width: 100%; }
+            0% {
+                width: 0%;
+            }
+
+            60% {
+                width: 75%;
+            }
+
+            100% {
+                width: 100%;
+            }
         }
+
         .loader-texto {
             margin-top: 14px;
             font-size: 0.78rem;
@@ -64,6 +89,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- TELA DE LOADING -->
     <div id="page-loader">
@@ -99,16 +125,18 @@
                         <i class="fas fa-user"></i>
                     </a>
                     <ul class="profile-dropdown">
-                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu Perfil</a></li>
-                        
+                        <li><a href="perfil.html" onclick="acessarPerfil()"><i class="fas fa-user-circle"></i> Meu
+                                Perfil</a></li>
+
 
                         <li class="dropdown-divider"></li>
-                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        <li><a href="index.html" onclick="deslogar()" class="logout"><i class="fas fa-sign-out-alt"></i>
+                                Sair</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div  class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
+            <div class="mobile-menu" id="mobile-menu" aria-label="Menu" role="button">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
@@ -123,16 +151,21 @@
             <div class="produto-galeria">
                 <img id="detalhe-img" src="Imagens/placeholder.png" alt="Carregando...">
             </div>
+            <div id="miniaturas-galeria" class="miniaturas-flex" style="display: flex; gap: 10px; margin-top: 15px;">
+                <!-- As fotos extras serão inseridas aqui via JS -->
+            </div>
+
 
             <div class="produto-infos-compra">
                 <h1 id="detalhe-nome">Carregando produto...</h1>
-                
+
                 <div class="rating-box">
                     <i class="fas fa-star"></i> <span>4.8</span>
                 </div>
 
                 <div class="precos-detalhe">
-                    <span id="detalhe-preco-antigo" style="text-decoration: line-through; color: #888; display: none;"></span>
+                    <span id="detalhe-preco-antigo"
+                        style="text-decoration: line-through; color: #888; display: none;"></span>
                     <h2 id="detalhe-preco-atual">R$ 0,00</h2>
                 </div>
 
@@ -153,7 +186,7 @@
         </section>
     </main>
 
-      <footer class="main-footer">
+    <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-column">
                 <h3>NUTRIR<span>VIDA</span></h3>
@@ -201,59 +234,95 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="javascript/database.js"></script> 
+    <script src="javascript/database.js"></script>
     <script src="javascript/script.js"></script>
-    
 
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        // 1. Captura o ID da URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const produtoId = urlParams.get('id');
 
-        if (!produtoId) {
-            console.error("ID não encontrado na URL");
-            const nomeEl = document.getElementById('detalhe-nome');
-            if(nomeEl) nomeEl.innerText = "Produto não especificado";
-            return;
-        }
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Captura o ID da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const produtoId = urlParams.get('id');
 
-        // 2. Busca os dados no Supabase
-        const { data: produto, error } = await _supabase
-            .from('produtos')
-            .select('*')
-            .eq('id', produtoId)
-            .single();
+            if (!produtoId) {
+                console.error("ID não encontrado na URL");
+                const nomeEl = document.getElementById('detalhe-nome');
+                if (nomeEl) nomeEl.innerText = "Produto não especificado";
+                return;
+            }
 
-        if (error || !produto) {
-            console.error("Erro ao buscar no banco:", error);
-            const nomeEl = document.getElementById('detalhe-nome');
-            if(nomeEl) nomeEl.innerText = "Produto não encontrado";
-            return;
-        }
+            // 2. Busca os dados no Supabase
+            const { data: produto, error } = await _supabase
+                .from('produtos')
+                .select('*')
+                .eq('id', produtoId)
+                .single();
 
-        // 3. Preenche o HTML com os dados do banco
-        // Nota: O clique do botão agora é gerenciado exclusivamente pelo carregarPaginaProduto() no script.js
-        if(document.getElementById('detalhe-nome')) document.getElementById('detalhe-nome').innerText = produto.nome;
-        if(document.getElementById('detalhe-preco-atual')) document.getElementById('detalhe-preco-atual').innerText = `R$ ${produto.preco.toFixed(2)}`;
-        if(document.getElementById('detalhe-descricao')) document.getElementById('detalhe-descricao').innerText = produto.descricao || "Sem descrição disponível.";
-        
-        const imgElement = document.getElementById('detalhe-img');
-        if(imgElement) {
-            imgElement.src = produto.imagem_url || 'Imagens/placeholder.png';
-            imgElement.alt = produto.nome;
-        }
+            if (error || !produto) {
+                console.error("Erro ao buscar no banco:", error);
+                const nomeEl = document.getElementById('detalhe-nome');
+                if (nomeEl) nomeEl.innerText = "Produto não encontrado";
+                return;
+            }
 
-        const precoAntigo = document.getElementById('detalhe-preco-antigo');
-        if (precoAntigo && produto.preco_antigo) {
-            precoAntigo.innerText = `R$ ${produto.preco_antigo.toFixed(2)}`;
-            precoAntigo.style.display = 'inline';
-        }
+            // 3. Preenche o HTML com os dados do banco
+            // Nota: O clique do botão agora é gerenciado exclusivamente pelo carregarPaginaProduto() no script.js
+            if (document.getElementById('detalhe-nome')) document.getElementById('detalhe-nome').innerText = produto.nome;
+            if (document.getElementById('detalhe-preco-atual')) document.getElementById('detalhe-preco-atual').innerText = `R$ ${produto.preco.toFixed(2)}`;
+            if (document.getElementById('detalhe-descricao')) document.getElementById('detalhe-descricao').innerText = produto.descricao || "Sem descrição disponível.";
 
-        // Definimos o produto no escopo global apenas para que o script.js possa usá-lo se necessário
-        window.produtoAtual = produto; 
-    });
-</script>
+            // 4. Lógica da Imagem Principal e Galeria
+            const imgElement = document.getElementById('detalhe-img');
+            const miniaturasContainer = document.getElementById('miniaturas-galeria'); // Certifique-se de ter esse ID no HTML
+
+            if (imgElement && produto.imagem_url) {
+                imgElement.src = produto.imagem_url;
+                imgElement.alt = produto.nome;
+
+                // Limpa o container de miniaturas antes de adicionar (evita duplicados)
+                if (miniaturasContainer) {
+                    miniaturasContainer.innerHTML = '';
+
+                    // Adiciona a imagem principal como a primeira miniatura
+                    criarMiniatura(produto.imagem_url, imgElement);
+
+                    // Adiciona as imagens extras vindo do banco (coluna imagens_extras)
+                    if (produto.imagens_extras && Array.isArray(produto.imagens_extras)) {
+                        produto.imagens_extras.forEach(url => {
+                            if (url) criarMiniatura(url, imgElement);
+                        });
+                    }
+                }
+            }
+
+            // 5. Lógica do Preço (Mantém como você já tem)
+            const precoAntigo = document.getElementById('detalhe-preco-antigo');
+            if (precoAntigo && produto.preco_antigo) {
+                precoAntigo.innerText = `R$ ${produto.preco_antigo.toFixed(2)}`;
+                precoAntigo.style.display = 'inline';
+            }
+
+            // 6. Escopo Global
+            window.produtoAtual = produto;
+
+            // --- Função Auxiliar (coloque fora ou dentro do DOMContentLoaded) ---
+            function criarMiniatura(url, imgPrincipal) {
+                const mini = document.createElement('img');
+                mini.src = url;
+                mini.className = 'miniatura-item'; // Estilize no CSS
+                mini.style.cssText = "width: 60px; height: 60px; object-fit: cover; cursor: pointer; border: 2px solid #ddd; border-radius: 5px;";
+
+                mini.onclick = () => {
+                    imgPrincipal.src = url;
+                    // Opcional: destaque a miniatura selecionada
+                    document.querySelectorAll('.miniatura-item').forEach(m => m.style.borderColor = '#ddd');
+                    mini.style.borderColor = '#00C853';
+                };
+
+                document.getElementById('miniaturas-galeria').appendChild(mini);
+            }
+        });
+    </script>
 
     <script>
         window.addEventListener('load', function () {
@@ -267,4 +336,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const MAX_PARCELAS = 4;
+const MAX_PARCELAS = 3;
 const MP_TOKEN     = () => Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN') ?? ''
 
 serve(async (req) => {

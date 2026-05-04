@@ -4,7 +4,7 @@
 // =============================================
 
 const MP_PUBLIC_KEY = 'APP_USR-11dff890-5e5f-4aec-bb45-f58318f7a8e1';
-const MAX_PARCELAS  = 4;
+const MAX_PARCELAS  = 3;
 
 let paymentBrickController = null;
 
